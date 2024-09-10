@@ -1,0 +1,143 @@
+*{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+  }
+ nav{
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+ }
+ nav img{
+        width: 100px;
+        height: 100px;
+ }
+ nav ul{
+     display: flex;
+     justify-content: space-around;
+     width: 30%;
+     
+ }
+ nav ul li{
+     list-style: none;
+ }
+ nav ul li a{
+        text-decoration: none;
+        color: black;
+        font-size: 20px;
+        transition:1s;
+ }
+ nav ul li a:hover{
+     color: skyblue;
+ }
+
+ .header-buttons{
+  margin-right:80px;
+ }
+ .header-buttons button{
+  background-color: skyblue;
+  padding:9px;
+  border: none;
+ 
+  color: white;
+  border-radius: 10px;
+  margin-left: 30px;
+  transition:1s;
+  
+ }
+ .header-buttons button:hover{
+     background-color:white;
+     color:black;
+     border: 2px solid black;
+
+ }
+ footer {
+    display: flex;
+    justify-content: space-between;
+    background-color: white;
+    color: black;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    height: 40vh;
+    border: 1px solid black;
+}
+
+footer img {
+    width: 100px;
+    height: 100px;
+}
+
+table {
+    width: 50%; /* Adjust the table width to fit your design */
+    border-collapse: collapse; /* Ensure that borders don't double up */
+    margin-right: 20px; /* Add margin to separate from newsletter */
+}
+
+table th, table td {
+    padding: 10px;
+    text-align: center; /* Center text in table cells */
+}
+
+table td a {
+    text-decoration: none;
+    color: black;
+}
+
+table td a i {
+    font-size: 18px; /* Uniform font size */
+    margin-right: 8px; /* Adds space between icon and text */
+    color: black;
+    transition: 0.5s;
+    vertical-align: middle; /* Ensure vertical alignment */
+}
+
+table td a:hover i {
+    color: black; /* Change icon color on hover */
+}
+
+.fa-youtube {
+    color: red;
+}
+
+.fa-facebook {
+    color: blue;
+}
+
+.fa-twitter {
+    color: #1DA1F2;
+}
+/* Fix for Twitter icon */
+table td a i.fa-twitter {
+    position: fixed;
+    left:1172px;
+   /* Adjust position of Twitter icon */
+}
+.fa-linkedin {
+    color: blue;
+}
+
+.fa-instagram {
+    color: red;
+}
+
+input[type="email"] {
+    padding: 10px;
+    border: 1px solid black;
+    border-radius: 5px;
+    margin-right: 20px;
+}
+
+.Subscribe-btn {
+    padding: 10px;
+    border: none;
+    background-color: black;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 1s;
+}
+
+.Subscribe-btn:hover { 
+    background-color: white;
+    color: black;
+    border: 2px solid black; 
+}
