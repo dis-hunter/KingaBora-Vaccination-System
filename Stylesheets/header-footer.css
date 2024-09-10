@@ -17,18 +17,30 @@
      width: 30%;
      
  }
- nav ul li{
-     list-style: none;
- }
- nav ul li a{
-        text-decoration: none;
-        color: black;
-        font-size: 20px;
-        transition:1s;
- }
- nav ul li a:hover{
-     color: skyblue;
- }
+ nav ul li a {
+    text-decoration: none;
+    color: black;
+    font-size: 20px;
+    transition: color 0.3s ease; /* Smooth transition for text color */
+    position: relative; /* Ensure that the ::after pseudo-element is positioned relative to the link */
+}
+
+nav ul li a::after {
+    content: "";
+    display: block;
+    width: 0; /* Start with width 0 so the line is not visible initially */
+    height: 2px; /* Thickness of the line */
+    background-color: skyblue; /* Color of the line */
+    position: absolute;
+    bottom: -5px; /* Adjust the position of the line relative to the text */
+    left: 0;
+    transition: width 0.3s ease; /* Smooth transition for the line width */
+}
+
+nav ul li a:hover::after {
+    width: 100%; /* Expand the line to the full width of the link on hover */
+}
+
 
  .header-buttons{
   margin-right:80px;
