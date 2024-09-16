@@ -1,67 +1,198 @@
-*{
+* {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
-  }
- nav{
-  display:flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: white;
- }
- nav img{
-        width: 100px;
-        height: 100px;
- }
- nav ul{
-     display: flex;
-     justify-content: space-around;
-     width: 30%;
-     
- }
- nav ul li a {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+}
+
+nav img {
+    width: 100px;
+    height: 100px;
+}
+
+nav ul {
+    display: flex;
+    justify-content: space-around;
+    width: 30%;
+}
+
+nav ul li {
+    list-style-type: none;
+}
+
+nav ul li a {
     text-decoration: none;
     color: black;
     font-size: 20px;
-    transition: color 0.3s ease; /* Smooth transition for text color */
-    position: relative; /* Ensure that the ::after pseudo-element is positioned relative to the link */
+    position: relative;
+    transition: color 0.3s ease;
 }
 
 nav ul li a::after {
     content: "";
     display: block;
-    width: 0; /* Start with width 0 so the line is not visible initially */
-    height: 2px; /* Thickness of the line */
-    background-color: skyblue; /* Color of the line */
+    width: 0;
+    height: 2px;
+    background-color: skyblue;
     position: absolute;
-    bottom: -5px; /* Adjust the position of the line relative to the text */
+    bottom: -5px;
     left: 0;
-    transition: width 0.3s ease; /* Smooth transition for the line width */
+    transition: width 0.3s ease;
 }
 
 nav ul li a:hover::after {
-    width: 100%; /* Expand the line to the full width of the link on hover */
+    width: 100%;
+}
+
+.header-buttons {
+    margin-right: 80px;
+    opacity: 0; /* Initially hidden */
+    transform: translateY(30px); /* Initial off-screen position */
+    transition: opacity 1s ease 0.5s, transform 1s ease 0.5s; /* Delayed entrance */
+}
+
+.header-buttons.show {
+    opacity: 1; /* Appear */
+    transform: translateY(0); /* Move to original position */
+}
+
+/* Keyframe animation for buttons */
+@keyframes zoomIn {
+    0% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(1.1);
+    }
+}
+
+/* Apply the animation to buttons */
+.header-buttons button {
+    background-color: skyblue;
+    padding: 9px;
+    border: none;
+    color: white;
+    border-radius: 10px;
+    margin-left: 30px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.header-buttons button:hover {
+    background-color: white;
+    color: black;
+    border: 2px solid black;
+    animation: zoomIn 0.3s forwards; /* Add the zoom-in animation */
+}
+
+/* Hide the menu icon by default */
+.nav__menu__btn {
+    font-size: 1.5rem;
+    color: black;
+    cursor: pointer;
+    display: none;
+    margin-right: 50px;
+}
+
+/* Hide the vertical menu on larger screens */
+.nav__links {
+    display: flex;
+    position: static;
+    gap: 0;
+    background-color: transparent;
+    flex-direction: row;
+    padding: 0;
+}
+
+/* Animation for individual links */
+@keyframes slideIn {
+    0% {
+        transform: translateX(-50px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Media query for small screens */
+@media (max-width: 1200px) {
+    .nav__menu__btn {
+        display: block;
+    }
+
+    /* Hide links on small screens */
+    .nav__links {
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        padding: 2rem;
+        list-style: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 2rem;
+        background-color: var(--text-dark);
+        transition: transform 0.5s, opacity 0.5s ease;
+        z-index: -1;
+        transform: translateY(-100%);
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    .nav__links.open {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+/* Media query for larger screens (reset and animate links) */
+@media (min-width: 1201px) {
+    .nav__links {
+        position: static;
+        flex-direction: row;
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+        transition: none;
+    }
+
+    /* Add animation for individual links */
+    .nav__links li {
+        opacity: 0;
+        animation: slideIn 0.5s forwards;
+    }
+
+    .nav__links li:nth-child(1) {
+        animation-delay: 0.1s;
+    }
+
+    .nav__links li:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .nav__links li:nth-child(3) {
+        animation-delay: 0.3s;
+    }
+
+    .nav__links li:nth-child(4) {
+        animation-delay: 0.4s;
+    }
 }
 
 
- .header-buttons{
-  margin-right:80px;
- }
- .header-buttons button{
-  background-color: skyblue;
-  padding:9px;
-  border: none;
- 
-  color: white;
-  border-radius: 10px;
-  margin-left: 30px;
-  transition:1s;
-  
- }
- .header-buttons button:hover{
-     background-color:white;
-     color:black;
-     border: 2px solid black;
 
- }
+ /*footer styles*/
  footer {
     display: flex;
     justify-content: space-between;
@@ -70,7 +201,10 @@ nav ul li a:hover::after {
     padding: 20px;
     font-family: Arial, sans-serif;
     height: 40vh;
-    border: 1px solid black;
+ 
+}
+.news-letter p{
+    margin:15px;
 }
 
 footer img {
