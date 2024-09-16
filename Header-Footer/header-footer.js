@@ -2,7 +2,7 @@ class SpecialHeader extends HTMLElement{
     connectedCallback(){
         this.innerHTML=`
           <nav>
-        <img src="images/KingaBoraLogo.jpg">
+        <img src="Images/logo.jpg">
 
         <ul>
             <li><a href="">Home</a></li>
