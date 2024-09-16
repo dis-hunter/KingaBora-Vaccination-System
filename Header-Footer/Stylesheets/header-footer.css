@@ -1,5 +1,11 @@
-*{
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@100..800&display=swap');
+
+:root {
+    --primary-color: #008080 ;
+    --primary-color-dark:#40E0D0 ;
+    --text-dark: #111827;
+    --text-light: #6b7280;
+    --white: #ffffff;
   }
  nav{
   display:flex;
@@ -17,6 +23,9 @@
      width: 30%;
      
  }
+ nav ul li{
+    list-style-type: none;
+ }
  nav ul li a {
     text-decoration: none;
     color: black;
@@ -30,7 +39,7 @@ nav ul li a::after {
     display: block;
     width: 0; /* Start with width 0 so the line is not visible initially */
     height: 2px; /* Thickness of the line */
-    background-color: skyblue; /* Color of the line */
+    background-color: var(--primary-color-dark); /* Color of the line */
     position: absolute;
     bottom: -5px; /* Adjust the position of the line relative to the text */
     left: 0;
@@ -46,7 +55,7 @@ nav ul li a:hover::after {
   margin-right:80px;
  }
  .header-buttons button{
-  background-color: skyblue;
+  background-color: var(--primary-color);
   padding:9px;
   border: none;
  
