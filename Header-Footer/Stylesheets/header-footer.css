@@ -14,7 +14,7 @@
   background-color: white;
  }
  nav img{
-        width: 100px;
+        width: 160px;
         height: 100px;
  }
  nav ul{
@@ -79,11 +79,11 @@ nav ul li a:hover::after {
     padding: 20px;
     font-family: Arial, sans-serif;
     height: 40vh;
-    border: 1px solid black;
+    /* border: 1px solid black; */
 }
 
 footer img {
-    width: 100px;
+    width: 160px;
     height: 100px;
 }
 

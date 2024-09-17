@@ -26,11 +26,11 @@ class SpecialFooter extends HTMLElement{
         this.innerHTML=`
          <footer>
         <div class="news-letter">
-            <img src="images/KingaBoraLogo.jpg">
-            <p>Join Our newsletter to stay up to date</p>
+            <img src="Images/logo.jpg">
+            <br>
+            <p>Join Our newsletter to stay up to date <br> by subscribing you agree to our <a href="">PrivacyPolicy</a> and <br> provide consent to receive updates from KingaBora</p>
             <input type="email" placeholder="Enter your email">
             <button class="Subscribe-btn">Subscribe</button>
-            <p>by subscribing you agree to our <a href="">PrivacyPolicy</a> and provide consent to receive updates from KingaBora</p>
         </div>
 
         <table>
