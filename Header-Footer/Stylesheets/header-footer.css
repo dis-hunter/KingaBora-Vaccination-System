@@ -72,9 +72,7 @@
             font-size: 1rem;
             color: white;
             background-color: #008080;
-           
             cursor: pointer;
-           
             border-radius: 5px;
             margin-left: 30px;
             transition: background-color 0.5s ease, color 0.3s ease;

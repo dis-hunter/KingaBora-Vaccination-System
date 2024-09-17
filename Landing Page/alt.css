@@ -26,6 +26,7 @@
   border-radius: 5px;
   cursor: pointer;
   transition: 0.3s;
+  z-index: 10;
 }
 
 .btn:hover {
@@ -137,10 +138,13 @@ nav {
   background-color: var(--white);
   border-radius: 5px;
   box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
 }
 
 .image__content__1 {
   transform: translate(calc(-50% - 12rem), calc(-50% - 8rem));
+
 }
 
 .image__content__1 span {
@@ -181,6 +185,17 @@ nav {
 .image__content__2 span {
   font-size: 1.5rem;
   color: var(--primary-color);
+}
+/* Hover effect for image__content__1 */
+.image__content__1:hover {
+  transform: translate(calc(-50% - 12rem), calc(-50% - 8rem)) scale(1.05);
+  box-shadow: 8px 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Hover effect for image__content__2 */
+.image__content__2:hover {
+  transform: translate(calc(-50% + 8rem), calc(-50% + 10rem)) scale(1.05);
+  box-shadow: 8px 8px 30px rgba(0, 0, 0, 0.3);
 }
   
   /* Adjust layout for smaller screens */

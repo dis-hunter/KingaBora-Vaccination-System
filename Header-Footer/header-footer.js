@@ -6,13 +6,13 @@ class SpecialHeader extends HTMLElement{
         <head>
         <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
 
-            <link rel="stylesheet" href="Stylesheets/style.css">
+        <link rel="stylesheet" href="../Header-Footer/Stylesheets/style.css">
         
     
        
         </head>
          <nav>
-        <img src="images/KingaBoraLogo.jpg" alt="Logo">
+        <img src="../Header-Footer/images/KingaBoraLogo.jpg" alt="Logo">
 
         <!-- Navigation Links -->
         <ul class="nav__links" id="nav-links">
@@ -99,6 +99,12 @@ const menuIcon = menuBtn.querySelector('i');
 const navLinks = document.getElementById('nav-links');
 const headerButtons = document.getElementById('header-buttons');
 
+
+window.addEventListener('load', () => {
+    headerButtons.classList.add('show');
+});
+
+
 // Toggle the 'open' class on click to show/hide the menu
 menuBtn.addEventListener('click', () => {
     navLinks.classList.toggle('open');
@@ -107,9 +113,6 @@ menuBtn.addEventListener('click', () => {
 });
 
 // Show the buttons after the page has loaded
-window.addEventListener('load', () => {
-    headerButtons.classList.add('show');
-});
 
 // When a link is clicked, close the menu and change the icon back
 navLinks.addEventListener('click', () => {
