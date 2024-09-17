@@ -122,28 +122,28 @@
     justify-self: start;
 
 } */
-.aboutUs {
+/* .aboutUs {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Two columns */
+  grid-template-columns: 1fr 1fr; 
   gap: 2rem;
   align-items: center;
 }
 
 .aboutUs .content {
   text-align: left;
-  /*justify-self: end;  /* Remove this property*/
+  
 }
 
 .aboutUs .image2 {
   position: relative;
   text-align: center;
   isolation: isolate;
-  justify-self: start; /* Move the image to the left side of the grid*/
+  justify-self: start; 
 }
 
 .aboutUs .image2 img {
     width: 100%; 
-    max-width: 475px; /* Control the size of the image */
+    max-width: 475px; 
 }
 
 .aboutUs .image__bg {
@@ -181,6 +181,81 @@
 
 .aboutUs .btn:hover {
     background-color: var(--primary-color-dark);
+} */
+.aboutUs {
+  padding: 0 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two equal columns */
+  gap: 2rem;
+  align-items: center;
+}
+
+.aboutUs .content {
+  text-align: left; /* Aligns the text to the left */
+}
+
+.aboutUs .image2 {
+  position: relative;
+  text-align: center;
+  isolation: isolate;
+}
+
+.aboutUs .image2 img {
+  width: 100%;
+  max-width: 475px; /* Control the size of the image */
+}
+
+.aboutUs .image__bg2 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  height: 450px;
+  width: 400px;
+  background-color: var(--primary-color);
+  z-index: -2;
+}
+
+.aboutUs h2 {
+  font-size: 3rem;
+  color: var(--text-dark);
+}
+
+.aboutUs p {
+  margin-bottom: 2rem;
+  color: var(--text-light);
+  line-height: 1.75rem;
+}
+
+.aboutUs .btn {
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  color: var(--white);
+  background-color: var(--primary-color);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.aboutUs .btn:hover {
+  background-color: var(--primary-color-dark);
+}
+
+/* For responsiveness on smaller screens */
+@media (max-width: 900px) {
+  .aboutUs {
+      grid-template-columns: 1fr; /* Stack the image and text on top of each other */
+      text-align: center;
+  }
+
+  .aboutUs .content {
+      padding-right: 0;
+      margin-bottom: 2rem;
+  }
+
+  .aboutUs .image2 img {
+      max-width: 100%;
+  }
 }
 
 
@@ -217,6 +292,7 @@
 .image img {
   width: 100%;
   max-width: 475px;
+  border-radius: 10px;
  
 }
 
