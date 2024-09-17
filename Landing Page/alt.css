@@ -119,11 +119,13 @@ nav {
   background-color: var(--primary-color);
   border-radius: 100%;
   z-index: -1;
+  
 }
 
 .image img {
   width: 100%;
   max-width: 475px;
+ 
 }
 
 .image__content {
@@ -197,6 +199,12 @@ nav {
   transform: translate(calc(-50% + 8rem), calc(-50% + 10rem)) scale(1.05);
   box-shadow: 8px 8px 30px rgba(0, 0, 0, 0.3);
 }
+
+
+
+
+
+
   
   /* Adjust layout for smaller screens */
   @media (max-width: 900px) {

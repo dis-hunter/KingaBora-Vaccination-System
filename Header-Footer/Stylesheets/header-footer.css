@@ -108,36 +108,45 @@
                 opacity: 1;
             }
         }
-        @media (max-width: 1200px) {
+        @media (max-width: 900px) {
             .nav__menu__btn {
                 display: block;
             }
             .nav__links {
                 position: absolute;
-                top: 60px;
-                left: 0;
-                width: 100%;
-                padding: 2rem;
+                top: 90px; /* Ensure it starts below the menu icon */
+                right: 0px; /* Stick to the left side of the screen */
+                width: 20%; /* Adjust the width as needed */
+                padding: 2rem 1rem;
                 list-style: none;
                 display: flex;
-                align-items: center;
-                justify-content: center;
+                align-items: flex-start; /* Align links to the left */
+                justify-content: flex-start; /* Push links to the side */
                 flex-direction: column;
                 gap: 2rem;
-                background-color: var(--text-dark);
+                background-color: transparent;
                 transition: transform 0.5s, opacity 0.5s ease;
-                z-index: -1;
+                z-index: 10;
                 transform: translateY(-100%);
                 opacity: 0;
                 visibility: hidden;
+                padding-left: 20px; /* Add some space from the edge of the screen */
+            }
+
+            .nav__links li a{
+                color: black;
+                text-align: left;
             }
             .nav__links.open {
                 transform: translateY(0);
                 opacity: 1;
                 visibility: visible;
             }
+            nav{
+                z-index: 20;
+            }
         }
-        @media (min-width: 1201px) {
+        @media (min-width: 910px) {
             .nav__links {
                 position: static;
                 flex-direction: row;

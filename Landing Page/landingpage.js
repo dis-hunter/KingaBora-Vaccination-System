@@ -1,6 +1,5 @@
 
-
-
+//Handling of scroll animations
 const  scrollRevealOption = {
     distance: "50px",
     origin: "bottom",
@@ -36,3 +35,20 @@ ScrollReveal().reveal(".image .image__content__2 ", {
 ...scrollRevealOption,
 delay: 2500,
 });
+ScrollReveal.reveal(".about .content .image", {
+...scrollRevealOption,
+delay: 1000
+});
+ScrollReveal.reveal(".about .content h2", {
+...scrollRevealOption,
+delay: 2000
+});
+ScrollReveal.reveal(".about .content p", {
+...scrollRevealOption,
+delay:2000
+});
+ScrollReveal.reveal(".about .content .btn", {
+...scrollRevealOption,
+delay: 2500
+});
+
