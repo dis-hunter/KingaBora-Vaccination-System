@@ -100,24 +100,51 @@
   color: var(--text-light);
   line-height: 1.75rem;
 }
-.aboutUs{
+/* .aboutUs {
     padding: 0 1rem;
-    flex: 1;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr); 
     gap: 2rem;
     align-items: center;
+    justify-content: space-between;
 }
-.aboutUs .image2{
+
+.aboutUs .content {
+    text-align: left;
+    justify-self: end;
+}
+
+.aboutUs .image2 {
     position: relative;
-  text-align: center;
-  isolation: isolate;
+    text-align: center;
+    isolation: isolate;
+    justify-self: start;
+
+} */
+.aboutUs {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two columns */
+  gap: 2rem;
+  align-items: center;
 }
-.image {
+
+.aboutUs .content {
+  text-align: left;
+  /*justify-self: end;  /* Remove this property*/
+}
+
+.aboutUs .image2 {
   position: relative;
   text-align: center;
   isolation: isolate;
+  justify-self: start; /* Move the image to the left side of the grid*/
 }
+
+.aboutUs .image2 img {
+    width: 100%; 
+    max-width: 475px; /* Control the size of the image */
+}
+
 .aboutUs .image__bg {
     position: absolute;
     top: 50%;
@@ -127,6 +154,50 @@
     width: 450px;
     background-color: var(--primary-color);
     border-radius: 100%;
+    z-index: -1;
+}
+
+.aboutUs h2 {
+    font-size: 3rem;
+    color: var(--text-dark);
+}
+
+.aboutUs p {
+    margin-bottom: 2rem;
+    color: var(--text-light);
+    line-height: 1.75rem;
+}
+
+.aboutUs .btn {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    color: var(--white);
+    background-color: var(--primary-color);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.aboutUs .btn:hover {
+    background-color: var(--primary-color-dark);
+}
+
+
+
+.image {
+  position: relative;
+  text-align: center;
+  isolation: isolate;
+}
+.aboutUs .image__bg2 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    height: 450px;
+    width: 400px;
+    background-color: var(--primary-color);
+    border-radius: 100px;
     z-index: -1;
   }
 .image__bg {

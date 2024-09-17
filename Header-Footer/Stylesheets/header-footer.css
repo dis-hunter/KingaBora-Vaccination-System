@@ -150,7 +150,7 @@ input[type="email"] {
 .Subscribe-btn {
     padding: 10px;
     border: none;
-    background-color: black;
+    background-color: var(--primary-color);
     color: white;
     border-radius: 5px;
     cursor: pointer;
@@ -158,7 +158,7 @@ input[type="email"] {
 }
 
 .Subscribe-btn:hover { 
-    background-color: white;
+    background-color: var(--primary-color-dark);
     color: black;
     border: 2px solid black; 
 }
