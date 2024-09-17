@@ -1,76 +1,180 @@
 @import url('https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@100..800&display=swap');
+        * {
+           
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body{
+            font-family: "Roboto", sans-serif;
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+        }
+        nav img {
+            width: 130px;
+            height: 130px;
+        }
+        nav ul {
+            display: flex;
+            justify-content: space-around;
+            width: 30%;
+        }
+        nav ul li {
+            list-style-type: none;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #6b7280;
+            font-size: 20px;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        nav ul li a::after {
+            content: "";
+            display: block;
+            width: 0;
+            height: 3px;
+            background-color:#008080;
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            transition: width 0.3s ease;
+        }
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+        .header-buttons {
+            margin-right: 80px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 1s ease 0.5s, transform 1s ease 0.5s;
+        }
+        .header-buttons.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        @keyframes zoomIn {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.1);
+            }
+        }
+        .header-buttons button {
+            padding: 0.8rem 1.6rem;
+            outline: none;
+            border: none;
+            font-size: 1rem;
+            color: white;
+            background-color: #008080;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-left: 30px;
+            transition: background-color 0.5s ease, color 0.3s ease;
+        }
+        .header-buttons button:hover {
+            background-color: white;
+            color: black;
+            border: 2px solid black;
+            animation: zoomIn 0.3s forwards;
+        }
+        .nav__menu__btn {
+            font-size: 1.5rem;
+            color: black;
+            cursor: pointer;
+            display: none;
+            margin-right: 50px;
+        }
+        .nav__links {
+            display: flex;
+            position: static;
+            gap: 0;
+            background-color: transparent;
+            flex-direction: row;
+            padding: 0;
+        }
+        @keyframes slideIn {
+            0% {
+                transform: translateX(-50px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @media (max-width: 900px) {
+            .nav__menu__btn {
+                display: block;
+            }
+            .nav__links {
+                position: absolute;
+                top: 90px; /* Ensure it starts below the menu icon */
+                right: 0px; /* Stick to the left side of the screen */
+                width: 20%; /* Adjust the width as needed */
+                padding: 2rem 1rem;
+                list-style: none;
+                display: flex;
+                align-items: flex-start; /* Align links to the left */
+                justify-content: flex-start; /* Push links to the side */
+                flex-direction: column;
+                gap: 2rem;
+                background-color: transparent;
+                transition: transform 0.5s, opacity 0.5s ease;
+                z-index: 10;
+                transform: translateY(-100%);
+                opacity: 0;
+                visibility: hidden;
+                padding-left: 20px; /* Add some space from the edge of the screen */
+            }
 
-:root {
-    --primary-color: #008080 ;
-    --primary-color-dark:#40E0D0 ;
-    --text-dark: #111827;
-    --text-light: #6b7280;
-    --white: #ffffff;
-  }
- nav{
-  display:flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: white;
- }
- nav img{
-        width: 160px;
-        height: 100px;
- }
- nav ul{
-     display: flex;
-     justify-content: space-around;
-     width: 30%;
-     
- }
- nav ul li{
-    list-style-type: none;
- }
- nav ul li a {
-    text-decoration: none;
-    color: black;
-    font-size: 20px;
-    transition: color 0.3s ease; /* Smooth transition for text color */
-    position: relative; /* Ensure that the ::after pseudo-element is positioned relative to the link */
-}
-
-nav ul li a::after {
-    content: "";
-    display: block;
-    width: 0; /* Start with width 0 so the line is not visible initially */
-    height: 2px; /* Thickness of the line */
-    background-color: var(--primary-color-dark); /* Color of the line */
-    position: absolute;
-    bottom: -5px; /* Adjust the position of the line relative to the text */
-    left: 0;
-    transition: width 0.3s ease; /* Smooth transition for the line width */
-}
-
-nav ul li a:hover::after {
-    width: 100%; /* Expand the line to the full width of the link on hover */
-}
+            .nav__links li a{
+                color: black;
+                text-align: left;
+            }
+            .nav__links.open {
+                transform: translateY(0);
+                opacity: 1;
+                visibility: visible;
+            }
+            nav{
+                z-index: 20;
+            }
+        }
+        @media (min-width: 910px) {
+            .nav__links {
+                position: static;
+                flex-direction: row;
+                transform: translateY(0);
+                opacity: 1;
+                visibility: visible;
+                transition: none;
+            }
+            .nav__links li {
+                opacity: 0;
+                animation: slideIn 0.5s forwards;
+            }
+            .nav__links li:nth-child(1) {
+                animation-delay: 0.1s;
+            }
+            .nav__links li:nth-child(2) {
+                animation-delay: 0.2s;
+            }
+            .nav__links li:nth-child(3) {
+                animation-delay: 0.3s;
+            }
+            .nav__links li:nth-child(4) {
+                animation-delay: 0.4s;
+            }
+        }
 
 
- .header-buttons{
-  margin-right:80px;
- }
- .header-buttons button{
-  background-color: var(--primary-color);
-  padding:9px;
-  border: none;
- 
-  color: white;
-  border-radius: 10px;
-  margin-left: 30px;
-  transition:1s;
-  
- }
- .header-buttons button:hover{
-     background-color:white;
-     color:black;
-     border: 2px solid black;
-
- }
+ /*footer styles*/
  footer {
     display: flex;
     justify-content: space-between;
@@ -79,7 +183,10 @@ nav ul li a:hover::after {
     padding: 20px;
     font-family: Arial, sans-serif;
     height: 40vh;
-    /* border: 1px solid black; */
+ 
+}
+.news-letter p{
+    margin:15px;
 }
 
 footer img {

@@ -1,29 +1,51 @@
+
+
 class SpecialHeader extends HTMLElement{
     connectedCallback(){
         this.innerHTML=`
-          <nav>
-        <img src="Images/logo.jpg">
+        <head>
+        <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
 
-        <ul>
-            <li><a href="">Home</a></li>
-            <li><a href="">About</a></li>
-            <li><a href="">Contact</a></li>
-            <li><a href="">Services</a></li>
+        <link rel="stylesheet" href="../Header-Footer/Stylesheets/style.css">
+        
+    
+       
+        </head>
+         <nav>
+        <img src="../Header-Footer/images/KingaBoraLogo.jpg" alt="Logo">
+
+        <!-- Navigation Links -->
+        <ul class="nav__links" id="nav-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Services</a></li>
         </ul>
 
-        <div class="header-buttons">
+        <!-- Sign Up and Log In Buttons -->
+        <div class="header-buttons" id="header-buttons">
             <button>Sign Up</button>
             <button>Log In</button>
         </div>
 
-            
+        <!-- Menu Icon for Small Screens -->
+        <div class="nav__menu__btn" id="menu-btn">
+            <i class="ri-menu-line"></i>
+        </div>
     </nav>
+
         `
     }
 }
 class SpecialFooter extends HTMLElement{
     connectedCallback(){
         this.innerHTML=`
+
+        <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        
+        </head>
+       
          <footer>
         <div class="news-letter">
             <img src="Images/logo.jpg">
@@ -71,3 +93,29 @@ class SpecialFooter extends HTMLElement{
 }
 customElements.define('special-header', SpecialHeader);
 customElements.define('special-footer', SpecialFooter);
+
+const menuBtn = document.getElementById('menu-btn');
+const menuIcon = menuBtn.querySelector('i');
+const navLinks = document.getElementById('nav-links');
+const headerButtons = document.getElementById('header-buttons');
+
+
+window.addEventListener('load', () => {
+    headerButtons.classList.add('show');
+});
+
+
+// Toggle the 'open' class on click to show/hide the menu
+menuBtn.addEventListener('click', () => {
+    navLinks.classList.toggle('open');
+    const isOpen = navLinks.classList.contains('open');
+    menuIcon.setAttribute('class', isOpen ? 'ri-close-line' : 'ri-menu-line');
+});
+
+// Show the buttons after the page has loaded
+
+// When a link is clicked, close the menu and change the icon back
+navLinks.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+    menuIcon.setAttribute('class', 'ri-menu-line');
+});

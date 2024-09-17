@@ -8,16 +8,15 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="alt.css" />
-    <link rel="stylesheet" href="Header-Footer\Stylesheets\style.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    />
     <title></title>
+    
+   
   </head>
   <body>
     <special-header></special-header>
-    <div class="container">
+    <div  style="height: 100vh" class="container">
+
+      
       <!-- <nav>
         <div class="nav__logo">KINGA BORA</div>
         <ul class="nav__links">
@@ -29,9 +28,15 @@
           <li class="link"><a href="#">Contact</a></li>
         </ul>
         <button class="btn">Register Now</button>
-      </nav> -->
+      </nav>
+      <br />
+      <br />
+      <br />
+      <br />
+      <br /> -->
       <header class="header">
         <div class="content">
+          
           <h1><span>Get Quick</span><br />Medical Services</h1>
           <p>
             In today's fast-paced world, access to prompt and efficient medical
@@ -40,11 +45,13 @@
             receive quick medical services can significantly impact the outcome
             of a situation.
           </p>
-          <button class="btn">Get Services</button>
+
+          <button id="servicesButton" class="btn">Get Services</button>
         </div>
+        
         <div class="image">
           <span class="image__bg"></span>
-          <img src="Images\happy child.jpg" alt="header image" />
+          <img src="Images/happy child.jpg" alt="header image" />
           <div class="image__content image__content__1">
             <span><i class="ri-user-3-line"></i></span>
             <div class="details">
@@ -65,18 +72,19 @@
             </ul>
           </div>
         </div>
-      </header>
-    </div>
+        <br />
 
-    <!---------------------- About Us------------------------->
-    <div class="aboutUs">
-      <section class="about" id="about">
-        <div class="content">
-          <div class="image2">
-            <span class="image__bg2"></span>
-            <img src="Images\doctor.jpg" alt="doctor" />
-          </div>
-          
+      </header>
+  </div>
+        <!---------------------- About Us------------------------->
+<div class="container">
+        <section class="about" id="about">
+          <div class="content">
+            <div class="image">
+              <img src="Images/doctor.jpg" alt="doctor" />
+            </div>
+
+           
             <h2>About Us</h2>
             <p>
               Kinga Bora is a medical services provider that offers a wide range
@@ -86,13 +94,20 @@
               providing the best medical services to our clients.
             </p>
             <button class="btn">Read More</button>
-          
-          <br />
-        </div>
-      </section>
-    </div>
+          </div>
+            <br />
+          </div>
+        </section>
 
-    <special-footer></special-footer>
-    <script src="Header-Footer\header-footer.js"></script>
+</div>
+      
+    
+   
+    <!-- Include ScrollReveal.js -->
+    <script src="https://unpkg.com/scrollreveal"></script>
+
+    <script src="landingpage.js"></script>
+    <script src="..\Header-Footer\header-footer.js"></script>
+    
   </body>
 </html>
