@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@100..800&display=swap');
+
+body{
+    font-family: 'Poppins' , sans-serif;
+    background: #ececec;
+}
+
+/*--------Login container------------*/
+.box-area{
+    width:930px;
+}
+
+
+/*-------Right box-------------*/
+.right-box{
+    padding:40px 30px 40px 40px;
+}
+
+
+/*--------Custom Placeholder----------*/
+::placeholder{
+    font-size:16px;
+}
+
+/*---------------Small Screen-----------------*/
+@media only screen and (max-width: 768px){
+    .box-area{
+        margin: 0 10px;
+
+    }
+    .left-box{
+        height: 100px;
+        overflow: hidden;
+    }
+    .right-box{
+        padding:20px;
+    }
+
+}
+
+
+
