@@ -3,3 +3,6 @@ config.py
 
 # Ignore Firebase Admin SDK service account key
 kingaboravaccinationsystem-firebase-adminsdk-4vd5w-29da0d42b8.json
+
+
+firebaseconfig.js
