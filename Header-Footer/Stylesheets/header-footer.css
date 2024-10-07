@@ -5,7 +5,7 @@
   display:flex;
   justify-content: space-between;
   align-items: center;
-  background-color: white;
+ 
  }
  nav img{
         width: 100px;
@@ -65,7 +65,7 @@ nav ul li a:hover::after {
  footer {
     display: flex;
     justify-content: space-between;
-    background-color: white;
+    
     color: black;
     padding: 20px;
     font-family: Arial, sans-serif;
