@@ -63,37 +63,29 @@ def register():
 @app.route('/email_authenticate', methods=['POST'])
 def email_authenticate():
     try:
-        # Get form data
         data = request.get_json()
         email = data.get('email')
         password = data.get('password')
 
-        # Sign in the user
+        # Sign in the user with Firebase
         user = auth.sign_in_with_email_and_password(email, password)
         local_id = user['localId']
 
-        # Retrieve user data from Firestore
-        user_doc = db.collection('users').document(local_id).get()
-        username = user_doc.get('username')  # Assuming 'username' is a field in your Firestore document
-        print("welcome")
-        
-        # Store the local_id and username in the session
-        session['local_id'] = local_id
-        session['username'] = username
-        session.modified = True
-        print(session)
+        # Example: Fetch user data from Firestore (optional, you can expand based on your use case)
+        # user_data = firestore_db.collection('users').document(local_id).get()
+        # username = user_data.to_dict().get('username', 'User')
 
-        # Return a JSON response with the local_id, username, message, and redirect URL
-        return jsonify({
-            "message": "Authentication successful.",
-            "local_id": local_id,
-            "username": username,
-            "redirect_url": "http://127.0.0.1:5000/spotify/login"
-        })
+        # Store user information in session (optional)
+        session['local_id'] = local_id
+        # session['username'] = username
+
+        # Return JSON response with redirect URL
+        redirect_url = "http://localhost:8080/KingaBora-Vaccination-System/landingpage/altIndex.html"
+        return jsonify({"message": "Successfully logged in", "localId": local_id, "redirectUrl": redirect_url}), 201
 
     except Exception as e:
-        # In case of error, return the error message
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)}), 400
+
 
 
 # Run the Flask application
