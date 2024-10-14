@@ -24,7 +24,7 @@ class SpecialHeader extends HTMLElement{
 
         <!-- Sign Up and Log In Buttons -->
         <div class="header-buttons" id="header-buttons">
-            <button>Sign U</button>
+            <button>Sign Up</button>
             <button>Log In</button>
         </div>
 

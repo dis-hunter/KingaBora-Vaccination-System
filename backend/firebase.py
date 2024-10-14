@@ -86,7 +86,38 @@ def email_authenticate():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
+def ChildDetails():
+    try:
+        # Get JSON data from the request
+        data = request.get_json()
+        
+        # Extract the BirthCertificateID from the form data
+        birth_certificate_id = data.get("BirthCertificateID")
+        
+        if not birth_certificate_id:
+            return jsonify({"error": "BirthCertificateID is required"}), 400
 
+        # Reference to the 'childData' collection
+        child_data_ref = db.collection('childData')
+        
+        # Query Firestore to find the document with the matching BirthCertificateID
+        query = child_data_ref.where('BirthCertificate ID', '==', birth_certificate_id).stream()
+
+        # Initialize result to None
+        child_doc = None
+        
+        # Process the query results
+        for doc in query:
+            child_doc = doc.to_dict()  # Get the document data if found
+            child_doc["doc_id"] = doc.id  # Optionally include document ID
+
+        if child_doc:
+            return jsonify({"message": "Child found", "childData": child_doc}), 200
+        else:
+            return jsonify({"error": "No child found with the given BirthCertificateID"}), 404
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500  # Return error message on exception
 
 # Run the Flask application
 if __name__ == '__main__':
