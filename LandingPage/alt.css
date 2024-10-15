@@ -400,6 +400,8 @@
   .header {
     padding: 1rem;
     grid-template-columns: repeat(1, 1fr);
+    margin-bottom: 0;
+
   }
 
   .content {
