@@ -86,6 +86,8 @@ def email_authenticate():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
+@app.route('/childDetails', methods=['GET'])
+
 def ChildDetails():
     try:
         # Get JSON data from the request
