@@ -136,10 +136,12 @@
     </style>
     <!-- Firebase SDKs -->
     <script type="module">
+        // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js";
         
-        //Firebase configuration
+        // Your web app's Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDigqFcCi42MFXvhsuaQH-0HoeWVCRIrq8",
             authDomain: "kingaboravaccinationsystem.firebaseapp.com",
@@ -147,12 +149,24 @@
             storageBucket: "kingaboravaccinationsystem.appspot.com",
             messagingSenderId: "797186497406",
             appId: "1:797186497406:web:7ff7e514e5add24dd6f12f",
-            measurementId: "G-1WJNS5WW31"
+            measurementId: "G- 1WJNS5WW31"
         };
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
         const db = getFirestore(app);
+
+        // Check if user is logged in
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in, fetch user data
+                fetchUserData();
+            } else {
+                // No user is signed in, redirect to login page
+                window.location.href = '../authentication/login.html'; // Change this to your login page URL
+            }
+        });
 
         // Fetch user data from Firestore
         async function fetchUserData() {
@@ -190,10 +204,6 @@
             }
             return age;
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchUserData();
-        });
     </script>
 </head>
 <body>
@@ -208,34 +218,9 @@
             </div>
             <div class="buttons">
                 <button class="button edit-button">Edit Details</button>
-                <button class="button emergency-button">Emergency Call</button>
+                <button class="button delete-button">Delete Profile</button>
             </div>
         </div>
-
-        <div class="tabs">
-            <div class="tab active">Vaccination History</div>
-            <div class="tab">Upcoming Vaccinations</div>
-            <div class="tab">Vaccination Schedule</div>
-        </div>
-
-        <div class="progress-bar">
-            <div class="fill"></div>
-        </div>
-
-        <div class="upcoming-vaccinations">
-            <h3>Upcoming Vaccinations</h3>
-            <ul>
-                <li><span class="icon">&#x2022;</span> Vaccination 1</li>
-                <li><span class="icon">&#x2022;</span> Vaccination 2</li>
-                <li><span class="icon">&#x2022;</span> Vaccination 3</li>
-            </ul>
-        </div>
-
-        <div class="action-buttons">
-            <button class="action-button schedule-button">Schedule Vaccination</button>
-            <button class="action-button report-button">Report Vaccination</button>
-        </div>
-
     </div>
     <special-footer></special-footer>
 </body>
