@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vaccination Tracker</title>
+    <script src="../Header-Footer/header-footer.js"></script>
+    <link rel="stylesheet" href="../Header-Footer/Stylesheets/style.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        .profile-info {
+            margin-bottom: 10px;
+        }
+
+        .profile-info h2, .profile-info p {
+            margin: 0;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .edit-button {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        .emergency-button {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .tab.active {
+            background-color: #eee;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #ddd;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar .fill {
+            height: 100%;
+            background-color: #4CAF50;
+            border-radius: 4px;
+            width: 75%; /* Adjust this value based on completed vaccinations */
+        }
+
+        .upcoming-vaccinations h3 {
+            margin-bottom: 10px;
+        }
+
+        .upcoming-vaccinations ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .upcoming-vaccinations li {
+            margin-bottom: 5px;
+        }
+
+        .upcoming-vaccinations li .icon {
+            margin-right: 5px;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .action-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .schedule-button {
+            background-color: #333;
+            color: white;
+        }
+
+        .report-button {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+    </style>
+    <!-- Firebase SDKs -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js";
+        
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDigqFcCi42MFXvhsuaQH-0HoeWVCRIrq8",
+            authDomain: "kingaboravaccinationsystem.firebaseapp.com",
+            projectId: "kingaboravaccinationsystem",
+            storageBucket: "kingaboravaccinationsystem.appspot.com",
+            messagingSenderId: "797186497406",
+            appId: "1:797186497406:web:7ff7e514e5add24dd6f12f",
+            measurementId: "G- 1WJNS5WW31"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Check if user is logged in
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in, fetch user data
+                fetchUserData();
+            } else {
+                // No user is signed in, redirect to login page
+                window.location.href = '../authentication/login.html'; // Change this to your login page URL
+            }
+        });
+
+        // Fetch user data from Firestore
+        async function fetchUserData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const birthCertificateId = urlParams.get('birthCertificateId');
+
+            if (!birthCertificateId) {
+                console.error('No birthCertificateId provided in the URL');
+                return;
+            }
+
+            const userDocRef = doc(db, 'children', birthCertificateId);
+            const userDoc = await getDoc(userDocRef);
+
+            if (userDoc.exists()) {
+                const data = userDoc.data();
+                const birthDate = new Date(data['Date of Birth'].seconds * 1000);
+                const age = calculateAge(birthDate);
+
+                document.getElementById('child-name').textContent = data['Child Name'];
+                document.getElementById('mother-name').textContent = data['Parent Name'];
+                document.getElementById('birth-date').textContent = birthDate.toLocaleDateString();
+                document.getElementById('age').textContent = `Age: ${age} years old`;
+            } else {
+                console.log('No such document!');
+            }
+        }
+
+        function calculateAge(birthDate) {
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const month = today.getMonth() - birthDate.getMonth();
+            if (month < 0 || (month === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        }
+    </script>
+</head>
+<body>
+  <special-header></special-header>
+    <div class="container">
+        <div class="profile">
+            <div class="profile-info">
+                <h2 id="child-name">Loading...</h2>
+                <p id="mother-name">Loading...</p>
+                <p id="birth-date">Loading...</p>
+                <p id="age">Loading...</p>
+            </div>
+            <div class="buttons">
+                <button class="button edit-button">Edit Details</button>
+                <button class="button delete-button">Delete Profile</button>
+            </div>
+        </div>
+    </div>
+    <special-footer></special-footer>
+</body>
+</html>

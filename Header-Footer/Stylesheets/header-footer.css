@@ -1,3 +1,31 @@
+<<<<<<< HEAD
+*{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+  }
+ nav{
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+ 
+ }
+ nav img{
+        width: 100px;
+        height: 100px;
+ }
+ nav ul{
+     display: flex;
+     justify-content: space-around;
+     width: 30%;
+     
+ }
+ nav ul li a {
+    text-decoration: none;
+    color: black;
+    font-size: 20px;
+    transition: color 0.3s ease; /* Smooth transition for text color */
+    position: relative; /* Ensure that the ::after pseudo-element is positioned relative to the link */
+}
+=======
 @import url('https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@100..800&display=swap');
         * {
            
@@ -132,6 +160,7 @@
                 visibility: hidden;
                 padding-left: 20px; /* Add some space from the edge of the screen */
             }
+>>>>>>> 07a5752af939011cee16fe1d02e4d2e1c599a738
 
             .nav__links li a{
                 color: black;
@@ -178,7 +207,7 @@
  footer {
     display: flex;
     justify-content: space-between;
-    background-color: white;
+    
     color: black;
     padding: 20px;
     font-family: Arial, sans-serif;

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile Page</title>
+  <script src="../Header-Footer/header-footer.js"></script>
+  <link rel="stylesheet" href="../Header-Footer/Stylesheets/style.css">
+  <style>
+    body {
+  font-family: sans-serif;
+  margin: 0;
+  padding: 20px;
+}
+
+/* Header */
+.profile-header {
+  display: flex;
+  align-items: center;  /* Vertically align items */
+  padding: 20px;
+  background-color: #40e0d0;
+  border-radius: 8px;
+  margin: 4%;
+}
+
+.profile-pic {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-right: 20px;
+}
+
+.profile-info {
+  flex-grow: 1;  /* Allow profile info to take up available space */
+}
+
+.profile-actions button {
+  margin-left: 10px; 
+  padding: 8px 12px;
+  background-color: #008080; /* Example blue color */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Skills Section */
+.children ul {
+  list-style: none;
+  padding-left:10px;
+  display: flex;  /* Arrange skills horizontally */
+  flex-wrap: wrap; /* Allow wrapping to next line */
+}
+
+.children li {
+  margin: 5px;
+  padding: 8px 12px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+/* Updates Section */
+.updates {
+  margin-top: 20px;
+}
+
+.update {
+  background-color: #fff;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.update p {
+  margin-bottom: 5px;
+}
+
+.update button {
+  /* ... similar styling as profile-actions buttons ... */
+}
+  </style>
+</head>
+<body>
+    <special-header></special-header>
+    <main>
+ 
+    <div class="profile-header">
+      <img src="profile-picture.jpg" alt="Profile Picture" class="profile-pic">
+      <div class="profile-info">
+        <h1>Oloisudori Lemayan</h1>
+        <p>Parent</p>
+        <p>South B, Nairobi</p>
+      </div>
+      <div class="profile-actions">
+        <button>Edit Profile</button>
+        <button>Settings</button>
+      </div>
+    </div>
+  
+
+  
+    <section class="children">
+      <h2>Children</h2>
+      <ul>
+        <li>Zawadi</li>
+        <li>Taiyo</li>
+      </ul>
+    </section>
+
+    <section class="updates">
+      
+      <div class="update">
+        <h2>Messages</h2>
+        <p>Receive latest results and reminders on vaccinations to come!</p>
+      </div>
+      
+    </section>
+  </main>
+  <special-footer></special-footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

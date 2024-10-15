@@ -1,0 +1,50 @@
+.main{
+    margin: 2% 5%;
+    padding: 20px;
+    border-radius: 30px;
+
+}
+ul{
+    list-style-type: none;
+    display: flex;
+    justify-content: space-around;
+    padding-right: 20px;
+}
+table{
+    width: 100%;
+    margin: 20px 0;
+}
+a{
+    text-decoration: none;
+    
+}
+h4 a{
+    text-align: center;
+    color: black;
+    text-decoration: none;
+}
+h4 a:hover{
+    color : white;
+}
+.one{
+    margin-bottom: 8%;
+}
+.two{
+    margin-left: 30%;
+}
+#middle{
+    margin:3%;
+
+}
+hr{
+    border: 3px solid #40e0d0;
+}
+.one a{
+    
+    padding: 15px;
+    border-radius: 10px;
+    color: black;
+}
+special-header{
+    background-color: #40e0d0;
+}
