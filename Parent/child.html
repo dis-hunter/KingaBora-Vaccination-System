@@ -158,15 +158,15 @@
         const db = getFirestore(app);
 
         // Check if user is logged in
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // User is signed in, fetch user data
-                fetchUserData();
-            } else {
-                // No user is signed in, redirect to login page
-                window.location.href = '../authentication/login.html'; // Change this to your login page URL
-            }
-        });
+        // onAuthStateChanged(auth, (user) => {
+        //     if (user) {
+        //         // User is signed in, fetch user data
+        //         fetchUserData();
+        //     } else {
+        //         // No user is signed in, redirect to login page
+        //         window.location.href = '../authentication/login.html'; // Change this to your login page URL
+        //     }
+        // });
 
         // Fetch user data from Firestore
         async function fetchUserData() {

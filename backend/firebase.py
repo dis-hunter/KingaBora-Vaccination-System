@@ -1,9 +1,10 @@
 from flask import Flask, request, jsonify, session, redirect, url_for, render_template
 from flask_cors import CORS
-
+from google.cloud.firestore_v1.base_query import FieldFilter
 import pyrebase
 from flask_caching import Cache
 import firebase_admin
+import  logging
 from firebase_admin import credentials, firestore, auth, initialize_app
 from config import Config
 from datetime import datetime, timedelta
@@ -17,7 +18,7 @@ auth = firebase.auth()
 
 # Construct the absolute path to the service account key file
 base_dir = os.path.dirname(os.path.abspath(__file__))
-service_key_path = os.path.normpath(os.path.join(base_dir, 'kingaboravaccinationsystem-firebase-adminsdk-4vd5w-29da0d42b8.json'))
+service_key_path = os.path.normpath(os.path.join(base_dir, 'kingaboravaccinationsystem-1b5e85910ad8.json'))
 # Initialize Firebase Admin SDK
 
 cred = credentials.Certificate(service_key_path)
@@ -80,46 +81,60 @@ def email_authenticate():
         # session['username'] = username
 
         # Return JSON response with redirect URL
-        redirect_url = "http://localhost:8080/KingaBora-Vaccination-System/landingpage/altIndex.html"
-        return jsonify({"message": "Successfully logged in", "localId": local_id, "redirectUrl": redirect_url}), 201
-
+        # redirect_url = "http://localhost:8080/KingaBora-Vaccination-System/landingpage/altIndex.html"
+        # return jsonify({"message": "Successfully logged in", "localId": local_id, "redirectUrl": redirect_url}), 201
+        redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/Parent/PARENTPROFILE.html?localId={local_id}"
+        return jsonify({"message": "Successfully created the user", "localId": local_id, "redirectUrl": redirect_url}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
 @app.route('/childDetails', methods=['GET'])
-
 def ChildDetails():
+    
     try:
-        # Get JSON data from the request
-        data = request.get_json()
-        
-        # Extract the BirthCertificateID from the form data
-        birth_certificate_id = data.get("BirthCertificateID")
-        
-        if not birth_certificate_id:
-            return jsonify({"error": "BirthCertificateID is required"}), 400
-
-        # Reference to the 'childData' collection
-        child_data_ref = db.collection('childData')
-        
-        # Query Firestore to find the document with the matching BirthCertificateID
-        query = child_data_ref.where('BirthCertificate ID', '==', birth_certificate_id).stream()
-
-        # Initialize result to None
-        child_doc = None
-        
-        # Process the query results
-        for doc in query:
-            child_doc = doc.to_dict()  # Get the document data if found
-            child_doc["doc_id"] = doc.id  # Optionally include document ID
-
-        if child_doc:
-            return jsonify({"message": "Child found", "childData": child_doc}), 200
+        parent_name = request.args.get("ParentName")
+        doc_ref=db.collection('childData')
+        query=doc_ref.where(filter=FieldFilter("ParentName","==",parent_name))
+        docs=query.stream()
+        document_list=[]
+        for doc in docs:
+            data=doc.to_dict()
+            document_list.append(data)
+       
+        if data:
+            logging.info(f"Children found: {document_list}")
+            return jsonify({"message": "Children found", "childNames": document_list}), 200
         else:
-            return jsonify({"error": "No child found with the given BirthCertificateID"}), 404
+            logging.info("No children found.")
+            return jsonify({"error": "No children found for the given ParentName"}), 404
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500  # Return error message on exception
+        logging.error(f"Error fetching child details: {str(e)}")
+        return jsonify({"errors": str(e)}), 500
+
+
+@app.route('/parentDetails', methods=['GET'])
+def parentDetails():
+    
+    try:
+        parentlocalId = request.args.get("parentlocalId")
+        doc_ref=db.collection('childData').document(parentlocalId)
+        doc=doc_ref.get()
+        
+        data=doc.to_dict()
+        document_list.append(data)
+       
+        if data:
+            logging.info(f"Children found: {document_list}")
+            return jsonify({"message": "Children found", "childNames": document_list}), 200
+        else:
+            logging.info("No children found.")
+            return jsonify({"error": "No children found for the given ParentName"}), 404
+
+    except Exception as e:
+        logging.error(f"Error fetching child details: {str(e)}")
+        return jsonify({"errors": str(e)}), 500
+
 
 # Run the Flask application
 if __name__ == '__main__':
