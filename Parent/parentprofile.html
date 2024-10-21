@@ -224,9 +224,42 @@ async function getParentDetails()
     console.log(localId);
     return localId;
 }
-// document.addEventListener('DOMContentLoaded', () => {
-//   ParentDetails();  // Call the function when the DOM is fully loaded
-// });
+
+async function ParentProfile() {
+  localId= await getParentDetails();
+    try {
+        // Define the API URL and include the localId as a query parameter
+        const url = `http://127.0.0.1:5000/parentDetails?parentlocalId=${encodeURIComponent(localId)}`;
+
+        // Send a GET request to the backend
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',  // You can keep headers if needed
+            }
+        });
+
+        // Process the response
+        const data = await response.json();
+
+        if (response.ok) {
+            console.log('Children found:', data);  // Log child names in the console
+            
+            // Call a function to update the DOM with the list of children
+      //       document.querySelector('.profile-info h1').textContent = data.parentName; // Populate parent name
+      // document.querySelector('.profile-info p:nth-of-type(1)').textContent = 'Parent'; // This can stay static or be changed based on data
+      // document.querySelector('.profile-info p:nth-of-type(2)').textContent = data.parentEmailAddress; // Populate parent em`
+        } else {
+            console.error('Error fetching child details:', data.error || response.statusText);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  ParentProfile();  // Call the function when the DOM is fully loaded
+});
 
 
 </script>

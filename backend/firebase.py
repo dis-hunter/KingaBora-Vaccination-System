@@ -18,7 +18,7 @@ auth = firebase.auth()
 
 # Construct the absolute path to the service account key file
 base_dir = os.path.dirname(os.path.abspath(__file__))
-service_key_path = os.path.normpath(os.path.join(base_dir, 'kingaboravaccinationsystem-1b5e85910ad8.json'))
+service_key_path = os.path.normpath(os.path.join(base_dir, 'kingaboranewServiceKey.json'))
 # Initialize Firebase Admin SDK
 
 cred = credentials.Certificate(service_key_path)
@@ -33,7 +33,7 @@ CORS(app, resources={r"/*": {"origins": "http://localhost:8080"}})
 app.secret_key = 'your_secret_key'
 
 # create a user using firebase authenticate
-@app.route('/register', methods=['POST'])  # Change to POST for better practice
+@app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()  # Get JSON data from the request
 
@@ -41,23 +41,42 @@ def register():
     email = data.get("email")
     username = data.get("username")
     password = data.get("password")
+    nationalID = data.get("nationalID")
+    contacts = data.get("contacts")
 
-    if not email or not username or not password:
-        return jsonify({"error": "Missing email, username, or password"}), 400
+    # Validate required fields
+    if not email or not username or not password or not nationalID or not contacts:
+        logging.error("Missing required fields: email, username, password, nationalID, or contacts")
+        return jsonify({"error": "Missing email, username, password, nationalID, or contacts"}), 400
 
-    # Your logic to create user in Firebase (replace with your implementation)
-    # Assuming successful creation...
     try:
         # Create a new user in Firebase Authentication
         user = auth.create_user_with_email_and_password(email, password)
+        user_data = {
+            'parentName': username,
+            'parentEmailAddress': email,
+            'parentNationalID': nationalID,
+            'parentPhoneNumber': contacts,
+        }
+
         local_id = user['localId']
 
-        # Here you might want to store the username and other user details in your database
-        redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/landingpage/altIndex.html"
+        # Add data to Firestore with try-catch for error logging
+        try:
+            db.collection('parentData').document(local_id).set(user_data)
+            logging.info(f"User data successfully stored in Firestore for localId: {local_id}")
+
+        except Exception as firestore_error:
+            logging.error(f"Error adding user data to Firestore for localId: {local_id}: {firestore_error}")
+            return jsonify({"error": "Error adding data to Firestore"}), 500
+
+        # Redirect URL after successful registration
+        redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/Parent/PARENTPROFILE.html"
 
         return jsonify({"message": "Successfully created the user", "localId": local_id, "redirectUrl": redirect_url}), 201
 
     except Exception as e:
+        logging.error(f"Error creating user: {e}")
         return jsonify({"error": str(e)}), 400  # Return error message
     
 # Example route to handle POST requests
@@ -115,21 +134,19 @@ def ChildDetails():
 
 @app.route('/parentDetails', methods=['GET'])
 def parentDetails():
-    
     try:
-        parentlocalId = request.args.get("parentlocalId")
-        doc_ref=db.collection('childData').document(parentlocalId)
-        doc=doc_ref.get()
-        
-        data=doc.to_dict()
-        document_list.append(data)
+        parentlocalId = request.args.get("parentlocalId")  # Get the localId from the query parameters
+        doc_ref = db.collection('parentData').document(parentlocalId)
+        doc = doc_ref.get()
+
+        data = doc.to_dict()
        
         if data:
-            logging.info(f"Children found: {document_list}")
-            return jsonify({"message": "Children found", "childNames": document_list}), 200
+            logging.info(f"Children found: {data}")
+            return jsonify({"message": "Children found", "childNames": data}), 200  # Ensure the key matches what the frontend expects
         else:
             logging.info("No children found.")
-            return jsonify({"error": "No children found for the given ParentName"}), 404
+            return jsonify({"error": "No children found for the given Parent ID"}), 404
 
     except Exception as e:
         logging.error(f"Error fetching child details: {str(e)}")
