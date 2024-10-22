@@ -30,7 +30,8 @@ class sendMail{
             foreach($recipients as $recipients){
                 $mail->addAddress($recipients);
                 $mail->isHTML(true);
-                $mail->Subject =
+                $mail->Subject = $subject;
+                $mail->
             }
         }
     }
