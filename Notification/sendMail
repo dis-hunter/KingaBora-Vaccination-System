@@ -38,7 +38,8 @@ class sendMail{
             } else{
                 echo 'Mail not sent';
             }
-            $mail->
-        }
+            $mail->clearAddresses();
+            }
+        }catch
     }
 }
