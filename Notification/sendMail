@@ -12,44 +12,45 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
-class sendMail{
+class sendMail
+{
 
-    public function sendMail($recipients, $subject, $body){
+    public function sendMail($recipients, $subject, $body)
+    {
         $mail = new PHPMailer(true);
-        try{
+        try {
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
-            $mail->Username ='tobikoleriari69@gmail.com';
-            $mail->Password ='zswt oxnd foao vwab';
+            $mail->Username = 'tobikoleriari69@gmail.com';
+            $mail->Password = 'zswt oxnd foao vwab';
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = 465;
 
             $mail->setFrom('tobikoleriari69@gmail.com', 'Tobiko Leriari');
 
-            foreach($recipients as $recipients){
+            foreach ($recipients as $recipients) {
                 $mail->addAddress($recipients);
                 $mail->isHTML(true);
                 $mail->Subject = $subject;
-                $mail->Body =$body;
+                $mail->Body = $body;
 
-                if($mail->send()){
+                if ($mail->send()) {
                     echo 'Mail sent to {$recipient} successfully';
-            } else{
-                echo 'Mail not sent';
+                } else {
+                    echo 'Mail not sent';
+                }
+                $mail->clearAddresses();
             }
-            $mail->clearAddresses();
-            }
-        }catch(Exception $e){
+        } catch (Exception $e) {
             echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
         }
     }
-   
 }
 $recipients = [
     'tobikoleriari@gmail.com',
     'peter.leriari@strathmore.edu',
     'giftgichuhi4138@gmail.com'
 ];
-$subject="KINGA BORA TEST";
-$body="This is a test email";
+$subject = "KINGA BORA TEST";
+$body = "This is a test email";
