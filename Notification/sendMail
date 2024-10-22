@@ -50,4 +50,5 @@ $recipients = [
     'tobikoleriari@gmail.com',
     'peter.leriari@strathmore.edu',
     'giftgichuhi4138@gmail.com'
-    ]
+];
+$subject
