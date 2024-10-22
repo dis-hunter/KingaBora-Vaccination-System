@@ -18,7 +18,8 @@ class sendMail{
         $mail = newPHPMailer(true);
         try{
             $mail->isSMTP();
-            $mail->Host = 
+            $mail->Host = 'smtp.gmail.com';
+            
         }
     }
 }
