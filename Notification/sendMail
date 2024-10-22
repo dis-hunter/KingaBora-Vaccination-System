@@ -21,7 +21,8 @@ class sendMail{
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
             $mail->Username ='tobikoleriari69@gmail.com';
-            $mail->Password =
+            $mail->Password ='secret';
+            
         }
     }
 }
