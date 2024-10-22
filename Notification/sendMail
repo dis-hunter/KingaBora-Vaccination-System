@@ -24,7 +24,7 @@ class sendMail
             $mail->SMTPAuth = true;
             $mail->Username = 'tobikoleriari69@gmail.com';
             $mail->Password = 'zswt oxnd foao vwab';
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_S;
             $mail->Port = 465;
 
             $mail->setFrom('tobikoleriari69@gmail.com', 'Tobiko Leriari');
