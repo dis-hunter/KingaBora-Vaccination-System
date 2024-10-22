@@ -32,6 +32,8 @@ class sendMail{
                 $mail->isHTML(true);
                 $mail->Subject = $subject;
                 $mail->Body =$body;
+
+                i
             }
         }
     }
