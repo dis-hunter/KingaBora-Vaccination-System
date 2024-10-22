@@ -23,7 +23,7 @@ class sendMail{
             $mail->Username ='tobikoleriari69@gmail.com';
             $mail->Password ='secret';
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            
+            $mail->Port = 465;
         }
     }
 }
