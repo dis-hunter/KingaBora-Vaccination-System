@@ -15,7 +15,7 @@ use PHPMailer\PHPMailer\Exception;
 class sendMail{
 
     public function sendMail($recipients, $subject, $body){
-        
+        $mail = new
         try{
             $mail 
         }
