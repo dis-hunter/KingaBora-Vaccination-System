@@ -35,6 +35,8 @@ class sendMail{
 
                 if($mail->send()){
                     echo 'Mail sent to {$recipient} successfully';
+            } else{
+                echo 'Mail not sent';
             }
         }
     }
