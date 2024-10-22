@@ -48,5 +48,5 @@ class sendMail{
 }
 $recipients = [
     'tobikoleriari@gmail.com',
-    'peter.leriari@'
+    'peter.leriari@strathmore.edu',
     ]
