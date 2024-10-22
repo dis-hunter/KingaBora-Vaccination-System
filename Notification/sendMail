@@ -22,7 +22,7 @@ class sendMail{
             $mail->SMTPAuth = true;
             $mail->Username ='tobikoleriari69@gmail.com';
             $mail->Password ='secret';
-            
+            $mail->SMTPSe
         }
     }
 }
