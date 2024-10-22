@@ -27,7 +27,5 @@ class sendMail{
 
             $mail->setFrom('tobikoleriari69@gmail.com', 'Tobiko Leriari');
 
-            foreach
-        }
-    }
-}
+            foreach($recipients as )
+        }
