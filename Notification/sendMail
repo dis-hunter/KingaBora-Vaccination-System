@@ -34,7 +34,7 @@ class sendMail{
                 $mail->Body =$body;
 
                 if($mail->send()){
-                    echo 'Mail sent successfully';
+                    echo 'Mail sent to {$}successfully';
             }
         }
     }
