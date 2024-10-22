@@ -17,7 +17,7 @@ class sendMail{
     public function sendMail($recipients, $subject, $body){
         $mail = newPHPMailer(true);
         try{
-            $mail
+            $mail->isSMTP
         }
     }
 }
