@@ -19,7 +19,7 @@ class sendMail{
         try{
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';
-            
+            $mail->SMTP
         }
     }
 }
