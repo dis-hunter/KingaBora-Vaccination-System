@@ -31,7 +31,7 @@ class sendMail{
                 $mail->addAddress($recipients);
                 $mail->isHTML(true);
                 $mail->Subject = $subject;
-                $mail->
+                $mail->Body =$body;
             }
         }
     }
