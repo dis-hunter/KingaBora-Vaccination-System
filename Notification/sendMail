@@ -1,0 +1,20 @@
+<?php
+session_start();
+require 'C:\xampp\htdocs\PHPMailer\src\PHPMailer.php';
+require 'C:\xampp\htdocs\PHPMailer\src\SMTP.php';
+require 'C:\xampp\htdocs\PHPMailer\src\Exception.php';
+// require 'C:\xampp\htdocs\PHPMailer\src\OAuth.php';
+require 'vendor\autoload.php';
+
+
+//Import PHPMailer classes into the global namespace
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
+class sendMail{
+
+    public function sendMail($recipients, $sub){
+        
+    }
+}
