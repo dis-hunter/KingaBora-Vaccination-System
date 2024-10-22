@@ -20,7 +20,8 @@ class sendMail{
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
-            $mail->Username ='tobikoleriari69@gmail'
+            $mail->Username ='tobikoleriari69@gmail.com';
+            $mail
         }
     }
 }
