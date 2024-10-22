@@ -18,7 +18,7 @@ class sendMail{
         $mail = newPHPMailer(true);
         try{
             $mail->isSMTP();
-            $mail->
+            $mail->Host = 
         }
     }
 }
