@@ -15,7 +15,7 @@ use PHPMailer\PHPMailer\Exception;
 class sendMail{
 
     public function sendMail($recipients, $subject, $body){
-        $mail = newPHPMailer(true);
+        $mail = new PHPMailer(true);
         try{
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';
