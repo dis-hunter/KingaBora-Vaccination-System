@@ -33,7 +33,8 @@ class sendMail{
                 $mail->Subject = $subject;
                 $mail->Body =$body;
 
-                i
+                if($mail->send()){
+                    echo 'Mail sent successfully';
             }
         }
     }
