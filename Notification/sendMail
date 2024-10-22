@@ -52,4 +52,4 @@ $recipients = [
     'giftgichuhi4138@gmail.com'
 ];
 $subject="KINGA BORA TEST";
-$
+$body=
