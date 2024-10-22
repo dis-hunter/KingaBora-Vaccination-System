@@ -25,7 +25,7 @@ class sendMail{
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = 465;
 
-            $mail->setFrom('tobikoleriari69@gmail.com', '')
+            $mail->setFrom('tobikoleriari69@gmail.com', 'Tobiko Leriari')
         }
     }
 }
