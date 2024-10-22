@@ -45,5 +45,6 @@ class sendMail{
         }
     }
     $recipients = [
-        
+    
+        ]
 }
