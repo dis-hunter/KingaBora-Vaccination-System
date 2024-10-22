@@ -24,6 +24,7 @@ class sendMail{
             $mail->Password ='secret';
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = 465;
+            
         }
     }
 }
