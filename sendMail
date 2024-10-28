@@ -6,7 +6,7 @@ require 'C:\xampp\htdocs\PHPMailer\src\Exception.php';
 // require 'C:\xampp\htdocs\PHPMailer\src\OAuth.php';
 require 'vendor\autoload.php';
 
-require 'vendor/autoload.php';
+
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
