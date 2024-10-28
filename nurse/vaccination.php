@@ -144,6 +144,9 @@ table{
         ?>
       </tbody>
     </table>
+    <div id="graph">
+      
+    </div>
     <div id="measurementsDiv">
     <h2>Measurements</h2>
     <label for="weight">Weight (kg):</label>
