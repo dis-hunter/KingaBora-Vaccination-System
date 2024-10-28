@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kinga Bora</title>
-    <link rel="stylesheet" href="../style.css"> <!-- Optional: link to your CSS file -->
+    <link rel="stylesheet" href="style.css"> <!-- Optional: link to your CSS file -->
     <script defer src="Different_header_footer/header_footer.js"></script> <!-- Include the JS file -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
@@ -37,7 +37,7 @@
     <div class="container-fluid d-grid  align-items-center" style="grid-template-columns: 1fr 2fr;">
         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
             <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none custom-align-left">
-                <img src="../img/KingaBoraLogo.jpg" width="100" height="100" alt="Your Icon" />
+                <img src="img/KingaBoraLogo.jpg" width="100" height="100" alt="Your Icon" />
             </a>
         </div>
 
@@ -79,41 +79,41 @@
           <ul class="nav nav-pills flex-column mb-auto">
             <li >
               <a href="admin_dashboard.html" class="nav-link  text-white" aria-current="page">
-                <img src="../img/home_icon.png" alt="Home Icon" width="16" height="16" class="me-2">
+                <img src="img/home_icon.png" alt="Home Icon" width="16" height="16" class="me-2">
                 <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#home"/></svg>
                 Home
               </a>
             </li>
             <li>
-              <a href="view_users.html" class="nav-link text-white">
-                <img src="../img/view_users_icon.png" alt="Home Icon" width="16" height="16" class="me-2">
+              <a href="#users" class="nav-link text-white">
+                <img src="img/view_users_icon.png" alt="Home Icon" width="16" height="16" class="me-2">
                 <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#speedometer2"/></svg>
                 View Users
               </a>
             </li>
             <li>
-              <a href="register_nurse.html" class="nav-link text-white">
-                <img src="../img/reg_nurse_icon.png" alt="Home Icon" width="16" height="16" class="me-2">
+              <a href="#register" class="nav-link text-white">
+                <img src="img/reg_nurse_icon.png" alt="Home Icon" width="16" height="16" class="me-2">
                 <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#table"/></svg>
                 Register a Nurse
               </a>
             </li>
             <li>
-              <a href="view_activity.html" class="nav-link text-white">
-                <img src="../img/view_act2_icon.png" alt="Home Icon" width="16" height="16" class="me-2">
+              <a href="#activities" class="nav-link text-white">
+                <img src="img/view_act2_icon.png" alt="Home Icon" width="16" height="16" class="me-2">
                 <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"/></svg>
                 View Activities
               </a>
             </li>
             <li>
-              <a href="manage_profile.html" class="nav-link text-white">
-                <img src="../img/man_account2_icon.png" alt="Home Icon" width="16" height="16" class="me-2">
+              <a href="#manage" class="nav-link text-white">
+                <img src="img/man_account2_icon.png" alt="Home Icon" width="16" height="16" class="me-2">
                 <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
                 Manage Profile
               </a>
             <li>
               <a href="view_receipt.html" class="nav-link text-white">
-                <img src="../img/rcpt_icon.jpeg" alt="Home Icon" width="16" height="16" class="me-2">
+                <img src="img/view_rcpt_icon.jpeg" alt="Home Icon" width="16" height="16" class="me-2">
                 <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
                 View Receipts
               </a>
@@ -152,9 +152,9 @@
        
           <div class="row justify-content-center">
             <!-- First Row: Register Nurse and View Users -->
-            <div class="col-md-4 mb-4">
+            <div class="col-md-4 mb-4" id="register">
               <div class="card shadow-sm border-0">
-                <img src="../img/cutebaby2.avif" alt="Register Nurse" class="card-img-top" style="height: 200px; object-fit: cover;">
+                <img src="img/cutebaby2.avif" alt="Register Nurse" class="card-img-top" style="height: 200px; object-fit: cover;">
                 <div class="card-body">
                   <p class="card-text">Click the button below to access the nurse registration form</p>
                   <a href="register_nurse.html" target="_blank" class="btn btn-teal mt-2">Register Nurse</a>
@@ -162,7 +162,7 @@
               </div>
             </div>
       
-            <div class="col-md-8 mb-4">
+            <div class="col-md-8 mb-4" id="users">
               <div class="card shadow-sm border-0">
                 <div class="card-header text-center">
                   <h5 class="m-0"><b>View Users</b></h5>
@@ -178,17 +178,17 @@
                     </thead>
                     <tbody>
                       <tr>
-                        <td><img src="../img/Mihlalii.jpeg" alt="Ashley Irima" class="rounded-circle" width="40" height="40"></td>
+                        <td><img src="img/Mihlalii.jpeg" alt="Ashley Irima" class="rounded-circle" width="40" height="40"></td>
                         <td>Ashley Irima</td>
                         <td>2024-09-16 08:00:00</td>
                       </tr>
                       <tr>
-                        <td><img src="../img/Monty.jpeg" alt="John Doe" class="rounded-circle" width="40" height="40"></td>
+                        <td><img src="img/Monty.jpeg" alt="John Doe" class="rounded-circle" width="40" height="40"></td>
                         <td>John Miti</td>
                         <td>2024-09-16 08:00:00</td>
                       </tr>
                       <tr>
-                        <td><img src="../img/Lupita.jpeg" alt="Jane Smith" class="rounded-circle" width="40" height="40"></td>
+                        <td><img src="img/Lupita.jpeg" alt="Jane Smith" class="rounded-circle" width="40" height="40"></td>
                         <td>Jane Kane</td>
                         <td>2024-09-16 08:30:00</td>
                       </tr>
@@ -202,7 +202,7 @@
       
           <div class="row justify-content-center">
             <!-- Second Row: View Activities and Manage Profile -->
-            <div class="col-md-8 mb-4">
+            <div class="col-md-8 mb-4" id="activities">
               <div class="card shadow-sm border-0">
                 <div class="card-header text-center">
                   <h5 class="m-0"><b>View Activities</b></h5>
@@ -249,9 +249,9 @@
               </div>
             </div>
       
-            <div class="col-md-4 mb-4">
+            <div class="col-md-4 mb-4" id="manage">
               <div class="card shadow-sm border-0">
-                <img src="../img/view_use.jpeg" alt="Manage Profile" class="card-img-top" style="height: 200px; object-fit: cover;">
+                <img src="img/view_use.jpeg" alt="Manage Profile" class="card-img-top" style="height: 200px; object-fit: cover;">
                 <div class="card-body">
                   <p class="card-text">Click the button below to manage nurse's profiles</p>
                   <a href="manage_profile.html" target="_blank" class="btn btn-teal mt-2">Manage Profile</a>
