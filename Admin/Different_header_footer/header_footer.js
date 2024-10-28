@@ -50,7 +50,7 @@ class SpecialFooter extends HTMLElement{
          <footer>
         <div class="news-letter">
              <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none custom-align-left">
-                <img src="../img/KingaBoraLogo.jpg" width="50" height="50" alt="Your Icon" />
+                <img src="img/KingaBoraLogo.jpg" width="50" height="50" alt="Your Icon" />
             </a>
             <br>
             <p>Join Our newsletter to stay up to date <br> by subscribing you agree to our <a href="">PrivacyPolicy</a> and <br> provide consent to receive updates from KingaBora</p>
