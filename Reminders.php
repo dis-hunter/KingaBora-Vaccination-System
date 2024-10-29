@@ -1,15 +1,10 @@
 <?php
 session_start();
-require 'C:\xampp\htdocs\PHPMailer\src\PHPMailer.php';
-require 'C:\xampp\htdocs\PHPMailer\src\SMTP.php';
-require 'C:\xampp\htdocs\PHPMailer\src\Exception.php';
-// require 'C:\xampp\htdocs\PHPMailer\src\OAuth.php';
-require 'vendor\autoload.php';
-
-require 'vendor/autoload.php';
+require 'C:/xampp/htdocs/PHPMailer/src/PHPMailer.php';
+require 'C:/xampp/htdocs/PHPMailer/src/SMTP.php';
+require 'C:/xampp/htdocs/PHPMailer/src/Exception.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
 class SendMail {
@@ -18,23 +13,22 @@ class SendMail {
     public function __construct() {
         $this->mailer = new PHPMailer(true);
         
-        // Configure SMTP settings
+        // SMTP Configuration
         $this->mailer->isSMTP();
         $this->mailer->Host = 'smtp.gmail.com';
         $this->mailer->SMTPAuth = true;
-        $this->mailer->Username = 'tobikoleriari69@gmail.com';
-        $this->mailer->Password = 'belo gjrh yrsl hyxr';
-        $this->mailer->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // Changed to SMTPS for port 465
-        $this->mailer->Port = 465;
-        
-        // Set default sender
-        $this->mailer->setFrom('tobikoleriari69@gmail.com', 'Tobiko Leriari');
-        
-        // Enable HTML emails by default
-        $this->mailer->isHTML(true);
+        $this->mailer->Username = 'eoringe372@gmail.com';
+        $this->mailer->Password = 'wdjk opaf jhdx wjjr';
+        $this->mailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Use STARTTLS for port 587
+        $this->mailer->Port = 587;
+
+        // Default Sender
+        $this->mailer->setFrom('eoringe372@gmail.com', 'KINGA BORA');
+        $this->mailer->isHTML(true); // Enable HTML
     }
     
     public function sendMail($recipients, $subject, $body) {
+        // Ensure recipients is an array
         if (!is_array($recipients)) {
             $recipients = [$recipients];
         }
@@ -53,9 +47,9 @@ class SendMail {
                     $results[$recipient] = "Failed to send mail";
                 }
                 
+                // Clear the recipient for the next loop iteration
                 $this->mailer->clearAddresses();
             }
-            
             return $results;
             
         } catch (Exception $e) {
@@ -66,17 +60,18 @@ class SendMail {
 
 // Usage example:
 try {
+    // Instantiate SendMail class
     $mailer = new SendMail();
     
     $recipients = [
         'tobikoleriari@gmail.com',
         'peter.leriari@strathmore.edu',
-        'giftgichuhi4138@gmail.com'
+        'giftgichuhi4138@gmail.com',
+        'emmanueloringe@gmail.com'
     ];
     
     $subject = "KINGA BORA TEST";
     $body = "This is a test email";
-    
 
     $results = $mailer->sendMail($recipients, $subject, $body);
     
@@ -87,3 +82,4 @@ try {
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage();
 }
+?>
