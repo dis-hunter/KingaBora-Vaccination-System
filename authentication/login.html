@@ -79,8 +79,9 @@
                 });
 
                 if (response.status === 201) {
-                    const { redirectUrl } = response.data;
+                    const { redirectUrl,localId } = response.data;
                     console.log("Successfully logged in. Redirecting...");
+                    localStorage.setItem('localId',localId);
                     window.location.href = redirectUrl;
                 } else {
                     console.error("Error during login:", response.data.error);

@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "kingaboravaccinationsystem",
+  "private_key_id": "1b5e85910ad808477194237ebb65e2735ea6a54c",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDFwOiwtZkeIwmk\nBn+CHffoNmIjYlzI4PPACzjLn57vY+75j10BVjhw4+Che+d8t4jYL+IkCIlvLzBj\npfLRMEaV1N1xBq+2q/Wad6ZT2isu4RIwLnlZAIen1VK2xS+KUNrTRuZEotOxcDy2\na+OjWyNVOE2ZC3ntSvQJ/Qr24X0qpkpQtGMedtDGy9R7Gcxo8BJz7GF7053N5m6P\nCPiZY/UyDRI8MRNrlIklT+kk2jVjnuXdxL25k34hDFZnKiu+69E7igluGnfOOq7+\nageOeEj4hBUoLgwV6GyHzkD5XhvZmEkcpyMQLzB+iUsmtXz/Kpb8nS5i1Sm7VNws\nR4rr76DTAgMBAAECggEAGsf+21ukom+1UQjuQMVlOwYOcWNTVIMej64VYYI7CImc\npiCTxGgUWbmKxOPeXEYQ2tJVSnL7hdq6r2wcf9cNYCJFYRa6Oj98khBNLsL3oTAr\nAepxVavcM08RFh6LSyybDgzmh3oTuE6OclgXKprfpJ1s6OKkfw3tEeM6lmfAR0Ok\nBQs7Uk0ROb0wXtRtGBCiYMD41D+YMOrjfggG/AaIBU+tJMiKKuNKkm5GO4u+7K1v\nHutjBp4dDqbk1o1WTfGMMCJQinBrNXRZCE4TPp5BHg2Rf3ir8HviQHE8XMLzbFRq\n8rVkUVBxudSIm4gEIkJ8HsEZfnjVhlZ9aWyN85oPqQKBgQDpwTw6LkVJG1U4kvFX\n94kIDGZ/yHlu607zWSZCDmPf3gpTOG6d3HcSwe4Z7XE8WvzUEQcQn/oGP7SrFzjv\nZRYOeF1jC+98mRiSCqbj0J74sR/a/iwkgDy4PgMTXX9uj7sF7d2xssoDJ7QT1WxQ\nDvaTnsn6IuUyTmabLi7bkQuyawKBgQDYkpsmoTzdWtV8gp7cAXCpXSTHHXDQBMiI\nPFEu2PMEEeVXcGSltxuTCatBKuvk39aOVefcfVm70DX69wqxuKIc4OXDGq46pwFr\nX4StfghkyshP/1fU8oIps1UKgagSKQ85xrIMz4VsRIYzhdITgT0wV0kflNQeRc3b\nAS8Dbd51OQKBgBE94ZVhCFdGHtkXbZnRdlgTohPW064syRwF/V5t9Uvz8ssEpJQc\nSOQnTcq3ytxq0a9KujytsCF53XepNNfjmubiVfESVk3YdQmAo6K2JqOtXO4oRVVD\n6DamzE9HXDjpfSAI1Ytf5qqo6Q11dpHJKMLmuXsry8AULFlR5L7pSfWVAoGALzFb\nP8K46Z9mj/hCt7xUmYNjhUQkFiBEtnM2WZgK9KMVr8UdGYNaLeNYfx3kQ36HWYLc\nwI5MJIINkT+OBAYwxUw4pRhGSR+lTomE9u1U1OnfVpdUw2GI/Z9Hc7+nKTXrTHLA\nz8vUzi/scoPBsGBkPgl3NLuQsXwSjJuoa/3gEPkCgYB1AJyA4M+U7PuoWDOPKgZp\nigB9uSLT3Fi1wAQoZ728400Ew9zfoACfzZDAv1D4rxU1lGKYwxxpm0A7gBLMu2s2\nDARyxi0wg9zUssfuQQVN9F54UCdQMcnWU5jN313XYM99hc29NoGWxpv2cHN7OWYz\nH/WB7RxLjRu5DKalE/BGRw==\n-----END PRIVATE KEY-----\n",
+  "client_email": "kingaboravaccinationsystem2@kingaboravaccinationsystem.iam.gserviceaccount.com",
+  "client_id": "108435645753209555211",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/kingaboravaccinationsystem2%40kingaboravaccinationsystem.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
