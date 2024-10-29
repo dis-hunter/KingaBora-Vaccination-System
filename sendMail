@@ -6,84 +6,70 @@ require 'C:\xampp\htdocs\PHPMailer\src\Exception.php';
 // require 'C:\xampp\htdocs\PHPMailer\src\OAuth.php';
 require 'vendor\autoload.php';
 
-
+require 'vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
-class SendMail {
-    private $mailer;
-    
-    public function __construct() {
-        $this->mailer = new PHPMailer(true);
-        
-        // Configure SMTP settings
-        $this->mailer->isSMTP();
-        $this->mailer->Host = 'smtp.gmail.com';
-        $this->mailer->SMTPAuth = true;
-        $this->mailer->Username = 'tobikoleriari69@gmail.com';
-        $this->mailer->Password = 'belo gjrh yrsl hyxr';
-        $this->mailer->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // Changed to SMTPS for port 465
-        $this->mailer->Port = 465;
-        
-        // Set default sender
-        $this->mailer->setFrom('tobikoleriari69@gmail.com', 'Tobiko Leriari');
-        
-        // Enable HTML emails by default
-        $this->mailer->isHTML(true);
-    }
-    
-    public function sendMail($recipients, $subject, $body) {
-        if (!is_array($recipients)) {
-            $recipients = [$recipients];
-        }
-        
-        $results = [];
-        
-        try {
-            foreach ($recipients as $recipient) {
-                $this->mailer->addAddress($recipient);
-                $this->mailer->Subject = $subject;
-                $this->mailer->Body = $body;
-                
-                if ($this->mailer->send()) {
-                    $results[$recipient] = "Mail sent successfully";
+class sendMail
+{
+    public function sendVaccinationReminder($parentEmail, $childName, $childAge, $vaccineName) {
+        // Calculate the difference in weeks between today and the child's age
+        $today = new DateTime();
+        $childBirthDate = $today->sub(new DateInterval('P' . $childAge . 'Y'));
+        $interval = $today->diff($childBirthDate);
+        $weeksOld = floor($interval->days / 7);
+
+        // Define the reminder intervals (1 week before the due date) and messages
+        $reminders = [
+            5  => "Reminder: {$childName}'s vaccination {6-weeks} is due in 1 week.",
+            9  => "Reminder: {$childName}'s vaccination {10-weeks} is due in 1 week.",
+            13 => "Reminder: {$childName}'s vaccination {14-weeks} is due in 1 week.",
+            23 => "Reminder: {$childName}'s vaccination {6-months} is due in 1 week.",
+            27 => "Reminder: {$childName}'s vaccination {7-months} is due in 1 week.",
+            35 => "Reminder: {$childName}'s vaccination {9-months} is due in 1 week.",
+            39 => "Reminder: {$childName}'s vaccination {10-months} is due in 1 week.",
+            51 => "Reminder: {$childName}'s vaccination {1-year} is due in 1 week.",
+            63 => "Reminder: {$childName}'s vaccination {15-months} is due in 1 week.",
+            103=> "Reminder: {$childName}'s vaccination {2-years} is due in 1 week."
+        ];
+
+        // Check if a reminder is due at this age (1 week before)
+        if (isset($reminders[$weeksOld])) {
+            $subject = "Vaccination Reminder for {$childName}";
+            $body = $reminders[$weeksOld];
+
+            $mail = new PHPMailer(true);
+            try {
+                $mail->isSMTP();
+                $mail->Host = 'smtp.gmail.com';
+                $mail->SMTPAuth = true;
+                $mail->Username = 'tobikoleriari69@gmail.com';
+                $mail->Password = 'zswt oxnd foao vwab'; // Replace with your actual password or use a more secure method
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->Port = 587;
+
+                $mail->setFrom('tobikoleriari69@gmail.com', 'Tobiko Leriari');
+                $mail->addAddress($parentEmail);
+                $mail->isHTML(true);
+                $mail->Subject = $subject;
+                $mail->Body = $body;
+
+                if ($mail->send()) {
+                    echo 'Mail sent to ' . $parentEmail . ' successfully';
                 } else {
-                    $results[$recipient] = "Failed to send mail";
+                    echo 'Mail not sent';
                 }
-                
-                $this->mailer->clearAddresses();
+            } catch (Exception $e) {
+                echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
             }
-            
-            return $results;
-            
-        } catch (Exception $e) {
-            throw new Exception("Message could not be sent. Mailer Error: {$this->mailer->ErrorInfo}");
         }
     }
 }
 
-// Usage example:
-try {
-    $mailer = new SendMail();
-    
-    $recipients = [
-        'tobikoleriari@gmail.com',
-        'peter.leriari@strathmore.edu',
-        'giftgichuhi4138@gmail.com'
-    ];
-    
-    $subject = "KINGA BORA TEST";
-    $body = "This is a test email";
-    
+// Example usage:
+$sendMail = new sendMail();
+$sendMail->sendVaccinationReminder('parent@example.com', 'John Doe', '1', 'MMR'); 
 
-    $results = $mailer->sendMail($recipients, $subject, $body);
-    
-    foreach ($results as $recipient => $status) {
-        echo "Recipient: $recipient - Status: $status<br>";
-    }
-    
-} catch (Exception $e) {
-    echo "Error: " . $e->getMessage();
-}
+?>
