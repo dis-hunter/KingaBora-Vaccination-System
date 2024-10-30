@@ -82,8 +82,14 @@
 
 
       <div class="profile-info">
-        <h1>Oloisudori Lemayan</h1>
-        <p>Parent</p>
+        <!-- parentName -->
+        <h1 id="parentName"></h1>    
+                               
+        <p id="parentEmailAddress"></p>
+        <p id="parentPhoneNumber">Parent</p>
+        <p id="parentNationalID">Parent</p>
+
+        
         <p>South B, Nairobi</p>
       </div>
       <div class="profile-actions">
@@ -122,34 +128,35 @@
   </main>
   <special-footer></special-footer>
   <script>
+    let parentNationalID;
     document.querySelector("form").addEventListener("submit", function (event) {
       event.preventDefault(); // Prevent form from submitting and reloading the page
       searchBar();  // Call your async function
     });
 
-    async function searchBar() {
-      // ... (your searchBar function) ...
-    }
+    // async function searchBar() {
+    //   // ... (your searchBar function) ...
+    // }
 
-    // Function to dynamically update the DOM with the children
-    function displayChildren(children) {
-      const childrenList = document.querySelector('.children ul');
-      childrenList.innerHTML = '';  // Clear the list first
+    // // Function to dynamically update the DOM with the children
+    // function displayChildren(children) {
+    //   const childrenList = document.querySelector('.children ul');
+    //   childrenList.innerHTML = '';  // Clear the list first
 
-    // Loop through the children array and create list items for each child
-    children.forEach(child => {
-      const listItem = document.createElement('li');
-      listItem.textContent = child.ChildName;  // Assuming each child object has a 'ChildName' property
-      childrenList.appendChild(listItem);
-    });
-  }
+    // // Loop through the children array and create list items for each child
+    // children.forEach(child => {
+    //   const listItem = document.createElement('li');
+    //   listItem.textContent = child.ChildName;  // Assuming each child object has a 'ChildName' property
+    //   childrenList.appendChild(listItem);
+  //   // });
+  // }
 async function ParentDetails() {
   
-  parent_localId=getParentDetails()
+  parent_localId= await getParentDetails()
 
       try {
         // Use localId in the API URL
-        const url = `http://127.0.0.1:5000/childDetails?localId=${encodeURIComponent('localId')}`;
+        const url = `http://127.0.0.1:5000/parentDetails?ParentlocalID=${encodeURIComponent(parent_localId)}`;
 
         // Send a GET request to the backend (no body needed for GET requests)
         const response = await fetch(url, {
@@ -161,9 +168,13 @@ async function ParentDetails() {
 
         // Process the response
         const data = await response.json();
+                                                                                              
+          
 
     if (response.ok) {
       console.log('Children found:', data);  // Log child names in the console
+                                                                                //the function for filling the dom is being executed here
+      await ParentDomPopulation(data);
     } else {
       console.error('Error fetching child details:', data.error || response.statusText);    }
   } catch (error) {
@@ -187,12 +198,28 @@ async function getParentDetails()
     console.log(localId);
     return localId;
 }
-// document.addEventListener('DOMContentLoaded', () => {
-//   ParentDetails();  // Call the function when the DOM is fully loaded
-// });
+// this function is the one that displays the attributes on the dom
+async function ParentDomPopulation(data)
+{
+  const parentjson = data.parentDetails; // Assuming there's only one child for simplicity
+     let parentName= parentjson.parentName;
+     let parentEmailAddress=parentjson.parentEmailAddress;
+     let parentPhoneNumber=parentjson.parentPhoneNumber;
+      parentNationalID=parentjson.parentNationalID;
+
+      //  parentName=parentjson.parentName;                                      //child details
+    console.log("parentname", parentjson);
+    document.getElementById("parentName").innerHTML=parentName;
+    document.getElementById("parentEmailAddress").innerHTML =parentEmailAddress;
+    document.getElementById("parentPhoneNumber").innerHTML =parentPhoneNumber;
+    document.getElementById("parentNationalID").innerHTML =parentNationalID;
+    
+      
+      
+}
 
     document.addEventListener('DOMContentLoaded', () => {
-      ParentDetails(); // Call the function when the DOM is fully loaded
+        ParentDetails(); // Call the function when the DOM is fully loaded
     });
 
   </script>

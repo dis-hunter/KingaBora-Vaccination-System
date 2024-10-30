@@ -146,7 +146,7 @@ def parentDetails():
         data = doc.to_dict()
        
         if data:
-            logging.info(f"Children found: {data}")
+            logging.info(f"Parent found: {data}")
             return jsonify({"message": "Parent found", "parentDetails": data}), 200  # Ensure the key matches what the frontend expects
         else:
             logging.info("No Parent found.")

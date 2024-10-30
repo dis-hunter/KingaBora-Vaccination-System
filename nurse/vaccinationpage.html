@@ -217,7 +217,7 @@ console.log(newDate);
 
 
 
-async function VaccineReceipt() {
+async function VaccineReceipt() {     
   const localId = getLocalIdFromUrl();
   try {
     const url = `http://127.0.0.1:5000/vaccinationupdate?localId=${encodeURIComponent(localId)}`;
@@ -270,7 +270,7 @@ async function VaccineReceipt() {
     // displayVaccination(null);
   }
 }
-async function getVaccines(period) {                              //gets vaccine which has the period specified
+async function getVaccines(period) {                              //gets vaccine which has the its period to be administered specified
   try {
  
     console.log('Requesting vaccines for period:', period); // Debug logging
