@@ -70,8 +70,17 @@ try {
         'emmanueloringe@gmail.com'
     ];
     
-    $subject = "KINGA BORA TEST";
-    $body = "This is a test email";
+    $subject = "Reminder: [Child Name]s Vaccination Appointment in One Week";
+    $body = "This is a friendly reminder that your child, [Child's Name], is scheduled to receive their next vaccination in one week. 
+
+**Vaccine Information:**
+- **Vaccine Name:** [Vaccine Name]
+- **Scheduled Date:** [Due Date]
+- **Scheduled Time:** [Due Time]
+Warm regards,  
+[Kinga Bora Team]  
+[Contact Information]  
+[Facility Address]  ";
 
     $results = $mailer->sendMail($recipients, $subject, $body);
     
@@ -89,10 +98,9 @@ try {
 <?php
 
 
-class sendMail
+class VaccinationReminderMail
 {
-    public function   
- sendVaccinationReminder($parentEmail, $childName, $childAge, $vaccineName) {
+public function sendVaccinationReminder($parentEmail, $childName, $childAge, $vaccineName) {
         // Calculate the difference in weeks between today and the child's age
         $today = new DateTime();
         $childBirthDate = $today->sub(new DateInterval('P' . $childAge . 'Y'));
