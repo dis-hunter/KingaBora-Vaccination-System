@@ -6,5 +6,27 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Symfony\\Polyfill\\Ctype\\' => array($vendorDir . '/symfony/polyfill-ctype'),
+    'Rize\\' => array($vendorDir . '/rize/uri-template/src/Rize'),
+    'Ramsey\\Uuid\\' => array($vendorDir . '/ramsey/uuid/src'),
+    'Psr\\Log\\' => array($vendorDir . '/psr/log/src'),
+    'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-message/src', $vendorDir . '/psr/http-factory/src'),
+    'Psr\\Http\\Client\\' => array($vendorDir . '/psr/http-client/src'),
+    'Psr\\Cache\\' => array($vendorDir . '/psr/cache/src'),
     'PHPMailer\\PHPMailer\\' => array($vendorDir . '/phpmailer/phpmailer/src'),
+    'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
+    'GuzzleHttp\\Psr7\\' => array($vendorDir . '/guzzlehttp/psr7/src'),
+    'GuzzleHttp\\Promise\\' => array($vendorDir . '/guzzlehttp/promises/src'),
+    'GuzzleHttp\\' => array($vendorDir . '/guzzlehttp/guzzle/src'),
+    'Grpc\\' => array($vendorDir . '/grpc/grpc/src/lib'),
+    'Google\\Protobuf\\' => array($vendorDir . '/google/protobuf/src/Google/Protobuf'),
+    'Google\\GAX\\UnitTests\\' => array($vendorDir . '/google/gax/tests'),
+    'Google\\GAX\\' => array($vendorDir . '/google/gax/src'),
+    'Google\\Cloud\\Firestore\\' => array($vendorDir . '/google/cloud-firestore'),
+    'Google\\Cloud\\Core\\' => array($vendorDir . '/google/cloud-core/src'),
+    'Google\\Auth\\' => array($vendorDir . '/google/auth/src'),
+    'Google\\' => array($vendorDir . '/google/proto-client/src/Google', $vendorDir . '/google/gax/src/generated/Google'),
+    'GPBMetadata\\Google\\Protobuf\\' => array($vendorDir . '/google/protobuf/src/GPBMetadata/Google/Protobuf'),
+    'GPBMetadata\\' => array($vendorDir . '/google/proto-client/src/GPBMetadata', $vendorDir . '/google/gax/src/generated/GPBMetadata'),
+    'Firebase\\JWT\\' => array($vendorDir . '/firebase/php-jwt/src'),
 );
