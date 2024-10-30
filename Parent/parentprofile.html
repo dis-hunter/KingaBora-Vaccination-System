@@ -23,13 +23,6 @@
   margin: 4%;
 }
 
-.profile-pic {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  margin-right: 20px;
-}
-
 .profile-info {
   flex-grow: 1;  /* Allow profile info to take up available space */
 }
@@ -86,7 +79,8 @@
     <main>
  
     <div class="profile-header">
-      <!-- <img src="profile-picture.jpg" alt="Profile Picture" class="profile-pic"> -->
+
+
       <div class="profile-info">
         <h1>Oloisudori Lemayan</h1>
         <p>Parent</p>
@@ -127,54 +121,20 @@
     </section>
   </main>
   <special-footer></special-footer>
+  <script>
+    document.querySelector("form").addEventListener("submit", function (event) {
+      event.preventDefault(); // Prevent form from submitting and reloading the page
+      searchBar();  // Call your async function
+    });
 
-</body>
-</html>
-<script>
- document.querySelector("form").addEventListener("submit", function(event) {
-    event.preventDefault(); // Prevent form from submitting and reloading the page
-    searchBar();  // Call your async function
-  });
-
-  async function searchBar() {
-    const storedLocalId = localStorage.getItem('localId');
-    console.log("Stored Local ID:", storedLocalId);
-
-    const parentName = document.getElementById('searchQuery').value;  // Get the parent name from the input field
-    console.log(parentName);
-
-    try {
-      // Define the API URL and include the ParentName as a query parameter
-      const url = `http://127.0.0.1:5000/childDetails?ParentName=${encodeURIComponent(parentName)}`;
-
-      // Send a GET request to the backend
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',  // You can keep headers if needed
-        }
-      });
-
-      // Process the response
-      const data = await response.json();
-
-      if (response.ok) {
-        console.log('Children found:', data);  // Log child names in the console
-        
-        // Call a function to update the DOM with the list of children
-        displayChildren(data.children); // Assuming the children are in `data.children`
-      } else {
-        console.error('Error fetching child details:', data.error || response.statusText);
-      }
-    } catch (error) {
-      console.error('Error:', error);
+    async function searchBar() {
+      // ... (your searchBar function) ...
     }
-  }
 
-  // Function to dynamically update the DOM with the children- not yet donee
-  function displayChildren(children) {
-    const childrenList = document.querySelector('.children ul');
-    childrenList.innerHTML = '';  // Clear the list first
+    // Function to dynamically update the DOM with the children
+    function displayChildren(children) {
+      const childrenList = document.querySelector('.children ul');
+      childrenList.innerHTML = '';  // Clear the list first
 
     // Loop through the children array and create list items for each child
     children.forEach(child => {
@@ -183,24 +143,24 @@
       childrenList.appendChild(listItem);
     });
   }
-async function ParentDetails() {    
+async function ParentDetails() {
   
   parent_localId=getParentDetails()
 
-  try {
-    // Define the API URL and include the ParentName as a query parameter
-    const url = `http://127.0.0.1:5000/childDetails?ParentName=${encodeURIComponent(parentName)}`;
+      try {
+        // Use localId in the API URL
+        const url = `http://127.0.0.1:5000/childDetails?localId=${encodeURIComponent('localId')}`;
 
-    // Send a GET request to the backend (no body needed for GET requests)
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',  // You can keep headers if needed
-      }
-    });
+        // Send a GET request to the backend (no body needed for GET requests)
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json', // You can keep headers if needed
+          }
+        });
 
-    // Process the response
-    const data = await response.json();
+        // Process the response
+        const data = await response.json();
 
     if (response.ok) {
       console.log('Children found:', data);  // Log child names in the console
@@ -212,7 +172,10 @@ async function ParentDetails() {
 }
 async function getParentDetails()
 {
-
+  function getLocalIdFromUrl() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('localId'); // Change 'localId' to whatever the parameter name is
+    }
 
     // Extract the localId
     const localId = getLocalIdFromUrl();
@@ -221,54 +184,22 @@ async function getParentDetails()
         console.error("localId not found in URL");
         return; // Exit the function if localId is not found
     }
-    console.log("parent localID",localId);
+    console.log(localId);
     return localId;
 }
-function getLocalIdFromUrl() {                              //gets the local id from the url
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get('localId'); // Change 'localId' to whatever the parameter name is
-    }
+// document.addEventListener('DOMContentLoaded', () => {
+//   ParentDetails();  // Call the function when the DOM is fully loaded
+// });
 
-    
-    
-    async function getParentsChildren() {
-  // Await the result of getParentDetails to ensure parent_localId is not a promise
-  const parent_localId = await getParentDetails();
+    document.addEventListener('DOMContentLoaded', () => {
+      ParentDetails(); // Call the function when the DOM is fully loaded
+    });
 
-  // Check if parent_localId is valid
-  if (!parent_localId) {
-    console.error("Parent local ID not found.");
-    return;
-  }
-
-  try {
-    const url = `http://127.0.0.1:5000/parentDetails?ParentlocalID=${encodeURIComponent(parent_localId)}`;
-    const response = await fetch(url, { method: 'GET' });
-    const data = await response.json();
-
-    if (response.ok) {
-      console.log('Parent found:', data);
-
-      // Example of handling child profile link
-      const child = data.childNames[0]; // Assuming there's only one child for simplicity
-      const childName = child.ChildName;
-      const childDocId = child.id; // Access the document ID
-
-      const childProfileLink = document.getElementById("childname");
-      childProfileLink.href = `vaccinationpage.html?localId=${childDocId}`;
-      childProfileLink.textContent = `${childName} (${childDocId})`;
-    } else {
-      console.error('Error fetching child details:', data.error || response.statusText);
-    }
-  } catch (error) {
-    console.error('Error:', error);
-  }
-}
+  </script>
 
 
-document.addEventListener('DOMContentLoaded', () => {
-  getParentsChildren();  // Call the function when the DOM is fully loaded
-});
+</body>
+</html>
 
 
-</script>
+  
