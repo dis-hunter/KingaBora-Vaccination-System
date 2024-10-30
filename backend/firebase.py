@@ -250,6 +250,35 @@ def storevaccinereceipt():
     except Exception as firestore_error:
         logging.error(f"Error adding user data to Firestore: {firestore_error}")
         return jsonify({"error": "Error adding data to Firestore"}), 500
+    
+    
+@app.route('/ViewActivities', methods=['GET'])
+def ViewActivities():
+    try:
+        # Get the correct query parameter
+        # In this case, we don't need any query parameters, we just want to retrieve the 4 most recent documents
+
+        # Query Firestore correctly
+        doc_ref = db.collection('VaccinationHistory')
+        # Order the results by the creation timestamp in descending order to get the most recent documents first
+        query = doc_ref.order_by('DateofVaccination', direction=firestore.Query.DESCENDING)
+        # Limit the results to 4 documents
+        docs = query.limit(4).stream()
+
+        document_list = [
+            {"id": doc.id, **doc.to_dict()} for doc in docs
+        ]  # Unpack document data and add ID
+
+        if document_list:
+            logging.info(f"Children found: {document_list}")
+            return jsonify({"message": "Children found", "childNames": document_list}), 200
+        else:
+            logging.info("No children found.")
+            return jsonify({"error": "No activities found"}), 404
+
+    except Exception as e:
+        logging.error(f"Error fetching child details: {str(e)}")
+        return jsonify({"errors": str(e)}), 500
 
 # Run the Flask application
 if __name__ == '__main__':
