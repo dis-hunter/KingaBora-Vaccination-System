@@ -250,7 +250,61 @@ def storevaccinereceipt():
     except Exception as firestore_error:
         logging.error(f"Error adding user data to Firestore: {firestore_error}")
         return jsonify({"error": "Error adding data to Firestore"}), 500
-    
+ 
+@app.route('/registerNurse', methods=['POST'])
+def registerNurse():
+    data = request.get_json()  # Get JSON data from the request
+
+# fullname,
+#               email,
+#               phonenumber,
+#               password,
+#               gender
+              
+    # Extract data from the request
+    fullname = data.get("fullname")
+    email = data.get("email")
+    phonenumber = data.get("phonenumber")
+    password = data.get("password")
+    gender = data.get("gender")
+    nationalID = data.get("nationalID")
+
+
+    # Validate required fields
+    if not email or not fullname or not password or not phonenumber or not gender or not  nationalID:
+        logging.error("Missing required fields: email, username, password, nationalID, or contacts")
+        return jsonify({"error": "Missing email, username, password, nationalID, or contacts"}), 400
+
+    try:
+        # Create a new user in Firebase Authentication
+        user = auth.create_user_with_email_and_password(email, password)
+        nurse_data = {
+            'nurseName': fullname,
+            'nurseEmailAddress': email,
+            'nursephonenumber': phonenumber,
+            'nurseGender': gender,
+            'nurseNationalID': nationalID
+        }
+
+        local_id = user['localId']
+
+        # Add data to Firestore with try-catch for error logging
+        try:
+            db.collection('nurseData').document(local_id).set(nurse_data)
+            logging.info(f"User data successfully stored in Firestore for localId: {local_id}")
+
+        except Exception as firestore_error:
+            logging.error(f"Error adding user data to Firestore for localId: {local_id}: {firestore_error}")
+            return jsonify({"error": "Error adding data to Firestore"}), 500
+
+        # Redirect URL after successful registration
+        redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/JoyAdmin/Admin/manage_profile.html?localId={local_id}"
+
+        return jsonify({"message": "Successfully created the user", "localId": local_id, "redirectUrl": redirect_url}), 201
+
+    except Exception as e:
+        logging.error(f"Error creating user: {e}")
+        return jsonify({"error": str(e)}), 400  # Return error message   
     
 @app.route('/ViewActivities', methods=['GET'])
 def ViewActivities():
