@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vaccination Table</title>
+</head>
+<body>
+  <h2>Search for children using parent national ID</h2>
+  <form class="d-flex" role="search" onsubmit="searchBar(); return false;">
+    <label for="searchQuery">ParentID</label>
+    <input class="form-control me-2" type="search" id="searchQuery" placeholder="Enter Parent Name" aria-label="Search">
+    <button class="btn btn-outline-success" type="submit">Search</button>
+  </form>
+  <a id="childname" href="#">Child Name (Document ID)</a>
+</body>
+</html>
+<script>
+async function searchBar() {
+  const parentNationalID = document.getElementById('searchQuery').value;
+
+  try {
+    const url = `http://127.0.0.1:5000/childDetails?ParentNationalID=${encodeURIComponent(parentNationalID)}`;
+    const response = await fetch(url, { method: 'GET' });
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log('Children found:', data);
+
+      const child = data.childNames[0]; // Assuming there's only one child for simplicity
+      const childName = child.ChildName;
+      const childDocId = child.id; // Access the document ID
+
+      const childProfileLink = document.getElementById("childname");
+      childProfileLink.href = `vaccinationpage.html?localId=${childDocId}`;
+      childProfileLink.textContent = `${childName} (${childDocId})`;
+    } else {
+      console.error('Error fetching child details:', data.error || response.statusText);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+</script>
