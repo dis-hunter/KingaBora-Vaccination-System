@@ -107,9 +107,12 @@
 
   
     <section class="children">
-      <h2>Children</h2>
+      <h1>Children</h1>
+      <a id="childname" href="#">Child Name (Document ID)</a>
+
       <ul>
         <li>Zawadi</li>
+        <li>{{data.childName}}</li>
         <li>Taiyo</li>
       </ul>
     </section>
@@ -180,7 +183,7 @@
       childrenList.appendChild(listItem);
     });
   }
-async function ParentDetails() {
+async function ParentDetails() {    
   
   parent_localId=getParentDetails()
 
@@ -209,10 +212,7 @@ async function ParentDetails() {
 }
 async function getParentDetails()
 {
-  function getLocalIdFromUrl() {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get('localId'); // Change 'localId' to whatever the parameter name is
-    }
+
 
     // Extract the localId
     const localId = getLocalIdFromUrl();
@@ -221,44 +221,53 @@ async function getParentDetails()
         console.error("localId not found in URL");
         return; // Exit the function if localId is not found
     }
-    console.log(localId);
+    console.log("parent localID",localId);
     return localId;
 }
-
-async function ParentProfile() {
-  localId= await getParentDetails();
-    try {
-        // Define the API URL and include the localId as a query parameter
-        const url = `http://127.0.0.1:5000/parentDetails?parentlocalId=${encodeURIComponent(localId)}`;
-
-        // Send a GET request to the backend
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',  // You can keep headers if needed
-            }
-        });
-
-        // Process the response
-        const data = await response.json();
-
-        if (response.ok) {
-            console.log('Children found:', data);  // Log child names in the console
-            
-            // Call a function to update the DOM with the list of children
-      //       document.querySelector('.profile-info h1').textContent = data.parentName; // Populate parent name
-      // document.querySelector('.profile-info p:nth-of-type(1)').textContent = 'Parent'; // This can stay static or be changed based on data
-      // document.querySelector('.profile-info p:nth-of-type(2)').textContent = data.parentEmailAddress; // Populate parent em`
-        } else {
-            console.error('Error fetching child details:', data.error || response.statusText);
-        }
-    } catch (error) {
-        console.error('Error:', error);
+function getLocalIdFromUrl() {                              //gets the local id from the url
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('localId'); // Change 'localId' to whatever the parameter name is
     }
+
+    
+    
+    async function getParentsChildren() {
+  // Await the result of getParentDetails to ensure parent_localId is not a promise
+  const parent_localId = await getParentDetails();
+
+  // Check if parent_localId is valid
+  if (!parent_localId) {
+    console.error("Parent local ID not found.");
+    return;
+  }
+
+  try {
+    const url = `http://127.0.0.1:5000/parentDetails?ParentlocalID=${encodeURIComponent(parent_localId)}`;
+    const response = await fetch(url, { method: 'GET' });
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log('Parent found:', data);
+
+      // Example of handling child profile link
+      const child = data.childNames[0]; // Assuming there's only one child for simplicity
+      const childName = child.ChildName;
+      const childDocId = child.id; // Access the document ID
+
+      const childProfileLink = document.getElementById("childname");
+      childProfileLink.href = `vaccinationpage.html?localId=${childDocId}`;
+      childProfileLink.textContent = `${childName} (${childDocId})`;
+    } else {
+      console.error('Error fetching child details:', data.error || response.statusText);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
 }
 
+
 document.addEventListener('DOMContentLoaded', () => {
-  ParentProfile();  // Call the function when the DOM is fully loaded
+  getParentsChildren();  // Call the function when the DOM is fully loaded
 });
 
 

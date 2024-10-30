@@ -71,7 +71,7 @@ def register():
             return jsonify({"error": "Error adding data to Firestore"}), 500
 
         # Redirect URL after successful registration
-        redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/Parent/PARENTPROFILE.html"
+        redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/Parent/PARENTPROFILE.html?localId={local_id}"
 
         return jsonify({"message": "Successfully created the user", "localId": local_id, "redirectUrl": redirect_url}), 201
 
@@ -97,6 +97,7 @@ def email_authenticate():
 
         # Store user information in session (optional)
         session['local_id'] = local_id
+        
         # session['username'] = username
 
         # Return JSON response with redirect URL
@@ -109,33 +110,36 @@ def email_authenticate():
 
 @app.route('/childDetails', methods=['GET'])
 def ChildDetails():
-    
     try:
-        parent_name = request.args.get("ParentName")
-        doc_ref=db.collection('childData')
-        query=doc_ref.where(filter=FieldFilter("ParentName","==",parent_name))
-        docs=query.stream()
-        document_list=[]
-        for doc in docs:
-            data=doc.to_dict()
-            document_list.append(data)
-       
-        if data:
-            logging.info(f"Children found: {document_list}")
-            return jsonify({"message": "Children found", "childNames": document_list}), 200
+        # Get the correct query parameter
+        parentNationalID = request.args.get("ParentNationalID")
+        
+        # Query Firestore correctly
+        doc_ref = db.collection('childData')   #this is the collection of the children (table in sql)
+        query = doc_ref.where("ParentNationalID", "==", parentNationalID)  # Correct usage without FieldFilter , this filters
+        docs = query.stream()
+        
+        document_list = [
+         {"id": doc.id, **doc.to_dict()} for doc in docs
+        ]  # Unpack document data and add ID
+
+        if document_list:
+          logging.info(f"Children found: {document_list}")
+          return jsonify({"message": "Children found", "childNames": document_list}), 200
         else:
-            logging.info("No children found.")
-            return jsonify({"error": "No children found for the given ParentName"}), 404
+          logging.info("No children found.")
+          return jsonify({"error": "No children found for the given ParentNationalID"}), 404
 
     except Exception as e:
-        logging.error(f"Error fetching child details: {str(e)}")
-        return jsonify({"errors": str(e)}), 500
+       logging.error(f"Error fetching child details: {str(e)}")
+       return jsonify({"errors": str(e)}), 500
+
 
 
 @app.route('/parentDetails', methods=['GET'])
 def parentDetails():
     try:
-        parentlocalId = request.args.get("parentlocalId")  # Get the localId from the query parameters
+        parentlocalId = request.args.get("ParentlocalID")  # Get the localId from the query parameters
         doc_ref = db.collection('parentData').document(parentlocalId)
         doc = doc_ref.get()
 
@@ -143,15 +147,109 @@ def parentDetails():
        
         if data:
             logging.info(f"Children found: {data}")
-            return jsonify({"message": "Children found", "childNames": data}), 200  # Ensure the key matches what the frontend expects
+            return jsonify({"message": "Parent found", "parentDetails": data}), 200  # Ensure the key matches what the frontend expects
         else:
-            logging.info("No children found.")
-            return jsonify({"error": "No children found for the given Parent ID"}), 404
+            logging.info("No Parent found.")
+            return jsonify({"error": "No parent found for the given Parent ID"}), 404
 
     except Exception as e:
         logging.error(f"Error fetching child details: {str(e)}")
         return jsonify({"errors": str(e)}), 500
+    
+@app.route('/vaccinationupdate')
+def vaccinationupdate():
+    try:
+        child_local_id = request.args.get("localId")  # Get the localId from the query parameters
 
+        doc_ref=db.collection('VaccinationHistory')
+        query=doc_ref.where(filter=FieldFilter("Child_local_ID","==",child_local_id))
+        docs=query.stream()
+        document_list=[]
+        for doc in docs:
+            data=doc.to_dict()
+            document_list.append(data)
+       
+        if data:
+            logging.info(f"Vaccination file: {document_list}")
+            return jsonify({"message": "Vaccination file", "Vaccination": document_list}), 200
+        else:
+            logging.info("No children found.")
+            return jsonify({"error": "No vaccine found for the given ParentName"}), 404
+
+       
+
+    except Exception as e:
+        logging.error(f"Error fetching child details: {str(e)}")
+        return jsonify({"errors": str(e)}), 500    
+
+@app.route('/Vaccines')
+def Vaccines():
+  try:
+    period = request.args.get("period")  # Get the period from the query parameters
+    logging.info(f"Searching for period: {period}")  # Debug logging
+
+    doc_ref = db.collection('DrugInventory')
+    # This is correct now since DrugPeriod is an array
+    query = doc_ref.where('DrugPeriod', 'array_contains', period)
+
+    docs = query.stream()
+    document_list = []
+    for doc in docs:
+      data = doc.to_dict()
+      logging.info(f"Found document: {data}")  # Debug logging
+      drug_name = data.get('DrugName')
+      if drug_name:
+        document_list.append(drug_name)
+
+    if document_list:
+      logging.info(f"Drugs found with period {period}: {document_list}")
+      return jsonify({"message": "Drug list", "Drugs": document_list}), 200
+    else:
+      logging.info(f"No drugs found with period {period}.")
+      return jsonify({"error": "No drugs found for the given period"}), 404
+
+  except Exception as e:
+    logging.error(f"Error fetching drugs: {str(e)}")
+    import traceback
+    logging.error(traceback.format_exc())  # Add full stack trace
+    return jsonify({"error": str(e)}), 500
+
+@app.route('/storevaccinereceipt', methods=['POST'])
+def storevaccinereceipt():
+    data = request.get_json()
+
+    # Extract data from the request
+    childName = data.get("ChildName")
+    child_local_ID = data.get("Child_local_ID")
+    DateofVaccination = data.get("DateofVaccination")
+    NextVisit = data.get("NextVisit")
+    NurseName = data.get("NurseName")
+    nextscheduletime = data.get("nextscheduletime")
+    vaccinesIssued = data.get("vaccinesIssued")
+
+    # Create a new user in Firestore
+    vaccine_data = {
+        'childName': childName,
+        'child_local_ID': child_local_ID,
+        'DateofVaccination': DateofVaccination,
+        'NextVisit': NextVisit,
+        'NurseName': NurseName,
+        'nextscheduletime': nextscheduletime,
+        'vaccinesIssued': vaccinesIssued
+    }
+
+    try:
+        doc_ref = db.collection('VaccinationHistory').add(vaccine_data)
+        doc_id = doc_ref.id  # Get the generated document ID
+
+        # Redirect URL after successful registration
+        redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/Parent/PARENTPROFILE.html?localId={doc_id}"
+
+        return jsonify({"message": "Successfully created the user", "localId": doc_id, "redirectUrl": redirect_url}), 201
+
+    except Exception as firestore_error:
+        logging.error(f"Error adding user data to Firestore: {firestore_error}")
+        return jsonify({"error": "Error adding data to Firestore"}), 500
 
 # Run the Flask application
 if __name__ == '__main__':

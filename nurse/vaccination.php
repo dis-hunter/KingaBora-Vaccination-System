@@ -100,6 +100,10 @@ table{
     <img src="../img/logo.png" id="logo" alt="Software Engineering Logo" width="170" height="120">
     </div>
     <h2>Child Vaccination Profile</h2>
+    <form class="d-flex" role="search" onsubmit="searchBar(); return false;">
+      <input class="form-control me-2" type="search" id="searchQuery" placeholder="Enter Parent Name" aria-label="Search">
+      <button class="btn btn-outline-success" type="submit">Search</button>
+  </form>
   <label>Child's Name: </label>
     <input type="text" name="child_name" placeholder="Child's Name">
   <label>Parent/Guardian's name: </label>
@@ -113,7 +117,7 @@ table{
         </div>
         <div class="dosage">
         <h2>DOSAGE</h2>
-    <table>
+    <!-- <table>
       <thead>
         <tr>
           <th>AGE</th>
@@ -143,7 +147,7 @@ table{
         }
         ?>
       </tbody>
-    </table>
+    </table> -->
     <div id="graph">
       
     </div>
@@ -161,8 +165,45 @@ table{
 <button type="button" id="paymentBtn">PAYMENT</button>
 
   <script>
-    // Add any JavaScript functionality here if needed, e.g., 
-    // for handling button clicks, form submission, etc.
+     document.querySelector("form").addEventListener("submit", function(event) {
+    event.preventDefault(); // Prevent form from submitting and reloading the page
+    searchBar();  // Call your async function
+  });
+
+  async function searchBar() {
+    const storedLocalId = localStorage.getItem('localId');
+    console.log("Stored Local ID:", storedLocalId);
+
+    const parentName = document.getElementById('searchQuery').value;  // Get the parent name from the input field
+    console.log(parentName);
+
+    try {
+      // Define the API URL and include the ParentName as a query parameter
+      const url = `http://127.0.0.1:5000/childDetails?ParentName=${encodeURIComponent(parentName)}`;
+
+      // Send a GET request to the backend
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',  // You can keep headers if needed
+        }
+      });
+
+      // Process the response
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log('Children found:', data);  // Log child names in the console
+        
+        // Call a function to update the DOM with the list of children
+        displayChildren(data.children); // Assuming the children are in `data.children`
+      } else {
+        console.error('Error fetching child details:', data.error || response.statusText);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
   </script>
 </body>
 <footer>
