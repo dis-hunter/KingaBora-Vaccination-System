@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vaccine Session</title>
+    <link rel="stylesheet" href="header-footer.css">
+    <script type="module" src="header-footer.js" defer></script>
+</head>
+<body>
+    <header>
+        <img src="project\logo.jpg" alt="Logo">
+        <img src="" alt="Logo">
+        <div class="account-info">
+            <p>Account Name</p>
+            <img src="profile-picture.png" alt="Profile Picture" class="profile-picture">
+        </div>
+    </header>
+
+    <form id="vaccine-session-form">
+        <h2>SESSION</h2>
+
+        <label for="date-time" class="label">DATE AND TIME</label>
+        <input type="text" id="date-time" class="input-field" readonly>
+
+        <label for="child-name" class="label">NAME OF CHILD</label>
+        <input type="text" id="child-name" class="input-field" required>
+
+        <label for="birth-cert-no" class="label">BIRTH CERTIFICATE NUMBER</label>
+        <input type="text" id="birth-cert-no" class="input-field" required>
+
+        <label for="vaccine-name" class="label">VACCINE ADMINISTERED NAME</label>
+        <input type="text" id="vaccine-name" class="input-field" required>
+
+        <label for="vaccine-code" class="label">VACCINE CODE</label>
+        <input type="text" id="vaccine-code" class="input-field" required>
+
+        <label for="comments" class="label">COMMENTS</label>
+        <textarea id="comments" class="input-field" rows="6"></textarea>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        // Function to set the current date and time
+        function setCurrentDateTime() {
+            const now = new Date();
+            const dateTimeString = now.toLocaleString(); // Format as "MM/DD/YYYY, HH:MM:SS"
+            document.getElementById('date-time').value = dateTimeString;
+        }
+
+        // Set current date and time on page load
+        window.onload = function() {
+            setCurrentDateTime();
+        };
+
+        document.getElementById('vaccine-session-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the form from submitting normally
+            // Collect form data
+            const formData = new FormData(this);
+            // Log or handle form data here
+            console.log('Form submitted:', Object.fromEntries(formData));
+            alert('Vaccine session recorded successfully!');
+            this.reset(); // Reset the form
+            setCurrentDateTime(); // Reset the date and time
+        });
+    </script>
+</body>
+</html>

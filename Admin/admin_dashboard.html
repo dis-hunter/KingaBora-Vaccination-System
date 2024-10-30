@@ -92,12 +92,14 @@
               </a>
             </li>
             <li>
-              <a href="#register" class="nav-link text-white">
-                <img src="img/reg_nurse_icon.png" alt="Home Icon" width="16" height="16" class="me-2">
-                <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#table"/></svg>
-                Register a Nurse
-              </a>
+              <li>
+                <a href="#registerNurseModal" class="nav-link text-white" data-bs-toggle="modal">
+                    <img src="img/reg_nurse_icon.png" alt="Register Nurse Icon" width="16" height="16" class="me-2">
+                    Register a Nurse
+                </a>
             </li>
+            
+            
             <li>
               <a href="#activities" class="nav-link text-white">
                 <img src="img/view_act2_icon.png" alt="Home Icon" width="16" height="16" class="me-2">
@@ -260,8 +262,56 @@
             </div>
           </div>
         </div>
+
+
+
       </main>
     <special-footer></special-footer>
-
+        <!-- Register Nurse Modal -->
+        <div class="modal fade" id="registerNurseModal" tabindex="-1" aria-labelledby="registerNurseModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="registerNurseModalLabel">Register a Nurse</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                      <!-- Form copied from register_nurse.html -->
+                      <form>
+                          <fieldset>
+                              <legend>Register a Nurse</legend> 
+                              
+                              <label for="first_name">First Name</label>
+                              <input type="text" id="first_name" placeholder="Nurse's first name" name="first_name" required>
+        
+                              <label for="last_name">Last Name</label>
+                              <input type="text" id="last_name" placeholder="Nurse's last name" name="last_name" required>
+        
+                              <label for="email">Email</label>
+                              <input type="email" id="email" placeholder="Nurse's email" name="email" required>
+        
+                              <label for="phone_number">Contacts</label>
+                              <input type="tel" id="phone_number" placeholder="Nurse's phone number" name="phone_number" required>
+        
+                              <label for="password">Password</label>
+                              <input type="password" id="password" placeholder="Nurse's dummy password" name="password" required>
+        
+                              <label for="gender">Gender</label>
+                              <select id="gender" name="gender" required>
+                                  <option value="Male">Male</option>
+                                  <option value="Female">Female</option>
+                                  <option value="Other">Other</option>
+                              </select>
+        
+                              <label for="profile_image">Profile Picture</label>
+                              <input type="file" id="profile_image" name="profile_image" accept="image/*" required> 
+                              
+                              <button type="submit" class="btn" id="btn" style="background-color: teal; color: white;">Sign Up</button>
+                          </fieldset>
+                      </form>
+                  </div>
+              </div>
+          </div>
+        </div>
 </body>
 </html>

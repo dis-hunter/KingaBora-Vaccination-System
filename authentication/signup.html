@@ -38,6 +38,14 @@
                         <label for="username" class="input-group-text">Username</label>
                         <input type="text" class="form-control form-control-lg bg-light fs-6" id="username" placeholder="Username">
                     </div>
+                    <div class="input-group mb-3">
+                        <label for="contacts" class="input-group-text">contacts</label>
+                        <input type="text" class="form-control form-control-lg bg-light fs-6" id="contacts" placeholder="contacts">
+                    </div>
+                    <div class="input-group mb-3">
+                        <label for="nationalID" class="input-group-text">National ID </label>
+                        <input type="text" class="form-control form-control-lg bg-light fs-6" id="nationalID" placeholder="nationalID">
+                    </div>
 
                     <div class="input-group mb-1">
                         <label for="password" class="input-group-text">Password</label>
@@ -72,34 +80,43 @@
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-        async function login() {
+      async function login() {
+        
   const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;   
-
+  const password = document.getElementById('password').value;   
+  const nationalID = document.getElementById('nationalID').value;
   const username = document.getElementById('username').value;
+  const contacts = document.getElementById('contacts').value;
 
   try {
-    const response = await axios.post('http://127.0.0.1:5000/register', {
-      email: email,
-      password: password,
-      username: username,
-    }, {
+    backendUrl='http://127.0.0.1:5000'
+    const response = await fetch(`${backendUrl}/register`, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json'
-      }
+      },
+      body: JSON.stringify({
+        email,
+        password,
+        username,
+        nationalID,
+        contacts
+      })
     });
 
-    if (response.status === 201) {
-      const { redirectUrl } = response.data;
+    if (response.ok) {
+      const data = await response.json();
       console.log("Successfully created user. Redirecting...");
-      window.location.href = redirectUrl;  // Redirect to provided URL
+      window.location.href = data.redirectUrl;  // Redirect to provided URL
     } else {
-      console.error("Error creating user:", response.data.error);
+      const errorData = await response.json();
+      console.error("Error creating user:", errorData.error);
       // Handle error message display or other actions
     }
 
   } catch (error) {
-    console.error(error);  // Handle error during request
+    console.error("Error during request:", error);
+    // Handle network errors or other exceptions
   }
 }
     </script>
