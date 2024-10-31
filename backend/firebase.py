@@ -162,7 +162,7 @@ def vaccinationupdate():
         child_local_id = request.args.get("localId")  # Get the localId from the query parameters
 
         doc_ref=db.collection('VaccinationHistory')
-        query=doc_ref.where(filter=FieldFilter("Child_local_ID","==",child_local_id))
+        query=doc_ref.where(filter=FieldFilter("child_local_ID","==",child_local_id))
         docs=query.stream()
         document_list=[]
         for doc in docs:
@@ -226,6 +226,8 @@ def storevaccinereceipt():
     NurseName = data.get("NurseName")
     nextscheduletime = data.get("nextscheduletime")
     vaccinesIssued = data.get("vaccinesIssued")
+    height = data.get("height")
+    weight=data.get("weight")
 
     # Create a new user in Firestore
     vaccine_data = {
@@ -235,7 +237,9 @@ def storevaccinereceipt():
         'NextVisit': NextVisit,
         'NurseName': NurseName,
         'nextscheduletime': nextscheduletime,
-        'vaccinesIssued': vaccinesIssued
+        'vaccinesIssued': vaccinesIssued,
+        'weight':weight,
+        'height':height
     }
 
     try:
@@ -305,6 +309,38 @@ def registerNurse():
     except Exception as e:
         logging.error(f"Error creating user: {e}")
         return jsonify({"error": str(e)}), 400  # Return error message   
+    
+@app.route('/getParentDetails', methods=['GET'])
+def getParentDetails():
+    try:
+        # Get the 'localID' query parameter
+        child_localID = request.args.get("localID")
+
+        # Check if localID is provided
+        if not child_localID:
+            return jsonify({"error": "Missing 'localID' parameter"}), 400
+
+        # Directly reference the document by its ID
+        doc_ref = db.collection('childData').document(child_localID)
+        doc = doc_ref.get()
+
+        # Check if the document exists
+        if doc.exists:
+            # Retrieve 'emailaddress' and 'parentName' from the document
+            doc_data = doc.to_dict()
+            response_data = {
+                "emailaddress": doc_data.get("emailaddress"),
+                "parentName": doc_data.get("ParentName")
+            }
+            return jsonify({"message": "Parent details found", "data": response_data}), 200
+        else:
+            return jsonify({"error": "No document found for the given 'localID'"}), 404
+
+    except Exception as e:
+        logging.error(f"Error fetching parent details: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+    # this is sections for admin data
     
 @app.route('/ViewActivities', methods=['GET'])
 def ViewActivities():
