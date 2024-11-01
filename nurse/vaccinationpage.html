@@ -112,10 +112,12 @@ table{
           <?php echo "Date: " . date("d-m-Y"); ?>
         </div>
         <div class="dosage">
-        <h2>DOSAGE</h2>
+        <h2>child Details</h2>
         <div id="childprofile"></div>
         <h2>Todays vaccines</h2>
         <div id="drugs"></div>
+        <div id="TodaysVaccine"></div>
+
           <h2>Next Visit</h2>
           <select id="myDropdown">
             <option value="0">Birth</option>
@@ -228,8 +230,10 @@ async function VaccineReceipt() {
       console.log('Vaccine found:', data);
       const vaccinereceipt = data.Vaccination[0]; // Assuming there's only one child for simplicity
       
-      ChildName=vaccinereceipt.ChildName;                                      //child details
-      Child_local_ID=vaccinereceipt.Child_local_ID;
+      ChildName=vaccinereceipt.childName;                                      //child details
+      Child_local_ID=vaccinereceipt.child_local_ID;
+      await getParentDetails(Child_local_ID);
+      console.log("haya",Child_local_ID);
       NurseName=vaccinereceipt.NurseName;
        
       
@@ -238,6 +242,9 @@ async function VaccineReceipt() {
       
 9      
         period= vaccinereceipt.nextscheduletime;
+        document.getElementById("TodaysVaccine").innerHTML="todays vaccines are for "+period
+        
+        console.log("what vaccine period its for:",period);
  
 
 // Extract the '6' from the string and convert it to a number
@@ -246,6 +253,10 @@ async function VaccineReceipt() {
       if(period=="6 Weeks")
     {
        period_passed=6;
+    }
+    else if(period=="Birth")
+    {
+      period_passed=0;
     }
     else if(period=="10 Weeks"){
       preiod_passed=10;
@@ -336,7 +347,9 @@ function getFormattedDate(weeksToAdd = 0) {
 }
 
  async function saveVaccine() {
-        
+        let weight=document.getElementById("weight").value
+        let height=document.getElementById("height").value
+
       
         try {
           backendUrl='http://127.0.0.1:5000'
@@ -346,7 +359,7 @@ function getFormattedDate(weeksToAdd = 0) {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              vaccinesIssued,ChildName,Child_local_ID,DateofVaccination,NextVisit,NurseName,nextscheduletime
+              vaccinesIssued,ChildName,Child_local_ID,DateofVaccination,NextVisit,NurseName,nextscheduletime,weight,height
             })
           });
       
@@ -378,6 +391,32 @@ function getFormattedDate(weeksToAdd = 0) {
       }
 
 
+      
+      
+      async function getParentDetails(localID) {                              //gets vaccine which has the its period to be administered specified
+  try {
+ 
+    console.log('Getting ParentName and email:', localID); // Debug logging
+    
+    const url = `http://127.0.0.1:5000/getParentDetails?localID=${encodeURIComponent(localID)}`;
+    console.log('Request URL:', url); // Debug logging
+    
+    const response = await fetch(url, { method: 'GET' });
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log('parentDetails found:', data);
+      
+     
+    } else {
+      console.error('Error fetching parentdetails:', data.error || response.statusText);
+      // document.getElementById('vaccineList').textContent = `Error: ${data.error || 'Failed to fetch vaccines'}`;
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    document.getElementById('vaccineList').textContent = 'Error: ' + error.message;
+  }
+}
 document.addEventListener('DOMContentLoaded', () => {
   VaccineReceipt();
   getFormattedDate();
