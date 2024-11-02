@@ -35,13 +35,6 @@ use Google\Auth\OAuth2;
 class UserRefreshCredentials extends CredentialsLoader implements GetQuotaProjectInterface
 {
     /**
-     * Used in observability metric headers
-     *
-     * @var string
-     */
-    private const CRED_TYPE = 'u';
-
-    /**
      * The OAuth2 instance used to conduct authorization.
      *
      * @var OAuth2
@@ -105,10 +98,6 @@ class UserRefreshCredentials extends CredentialsLoader implements GetQuotaProjec
 
     /**
      * @param callable $httpHandler
-     * @param array<mixed> $metricsHeader [optional] Metrics headers to be inserted
-     *     into the token endpoint request present.
-     *     This could be passed from ImersonatedServiceAccountCredentials as it uses
-     *     UserRefreshCredentials as source credentials.
      *
      * @return array<mixed> {
      *     A set of auth related metadata, containing the following
@@ -120,31 +109,17 @@ class UserRefreshCredentials extends CredentialsLoader implements GetQuotaProjec
      *     @type string $id_token
      * }
      */
-    public function fetchAuthToken(callable $httpHandler = null, array $metricsHeader = [])
+    public function fetchAuthToken(callable $httpHandler = null)
     {
-        // We don't support id token endpoint requests as of now for User Cred
-        return $this->auth->fetchAuthToken(
-            $httpHandler,
-            $this->applyTokenEndpointMetrics($metricsHeader, 'at')
-        );
+        return $this->auth->fetchAuthToken($httpHandler);
     }
 
     /**
-     * Return the Cache Key for the credentials.
-     * The format for the Cache key is one of the following:
-     * ClientId.Scope
-     * ClientId.Audience
-     *
      * @return string
      */
     public function getCacheKey()
     {
-        $scopeOrAudience = $this->auth->getScope();
-        if (!$scopeOrAudience) {
-            $scopeOrAudience = $this->auth->getAudience();
-        }
-
-        return $this->auth->getClientId() . '.' . $scopeOrAudience;
+        return $this->auth->getClientId() . ':' . $this->auth->getCacheKey();
     }
 
     /**
@@ -173,10 +148,5 @@ class UserRefreshCredentials extends CredentialsLoader implements GetQuotaProjec
     public function getGrantedScope()
     {
         return $this->auth->getGrantedScope();
-    }
-
-    protected function getCredType(): string
-    {
-        return self::CRED_TYPE;
     }
 }

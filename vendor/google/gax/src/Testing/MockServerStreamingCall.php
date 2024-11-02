@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2016, Google Inc.
+ * Copyright 2016 Google LLC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,22 +30,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace Google\GAX\Testing;
+namespace Google\ApiCore\Testing;
 
-use Google\GAX\ApiException;
+use Google\ApiCore\ApiException;
+use Google\ApiCore\ApiStatus;
 use Google\Rpc\Code;
-use Grpc;
 
 /**
  * The MockServerStreamingCall class is used to mock out the \Grpc\ServerStreamingCall class
  * (https://github.com/grpc/grpc/blob/master/src/php/lib/Grpc/ServerStreamingCall.php)
  */
-class MockServerStreamingCall
+class MockServerStreamingCall extends \Grpc\ServerStreamingCall
 {
     use SerializationTrait;
 
     private $responses;
-    private $deserialize;
     private $status;
 
     /**
@@ -73,12 +72,17 @@ class MockServerStreamingCall
         }
     }
 
+    /**
+     * @return MockStatus|null|\stdClass
+     * @throws ApiException
+     */
     public function getStatus()
     {
         if (count($this->responses) > 0) {
             throw new ApiException(
                 "Calls to getStatus() will block if all responses are not read",
-                Grpc\STATUS_INTERNAL
+                Code::INTERNAL,
+                ApiStatus::INTERNAL
             );
         }
         return $this->status;

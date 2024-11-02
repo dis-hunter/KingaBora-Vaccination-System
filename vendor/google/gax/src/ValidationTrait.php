@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2017, Google Inc.
+ * Copyright 2017 Google LLC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-namespace Google\GAX;
+namespace Google\ApiCore;
 
 trait ValidationTrait
 {
@@ -38,9 +38,9 @@ trait ValidationTrait
      * @param array $requiredKeys List of keys to check for in $arr
      * @return array Returns $arr for fluent use
      */
-    public function validate($arr, $requiredKeys)
+    public static function validate($arr, $requiredKeys)
     {
-        return $this->validateImpl($arr, $requiredKeys, true);
+        return self::validateImpl($arr, $requiredKeys, true);
     }
 
     /**
@@ -48,12 +48,12 @@ trait ValidationTrait
      * @param array $requiredKeys List of keys to check for in $arr
      * @return array Returns $arr for fluent use
      */
-    public function validateNotNull($arr, $requiredKeys)
+    public static function validateNotNull($arr, $requiredKeys)
     {
-        return $this->validateImpl($arr, $requiredKeys, false);
+        return self::validateImpl($arr, $requiredKeys, false);
     }
 
-    private function validateImpl($arr, $requiredKeys, $allowNull)
+    private static function validateImpl($arr, $requiredKeys, $allowNull)
     {
         foreach ($requiredKeys as $requiredKey) {
             $valid = array_key_exists($requiredKey, $arr)
@@ -63,5 +63,16 @@ trait ValidationTrait
             }
         }
         return $arr;
+    }
+
+    /**
+     * @param string $filePath
+     * @throws ValidationException
+     */
+    private static function validateFileExists($filePath)
+    {
+        if (!file_exists($filePath)) {
+            throw new ValidationException("Could not find specified file: $filePath");
+        }
     }
 }

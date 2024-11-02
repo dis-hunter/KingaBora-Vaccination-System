@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2016, Google Inc.
+ * Copyright 2016 Google LLC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,10 +29,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-namespace Google\GAX;
+namespace Google\ApiCore;
 
 use Generator;
-use InvalidArgumentException;
+use IteratorAggregate;
 
 /**
  * Response object for paged results from a list API method
@@ -44,51 +44,84 @@ use InvalidArgumentException;
  * are required.
  *
  * The list elements can be accessed in the following ways:
- *  - As a single iterable using the iterateAllElements method
+ *  - As a single iterable used in a foreach loop or via the getIterator method
  *  - As pages of elements, using the getPage and iteratePages methods
  *  - As fixed size collections of elements, using the
  *    getFixedSizeCollection and iterateFixedSizeCollections methods
+ *
+ * Example of using PagedListResponse as an iterator:
+ * ```
+ * $pagedListResponse = $client->getList(...);
+ * foreach ($pagedListResponse as $element) {
+ *     // doSomethingWith($element);
+ * }
+ * ```
+ *
+ * Example of iterating over each page of elements:
+ * ```
+ * $pagedListResponse = $client->getList(...);
+ * foreach ($pagedListResponse->iteratePages() as $page) {
+ *     foreach ($page as $element) {
+ *         // doSomethingWith($element);
+ *     }
+ * }
+ * ```
+ *
+ * Example of accessing the current page, and manually iterating
+ * over pages:
+ * ```
+ * $pagedListResponse = $client->getList(...);
+ * $page = $pagedListResponse->getPage();
+ * // doSomethingWith($page);
+ * while ($page->hasNextPage()) {
+ *     $page = $page->getNextPage();
+ *     // doSomethingWith($page);
+ * }
+ * ```
  */
-class PagedListResponse
+class PagedListResponse implements IteratorAggregate
 {
-    private $parameters;
-    private $callable;
-    private $pageStreamingDescriptor;
-
     private $firstPage;
 
     /**
      * PagedListResponse constructor.
-     * @param array $params {
-     *     The parameters used to make the API call.
-     *     @type  object the request object
-     *     @type  array the metadata
-     *     @type  array the options of the API call
-     * }
-     * @param callable $callable the callable object that makes the API method calls.
-     * @param PageStreamingDescriptor $pageStreamingDescriptor the descriptor that
-     *     contains the field names related to page-streaming.
+     *
+     * @param Page $firstPage A page containing response details.
      */
-    public function __construct($params, $callable, $pageStreamingDescriptor)
-    {
-        if (empty($params) || !is_object($params[0])) {
-            throw new InvalidArgumentException('First argument must be a request object.');
-        }
-        $this->parameters = $params;
-        $this->callable = $callable;
-        $this->pageStreamingDescriptor = $pageStreamingDescriptor;
-
-        // Eagerly construct the first page
-        $this->getPage();
+    public function __construct(
+        Page $firstPage
+    ) {
+        $this->firstPage = $firstPage;
     }
 
     /**
-     * Returns an iterator over the full list of elements. Elements
-     * of the list are retrieved lazily using the underlying API.
+     * Returns an iterator over the full list of elements. If the
+     * API response contains a (non-empty) next page token, then
+     * the PagedListResponse object will make calls to the underlying
+     * API to retrieve additional elements as required.
+     *
+     * NOTE: The result of this method is the same as getIterator().
+     * Prefer using getIterator(), or iterate directly on the
+     * PagedListResponse object.
      *
      * @return Generator
+     * @throws ValidationException
      */
     public function iterateAllElements()
+    {
+        return $this->getIterator();
+    }
+
+    /**
+     * Returns an iterator over the full list of elements. If the
+     * API response contains a (non-empty) next page token, then
+     * the PagedListResponse object will make calls to the underlying
+     * API to retrieve additional elements as required.
+     *
+     * @return Generator
+     * @throws ValidationException
+     */
+    public function getIterator()
     {
         foreach ($this->iteratePages() as $page) {
             foreach ($page as $element) {
@@ -98,21 +131,12 @@ class PagedListResponse
     }
 
     /**
-     * Return the current page of results. If the page has not
-     * previously been accessed, it will be retrieved with a call to
-     * the underlying API.
+     * Return the current page of results.
      *
      * @return Page
      */
     public function getPage()
     {
-        if (!isset($this->firstPage)) {
-            $this->firstPage = new Page(
-                $this->parameters,
-                $this->callable,
-                $this->pageStreamingDescriptor
-            );
-        }
         return $this->firstPage;
     }
 
@@ -121,6 +145,7 @@ class PagedListResponse
      * retrieved lazily from the underlying API.
      *
      * @return Page[]
+     * @throws ValidationException
      */
     public function iteratePages()
     {
@@ -144,35 +169,7 @@ class PagedListResponse
      */
     public function expandToFixedSizeCollection($collectionSize)
     {
-        if (!$this->pageStreamingDescriptor->requestHasPageSizeField()) {
-            throw new ValidationException(
-                "FixedSizeCollection is not supported for this method, because " .
-                "the method does not support an optional argument to set the " .
-                "page size."
-            );
-        }
-        // The first page has been eagerly constructed, so we do not need to
-        // update the page size parameter before calling getPage
-        $page = $this->getPage();
-        $request = $page->getRequestObject();
-        $pageSizeGetMethod = $this->pageStreamingDescriptor->getRequestPageSizeGetMethod();
-        $pageSize = $request->$pageSizeGetMethod();
-        if (is_null($pageSize)) {
-            throw new ValidationException(
-                "Error while expanding Page to FixedSizeCollection: No page size " .
-                "parameter found. The page size parameter must be set in the API " .
-                "optional arguments array, and must be less than the collectionSize " .
-                "parameter, in order to create a FixedSizeCollection object."
-            );
-        }
-        if ($pageSize > $collectionSize) {
-            throw new ValidationException(
-                "Error while expanding Page to FixedSizeCollection: collectionSize " .
-                "parameter is less than the page size optional argument specified in " .
-                "the API call. collectionSize: $collectionSize, page size: $pageSize"
-            );
-        }
-        return new FixedSizeCollection($this->getPage(), $collectionSize);
+        return $this->getPage()->expandToFixedSizeCollection($collectionSize);
     }
 
     /**

@@ -44,8 +44,7 @@ trait EmulatorTrait
                         'credentials' => \Grpc\ChannelCredentials::createInsecure()
                     ]
                 ]
-            ],
-            'credentials' => new InsecureCredentialsWrapper(),
+            ]
         ];
     }
     /**

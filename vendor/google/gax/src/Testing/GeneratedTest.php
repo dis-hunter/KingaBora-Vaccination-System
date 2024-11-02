@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2017, Google Inc.
+ * Copyright 2017 Google LLC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,17 +29,16 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-namespace Google\GAX\Testing;
+namespace Google\ApiCore\Testing;
 
-use Google\GAX\Serializer;
+use Google\ApiCore\Serializer;
 use Google\Protobuf\DescriptorPool;
 use Google\Protobuf\Internal\Message;
 use Google\Protobuf\Internal\RepeatedField;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class GeneratedTest extends PHPUnit_Framework_TestCase
+abstract class GeneratedTest extends TestCase
 {
-
     public function assertProtobufEquals(&$expected, &$actual)
     {
         if ($expected === $actual) {
@@ -52,9 +51,13 @@ class GeneratedTest extends PHPUnit_Framework_TestCase
             }
 
             $this->assertSame(count($expected), count($actual));
-            for ($i = 0; $i < count($expected); $i++) {
-                $expectedElement = $expected[$i];
-                $actualElement = $actual[$i];
+
+            $expectedValues = $this->getValues($expected);
+            $actualValues = $this->getValues($actual);
+
+            for ($i = 0; $i < count($expectedValues); $i++) {
+                $expectedElement = $expectedValues[$i];
+                $actualElement = $actualValues[$i];
                 $this->assertProtobufEquals($expectedElement, $actualElement);
             }
         } else {
@@ -73,5 +76,14 @@ class GeneratedTest extends PHPUnit_Framework_TestCase
                 }
             }
         }
+    }
+
+    private function getValues($field)
+    {
+        return array_values(
+            is_array($field)
+                ? $field
+                : iterator_to_array($field)
+        );
     }
 }

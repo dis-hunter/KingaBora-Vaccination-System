@@ -30,7 +30,6 @@ class LongRunningOperation
 
     /**
      * @var LongRunningConnectionInterface
-     * @internal
      */
     private $connection;
 
@@ -62,8 +61,6 @@ class LongRunningOperation
     /**
      * @param LongRunningConnectionInterface $connection An implementation
      *        mapping to methods which handle LRO resolution in the service.
-     *        This object is created by internal classes,
-     *        and should not be instantiated outside of this context.
      * @param string $name The Operation name.
      * @param array $callablesMap An collection of form [(string) typeUrl, (callable) callable]
      *        providing a function to invoke when an operation completes. The

@@ -21,7 +21,6 @@ use Symfony\Component\Lock\LockInterface as SymfonyLockInterface;
 
 /**
  * Symfony lock component adapter.
- * @deprecated
  */
 class SymfonyLockAdapter implements LockInterface
 {

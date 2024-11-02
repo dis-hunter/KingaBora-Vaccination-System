@@ -74,7 +74,7 @@ class GrpcRequestWrapper
     /**
      * @param array $config [optional] {
      *     Configuration options. Please see
-     *     {@see \Google\Cloud\Core\RequestWrapperTrait::setCommonDefaults()} for
+     *     {@see Google\Cloud\Core\RequestWrapperTrait::setCommonDefaults()} for
      *     the other available options.
      *
      *     @type callable $authHttpHandler A handler used to deliver Psr7
@@ -111,25 +111,20 @@ class GrpcRequestWrapper
      *           request. **Defaults to** `60`.
      *     @type int $retries Number of retries for a failed request.
      *           **Defaults to** `3`.
-     *     @type callable $grpcRetryFunction Sets the conditions for whether or
-     *           not a request should attempt to retry. Function signature should
-     *           match: `function (\Exception $ex) : bool`.
      *     @type array $grpcOptions gRPC specific configuration options.
      * }
      * @return array
-     * @throws Exception\ServiceException
      */
     public function send(callable $request, array $args, array $options = [])
     {
-        $retries = $options['retries'] ?? $this->retries;
-        $retryFunction = $options['grpcRetryFunction']
-            ?? function (\Exception $ex) {
-                $statusCode = $ex->getCode();
-                return in_array($statusCode, $this->grpcRetryCodes);
-            };
-        $grpcOptions = $options['grpcOptions'] ?? $this->grpcOptions;
-        $timeout = $options['requestTimeout'] ?? $this->requestTimeout;
-        $backoff = new ExponentialBackoff($retries, $retryFunction);
+        $retries = isset($options['retries']) ? $options['retries'] : $this->retries;
+        $grpcOptions = isset($options['grpcOptions']) ? $options['grpcOptions'] : $this->grpcOptions;
+        $timeout = isset($options['requestTimeout']) ? $options['requestTimeout'] : $this->requestTimeout;
+        $backoff = new ExponentialBackoff($retries, function (\Exception $ex) {
+            $statusCode = $ex->getCode();
+
+            return in_array($statusCode, $this->grpcRetryCodes);
+        });
 
         if (!isset($grpcOptions['retrySettings'])) {
             $retrySettings = [
@@ -187,7 +182,6 @@ class GrpcRequestWrapper
      *
      * @param ServerStream $response
      * @return \Generator|array|null
-     * @throws Exception\ServiceException
      */
     private function handleStream($response)
     {

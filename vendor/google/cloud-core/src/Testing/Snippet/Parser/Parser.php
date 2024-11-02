@@ -17,8 +17,8 @@
 
 namespace Google\Cloud\Core\Testing\Snippet\Parser;
 
-use Google\Cloud\Core\Testing\Reflection\ReflectionHandlerFactory;
 use DOMDocument;
+use Google\Cloud\Core\Testing\DocBlockStripSpaces;
 use Parsedown;
 use ReflectionClass;
 use ReflectionMethod;
@@ -38,13 +38,6 @@ class Parser
 {
     const SNIPPET_NAME_REGEX = '/\/\/\s?\[snippet\=(\w{0,})\]/';
 
-    private $reflection;
-
-    public function __construct()
-    {
-        $this->reflection = ReflectionHandlerFactory::create();
-    }
-
     /**
      * Get a snippet from a class.
      *
@@ -58,7 +51,7 @@ class Parser
      * @param string $class the name of the class
      * @param int|string $index The index of the example to return.
      * @return Snippet
-     * @throws \Exception
+     * @throws Exception
      */
     public function classExample($class, $index = 0)
     {
@@ -141,11 +134,7 @@ class Parser
             $class = new ReflectionClass($class);
         }
 
-        if (!$class->getDocComment()) {
-            return [];
-        }
-
-        $doc = $this->reflection->createDocBlock($class);
+        $doc = new DocBlock($class);
 
         $magic = [];
         if ($doc->getTags()) {
@@ -202,11 +191,7 @@ class Parser
             return [];
         }
 
-        if (!$method->getDocComment()) {
-            return [];
-        }
-
-        $doc = $this->reflection->createDocBlock($method);
+        $doc = new DocBlock($method);
 
         $parent = $method->getDeclaringClass();
         $class = $parent->getName();
@@ -260,7 +245,7 @@ class Parser
      */
     public function examples(DocBlock $docBlock, $fullyQualifiedName, $file, $line, array $magicMethods = [])
     {
-        $text = $this->reflection->getDocBlockText($docBlock);
+        $text = $docBlock->getText();
         $parts = [];
 
         if (strpos($text, 'Example:' . PHP_EOL . '```') !== false) {
@@ -338,8 +323,7 @@ class Parser
                 continue;
             }
 
-            $class = substr($method->getDescription(), 1, -1);
-            $doc = $this->reflection->createDocBlock($class);
+            $doc = new DocBlockStripSpaces(substr($method->getDescription(), 1, -1));
 
             $res[] = [
                 'name' => $method->getMethodName(),

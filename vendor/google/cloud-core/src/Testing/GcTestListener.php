@@ -15,41 +15,10 @@
  * limitations under the License.
  */
 
-namespace Google\Cloud\Core\Testing;
-
-use PHPUnit\Framework\Test;
-use PHPUnit\Framework\TestListener;
-use PHPUnit\Framework\TestSuite;
-use PHPUnit\Framework\Warning;
-use PHPUnit\Framework\AssertionFailedError;
-use Throwable;
-
-/**
- * Garbage collector for tests
- * @internal
- */
-class GcTestListener implements TestListener
+class GcTestListener extends PHPUnit_Framework_BaseTestListener
 {
-    public function endTestSuite(TestSuite $suite): void
+    public function endTestSuite(\PHPUnit_Framework_TestSuite $suite)
     {
         gc_collect_cycles();
     }
-
-    public function addError(Test $test, Throwable $t, float $time): void {}
-
-    public function addWarning(Test $test, Warning $e, float $time): void {}
-
-    public function addFailure(Test $test, AssertionFailedError $e, float $time): void {}
-
-    public function addIncompleteTest(Test $test, Throwable $t, float $time): void {}
-
-    public function addRiskyTest(Test $test, Throwable $t, float $time): void {}
-
-    public function addSkippedTest(Test $test, Throwable $t, float $time): void {}
-
-    public function startTestSuite(TestSuite $suite): void {}
-
-    public function startTest(Test $test): void {}
-
-    public function endTest(Test $test, float $time): void {}
 }

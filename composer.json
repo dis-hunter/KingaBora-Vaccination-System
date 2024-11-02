@@ -1,6 +1,8 @@
 {
     "require": {
         "phpmailer/phpmailer": "^6.9",
-        "google/cloud-firestore": "^0.1.0"
+        "google/cloud-firestore": "1.19.3",
+        "google/cloud-core": "1.43.0",
+        "google/gax": "1.1.0"
     }
 }

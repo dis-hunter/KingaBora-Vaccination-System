@@ -35,7 +35,9 @@ trait TimeTrait
         $nanoRegex = '/\d{4}-\d{1,2}-\d{1,2}T\d{1,2}\:\d{1,2}\:\d{1,2}(?:\.(\d{1,}))?/';
 
         preg_match($nanoRegex, $timestamp, $matches);
-        $subSeconds = $matches[1] ?? '0';
+        $subSeconds = isset($matches[1])
+            ? $matches[1]
+            : '0';
 
         if (strlen($subSeconds) > 6) {
             $timestamp = str_replace('.'. $subSeconds, '.' . substr($subSeconds, 0, 6), $timestamp);

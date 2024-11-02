@@ -44,7 +44,6 @@ class ExcludeFilter extends FilterIterator
     /**
      * @return bool Determines whether to accept or exclude a path
      */
-    #[\ReturnTypeWillChange]
     public function accept()
     {
         // Accept the current item if we can recurse into it

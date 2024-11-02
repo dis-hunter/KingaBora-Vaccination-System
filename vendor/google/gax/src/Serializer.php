@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2017, Google Inc.
+ * Copyright 2017 Google LLC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,11 +29,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-namespace Google\GAX;
+namespace Google\ApiCore;
 
+use Google\Protobuf\Any;
 use Google\Protobuf\Descriptor;
 use Google\Protobuf\DescriptorPool;
 use Google\Protobuf\FieldDescriptor;
+use Google\Protobuf\Internal\Message;
 use RuntimeException;
 
 /**
@@ -59,6 +61,8 @@ class Serializer
 
     private $fieldTransformers;
     private $messageTypeTransformers;
+    private $decodeFieldTransformers;
+    private $decodeMessageTypeTransformers;
 
     private $descriptorMaps = [];
 
@@ -67,11 +71,19 @@ class Serializer
      *
      * @param array $fieldTransformers An array mapping field names to transformation functions
      * @param array $messageTypeTransformers An array mapping message names to transformation functions
+     * @param array $decodeFieldTransformers An array mapping field names to transformation functions
+     * @param array $decodeMessageTypeTransformers An array mapping message names to transformation functions
      */
-    public function __construct($fieldTransformers = [], $messageTypeTransformers = [])
-    {
+    public function __construct(
+        $fieldTransformers = [],
+        $messageTypeTransformers = [],
+        $decodeFieldTransformers = [],
+        $decodeMessageTypeTransformers = []
+    ) {
         $this->fieldTransformers = $fieldTransformers;
         $this->messageTypeTransformers = $messageTypeTransformers;
+        $this->decodeFieldTransformers = $decodeFieldTransformers;
+        $this->decodeMessageTypeTransformers = $decodeMessageTypeTransformers;
     }
 
     /**
@@ -79,13 +91,22 @@ class Serializer
      *
      * @param mixed $message
      * @return array
+     * @throws ValidationException
      */
     public function encodeMessage($message)
     {
         // Get message descriptor
         $pool = DescriptorPool::getGeneratedPool();
         $messageType = $pool->getDescriptorByClassName(get_class($message));
-        return $this->encodeMessageImpl($message, $messageType);
+        try {
+            return $this->encodeMessageImpl($message, $messageType);
+        } catch (\Exception $e) {
+            throw new ValidationException(
+                "Error encoding message: " . $e->getMessage(),
+                $e->getCode(),
+                $e
+            );
+        }
     }
 
     /**
@@ -94,18 +115,28 @@ class Serializer
      * @param mixed $message
      * @param array $data
      * @return mixed
+     * @throws ValidationException
      */
     public function decodeMessage($message, $data)
     {
         // Get message descriptor
         $pool = DescriptorPool::getGeneratedPool();
         $messageType = $pool->getDescriptorByClassName(get_class($message));
-        return $this->decodeMessageImpl($message, $messageType, $data);
+        try {
+            return $this->decodeMessageImpl($message, $messageType, $data);
+        } catch (\Exception $e) {
+            throw new ValidationException(
+                "Error decoding message: " . $e->getMessage(),
+                $e->getCode(),
+                $e
+            );
+        }
     }
 
     /**
-     * @param \Google\Protobuf\Internal\Message $message
+     * @param Message $message
      * @return string Json representation of $message
+     * @throws ValidationException
      */
     public static function serializeToJson($message)
     {
@@ -113,8 +144,9 @@ class Serializer
     }
 
     /**
-     * @param \Google\Protobuf\Internal\Message $message
+     * @param Message $message
      * @return array PHP array representation of $message
+     * @throws ValidationException
      */
     public static function serializeToPhpArray($message)
     {
@@ -141,9 +173,17 @@ class Serializer
                 if (self::hasBinaryHeaderSuffix($key)) {
                     if (isset(self::$metadataKnownTypes[$key])) {
                         $class = self::$metadataKnownTypes[$key];
+                        /** @var Message $message */
                         $message = new $class();
-                        $message->mergeFromString($value);
-                        $decodedValue += self::serializeToPhpArray($message);
+                        try {
+                            $message->mergeFromString($value);
+                            $decodedValue += self::serializeToPhpArray($message);
+                        } catch (\Exception $e) {
+                            // We encountered an error trying to deserialize the data
+                            $decodedValue += [
+                                'data' => '<Unable to deserialize data>',
+                            ];
+                        }
                     } else {
                         // The metadata contains an unexpected binary type
                         $decodedValue += [
@@ -161,6 +201,39 @@ class Serializer
         return $result;
     }
 
+    /**
+     * Decode an array of Any messages into a printable PHP array.
+     *
+     * @param $anyArray
+     * @return array
+     */
+    public static function decodeAnyMessages($anyArray)
+    {
+        $results = [];
+        foreach ($anyArray as $any) {
+            try {
+                /** @var Any $any */
+                /** @var Message $unpacked */
+                $unpacked = $any->unpack();
+                $results[] = self::serializeToPhpArray($unpacked);
+            } catch (\Exception $ex) {
+                echo "$ex\n";
+                // failed to unpack the $any object - show as unknown binary data
+                $results[] = [
+                    'typeUrl' => $any->getTypeUrl(),
+                    'value' => '<Unknown Binary Data>',
+                ];
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * @param FieldDescriptor $field
+     * @param $data
+     * @return mixed array
+     * @throws \Exception
+     */
     private function encodeElement(FieldDescriptor $field, $data)
     {
         switch ($field->getType()) {
@@ -210,6 +283,12 @@ class Serializer
         return $this->descriptorMaps[$descriptor->getFullName()];
     }
 
+    /**
+     * @param Message $message
+     * @param Descriptor $messageType
+     * @return array
+     * @throws \Exception
+     */
     private function encodeMessageImpl($message, Descriptor $messageType)
     {
         $data = [];
@@ -261,16 +340,30 @@ class Serializer
         return $data;
     }
 
+    /**
+     * @param FieldDescriptor $field
+     * @param mixed $data
+     * @return mixed
+     * @throws \Exception
+     */
     private function decodeElement(FieldDescriptor $field, $data)
     {
+        if (isset($this->decodeFieldTransformers[$field->getName()])) {
+            $data = $this->decodeFieldTransformers[$field->getName()]($data);
+        }
+
         switch ($field->getType()) {
             case GPBType::MESSAGE:
-                if ($data instanceof \Google\Protobuf\Internal\Message) {
+                if ($data instanceof Message) {
                     return $data;
                 }
                 $messageType = $field->getMessageType();
+                $messageTypeName = $messageType->getFullName();
                 $klass = $messageType->getClass();
                 $msg = new $klass();
+                if (isset($this->decodeMessageTypeTransformers[$messageTypeName])) {
+                    $data = $this->decodeMessageTypeTransformers[$messageTypeName]($data);
+                }
 
                 return $this->decodeMessageImpl($msg, $messageType, $data);
             default:
@@ -278,28 +371,36 @@ class Serializer
         }
     }
 
+    /**
+     * @param Message $message
+     * @param Descriptor $messageType
+     * @param array $data
+     * @return mixed
+     * @throws \Exception
+     */
     private function decodeMessageImpl($message, Descriptor $messageType, $data)
     {
         list($fieldsByName, $_) = $this->getDescriptorMaps($messageType);
         foreach ($data as $key => $v) {
             // Get the field by tag number or name
             $fieldName = self::toSnakeCase($key);
-            /** @var $field FieldDescriptor */
-            $field = $fieldsByName[$fieldName];
 
             // Unknown field found
-            if (!$field) {
-                throw new RuntimeException("cannot handle unknown field: $fieldName");
+            if (!isset($fieldsByName[$fieldName])) {
+                throw new RuntimeException(sprintf(
+                    "cannot handle unknown field %s on message %s",
+                    $fieldName,
+                    $messageType->getFullName()
+                ));
             }
+
+            /** @var $field FieldDescriptor */
+            $field = $fieldsByName[$fieldName];
 
             if ($field->isMap()) {
                 list($mapFieldsByName, $_) = $this->getDescriptorMaps($field->getMessageType());
                 $keyField = $mapFieldsByName[self::MAP_KEY_FIELD_NAME];
                 $valueField = $mapFieldsByName[self::MAP_VALUE_FIELD_NAME];
-
-                $klass = $valueField->getType() === GPBType::MESSAGE
-                    ? $valueField->getMessageType()->getClass()
-                    : null;
                 $arr = [];
                 foreach ($v as $k => $vv) {
                     $arr[$this->decodeElement($keyField, $k)] = $this->decodeElement($valueField, $vv);
@@ -377,4 +478,18 @@ class Serializer
         }
         return self::$phpArraySerializer;
     }
+
+    public static function loadKnownMetadataTypes()
+    {
+        foreach (self::$metadataKnownTypes as $key => $class) {
+            new $class;
+        }
+    }
 }
+
+// It is necessary to call this when this file is included. Otherwise we cannot be
+// guaranteed that the relevant classes will be loaded into the protobuf descriptor
+// pool when we try to unpack an Any object containing that class.
+// phpcs:disable PSR1.Files.SideEffects
+Serializer::loadKnownMetadataTypes();
+// phpcs:enable

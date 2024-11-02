@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2016, Google Inc.
+ * Copyright 2016 Google LLC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,19 +29,15 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-namespace Google\GAX;
+namespace Google\ApiCore;
 
-use Grpc;
-use Google\GAX\ApiException;
-use Google\GAX\ValidationException;
+use Google\Rpc\Code;
 
 /**
  * BidiStream is the response object from a gRPC bidirectional streaming API call.
  */
 class BidiStream
 {
-    use CallHelperTrait;
-
     private $call;
     private $isComplete = false;
     private $writesClosed = false;
@@ -52,27 +48,14 @@ class BidiStream
      * BidiStream constructor.
      *
      * @param \Grpc\BidiStreamingCall $bidiStreamingCall The gRPC bidirectional streaming call object
-     * @param array $grpcStreamingDescriptor
+     * @param array $streamingDescriptor
      */
-    public function __construct($bidiStreamingCall, $grpcStreamingDescriptor = [])
+    public function __construct($bidiStreamingCall, array $streamingDescriptor = [])
     {
         $this->call = $bidiStreamingCall;
-        if (array_key_exists('resourcesGetMethod', $grpcStreamingDescriptor)) {
-            $this->resourcesGetMethod = $grpcStreamingDescriptor['resourcesGetMethod'];
+        if (array_key_exists('resourcesGetMethod', $streamingDescriptor)) {
+            $this->resourcesGetMethod = $streamingDescriptor['resourcesGetMethod'];
         }
-    }
-
-    /**
-     * @param callable $callable
-     * @param mixed[] $grpcStreamingDescriptor
-     * @return callable ApiCall
-     */
-    public static function createApiCall($callable, $grpcStreamingDescriptor)
-    {
-        return function () use ($callable, $grpcStreamingDescriptor) {
-            $response = self::callWithoutRequest($callable, func_get_args());
-            return new BidiStream($response, $grpcStreamingDescriptor);
-        };
     }
 
     /**
@@ -98,7 +81,6 @@ class BidiStream
      * @param mixed[] $requests An Iterable of request objects to write to the server
      *
      * @throws ValidationException
-     * @throws ApiException
      */
     public function writeAll($requests = [])
     {
@@ -110,6 +92,7 @@ class BidiStream
     /**
      * Inform the server that no more requests will be written. The write() function cannot be
      * called after closeWrite() is called.
+     * @throws ValidationException
      */
     public function closeWrite()
     {
@@ -156,7 +139,7 @@ class BidiStream
         if (is_null($result)) {
             $status = $this->call->getStatus();
             $this->isComplete = true;
-            if (!($status->code == Grpc\STATUS_OK)) {
+            if (!($status->code == Code::OK)) {
                 throw ApiException::createFromStdClass($status);
             }
         }
@@ -184,7 +167,7 @@ class BidiStream
     /**
      * Return the underlying gRPC call object
      *
-     * @return \Grpc\BidiStreamingCall
+     * @return \Grpc\BidiStreamingCall|mixed
      */
     public function getBidiStreamingCall()
     {

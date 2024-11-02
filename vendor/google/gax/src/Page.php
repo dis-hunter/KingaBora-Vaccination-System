@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2016, Google Inc.
+ * Copyright 2016 Google LLC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,10 +29,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-namespace Google\GAX;
+namespace Google\ApiCore;
 
 use Generator;
-use InvalidArgumentException;
+use Google\Protobuf\Internal\Message;
 use IteratorAggregate;
 
 /**
@@ -43,8 +43,9 @@ class Page implements IteratorAggregate
 {
     const FINAL_PAGE_TOKEN = "";
 
-    private $parameters;
+    private $call;
     private $callable;
+    private $options;
     private $pageStreamingDescriptor;
 
     private $pageToken;
@@ -53,24 +54,28 @@ class Page implements IteratorAggregate
 
     /**
      * Page constructor.
-     * @param array $params
+     *
+     * @param Call $call
+     * @param array $options
      * @param callable $callable
      * @param PageStreamingDescriptor $pageStreamingDescriptor
+     * @param Message $response
      */
-    public function __construct($params, $callable, $pageStreamingDescriptor)
-    {
-        if (empty($params) || !is_object($params[0])) {
-            throw new InvalidArgumentException('First argument must be a request object.');
-        }
-        $this->parameters = $params;
+    public function __construct(
+        Call $call,
+        array $options,
+        callable $callable,
+        PageStreamingDescriptor $pageStreamingDescriptor,
+        Message $response
+    ) {
+        $this->call = $call;
+        $this->options = $options;
         $this->callable = $callable;
         $this->pageStreamingDescriptor = $pageStreamingDescriptor;
+        $this->response = $response;
 
         $requestPageTokenGetMethod = $this->pageStreamingDescriptor->getRequestPageTokenGetMethod();
-        $this->pageToken = $params[0]->$requestPageTokenGetMethod();
-
-        // Make gRPC call eagerly
-        $this->response = call_user_func_array($this->callable, $this->parameters);
+        $this->pageToken = $this->call->getMessage()->$requestPageTokenGetMethod();
     }
 
     /**
@@ -101,6 +106,7 @@ class Page implements IteratorAggregate
      * @param int|null $pageSize
      * @throws ValidationException if there are no pages remaining, or if pageSize is supplied but
      * is not supported by the API
+     * @throws ApiException if the call to fetch the next page fails.
      * @return Page
      */
     public function getNextPage($pageSize = null)
@@ -112,7 +118,10 @@ class Page implements IteratorAggregate
             );
         }
 
-        $newRequest = clone $this->getRequestObject();
+        $oldRequest = $this->getRequestObject();
+        $requestClass = get_class($oldRequest);
+        $newRequest = new $requestClass();
+        $newRequest->mergeFrom($oldRequest);
 
         $requestPageTokenSetMethod = $this->pageStreamingDescriptor->getRequestPageTokenSetMethod();
         $newRequest->$requestPageTokenSetMethod($this->getNextPageToken());
@@ -127,10 +136,21 @@ class Page implements IteratorAggregate
             $requestPageSizeSetMethod = $this->pageStreamingDescriptor->getRequestPageSizeSetMethod();
             $newRequest->$requestPageSizeSetMethod($pageSize);
         }
+        $this->call = $this->call->withMessage($newRequest);
 
-        $nextParameters = [$newRequest, $this->parameters[1], $this->parameters[2]];
+        $callable = $this->callable;
+        $response = $callable(
+            $this->call,
+            $this->options
+        )->wait();
 
-        return new Page($nextParameters, $this->callable, $this->pageStreamingDescriptor);
+        return new Page(
+            $this->call,
+            $this->options,
+            $this->callable,
+            $this->pageStreamingDescriptor,
+            $response
+        );
     }
 
     /**
@@ -162,7 +182,9 @@ class Page implements IteratorAggregate
      * Additional Page objects are retrieved lazily via API calls until
      * all elements have been retrieved.
      *
-     * @return Page[]
+     * @return Generator|Page[]
+     * @throws ValidationException
+     * @throws ApiException
      */
     public function iteratePages()
     {
@@ -177,20 +199,66 @@ class Page implements IteratorAggregate
     /**
      * Gets the request object used to generate the Page.
      *
-     * @return \Google\Protobuf\Internal\Message
+     * @return mixed|Message
      */
     public function getRequestObject()
     {
-        return $this->parameters[0];
+        return $this->call->getMessage();
     }
 
     /**
      * Gets the API response object.
      *
-     * @return \Google\Protobuf\Internal\Message
+     * @return mixed|Message
      */
     public function getResponseObject()
     {
         return $this->response;
+    }
+
+    /**
+     * Returns a collection of elements with a fixed size set by
+     * the collectionSize parameter. The collection will only contain
+     * fewer than collectionSize elements if there are no more
+     * pages to be retrieved from the server.
+     *
+     * NOTE: it is an error to call this method if an optional parameter
+     * to set the page size is not supported or has not been set in the
+     * API call that was used to create this page. It is also an error
+     * if the collectionSize parameter is less than the page size that
+     * has been set.
+     *
+     * @param $collectionSize int
+     * @throws ValidationException if a FixedSizeCollection of the specified size cannot be constructed
+     * @return FixedSizeCollection
+     */
+    public function expandToFixedSizeCollection($collectionSize)
+    {
+        if (!$this->pageStreamingDescriptor->requestHasPageSizeField()) {
+            throw new ValidationException(
+                "FixedSizeCollection is not supported for this method, because " .
+                "the method does not support an optional argument to set the " .
+                "page size."
+            );
+        }
+        $request = $this->getRequestObject();
+        $pageSizeGetMethod = $this->pageStreamingDescriptor->getRequestPageSizeGetMethod();
+        $pageSize = $request->$pageSizeGetMethod();
+        if (is_null($pageSize)) {
+            throw new ValidationException(
+                "Error while expanding Page to FixedSizeCollection: No page size " .
+                "parameter found. The page size parameter must be set in the API " .
+                "optional arguments array, and must be less than the collectionSize " .
+                "parameter, in order to create a FixedSizeCollection object."
+            );
+        }
+        if ($pageSize > $collectionSize) {
+            throw new ValidationException(
+                "Error while expanding Page to FixedSizeCollection: collectionSize " .
+                "parameter is less than the page size optional argument specified in " .
+                "the API call. collectionSize: $collectionSize, page size: $pageSize"
+            );
+        }
+        return new FixedSizeCollection($this, $collectionSize);
     }
 }

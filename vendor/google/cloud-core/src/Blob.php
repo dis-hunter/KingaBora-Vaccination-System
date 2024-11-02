@@ -38,7 +38,7 @@ use Psr\Http\Message\StreamInterface;
  * echo (string) $blob;
  * ```
  */
-class Blob implements \JsonSerializable
+class Blob
 {
     /**
      * @var mixed
@@ -79,17 +79,5 @@ class Blob implements \JsonSerializable
     public function __toString()
     {
         return (string) $this->value;
-    }
-
-    /**
-     * Implement JsonSerializable by returning a base64 encoded string of the blob
-     *
-     * @return string
-     * @access private
-     */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()
-    {
-        return base64_encode((string) $this->value);
     }
 }

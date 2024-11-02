@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2016, Google Inc.
+ * Copyright 2016 Google LLC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,9 +29,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-namespace Google\GAX;
+namespace Google\ApiCore;
 
 use Exception;
+use Google\Protobuf\Internal\RepeatedField;
+use Google\Rpc\Status;
 
 /**
  * Represents an exception thrown during an RPC.
@@ -81,24 +83,78 @@ class ApiException extends Exception
      */
     public static function createFromStdClass($status)
     {
-        $basicMessage = $status->details;
-        $code = $status->code;
-        $rpcStatus = ApiStatus::statusFromRpcCode($code);
         $metadata = property_exists($status, 'metadata') ? $status->metadata : null;
+        return self::create(
+            $status->details,
+            $status->code,
+            $metadata,
+            Serializer::decodeMetadata($metadata)
+        );
+    }
 
+    /**
+     * @param string $basicMessage
+     * @param int $rpcCode
+     * @param array|null $metadata
+     * @param \Exception $previous
+     * @return ApiException
+     */
+    public static function createFromApiResponse(
+        $basicMessage,
+        $rpcCode,
+        array $metadata = null,
+        \Exception $previous = null
+    ) {
+        return self::create(
+            $basicMessage,
+            $rpcCode,
+            $metadata,
+            Serializer::decodeMetadata($metadata),
+            $previous
+        );
+    }
+
+    /**
+     * Construct an ApiException with a useful message, including decoded metadata.
+     *
+     * @param string $basicMessage
+     * @param int $rpcCode
+     * @param mixed[]|RepeatedField $metadata
+     * @param array $decodedMetadata
+     * @param \Exception|null $previous
+     * @return ApiException
+     */
+    private static function create($basicMessage, $rpcCode, $metadata, array $decodedMetadata, $previous = null)
+    {
+        $rpcStatus = ApiStatus::statusFromRpcCode($rpcCode);
         $messageData = [
             'message' => $basicMessage,
-            'code' => $code,
+            'code' => $rpcCode,
             'status' => $rpcStatus,
-            'details' => Serializer::decodeMetadata($metadata)
+            'details' => $decodedMetadata
         ];
 
         $message = json_encode($messageData, JSON_PRETTY_PRINT);
 
-        return new ApiException($message, $code, $rpcStatus, [
+        return new ApiException($message, $rpcCode, $rpcStatus, [
+            'previous' => $previous,
             'metadata' => $metadata,
             'basicMessage' => $basicMessage,
         ]);
+    }
+
+    /**
+     * @param Status $status
+     * @return ApiException
+     */
+    public static function createFromRpcStatus(Status $status)
+    {
+        return self::create(
+            $status->getMessage(),
+            $status->getCode(),
+            $status->getDetails(),
+            Serializer::decodeAnyMessages($status->getDetails())
+        );
     }
 
     /**

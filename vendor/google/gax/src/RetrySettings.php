@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2016, Google Inc.
+ * Copyright 2016 Google LLC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-namespace Google\GAX;
+namespace Google\ApiCore;
 
 /**
  * The RetrySettings class is used to configure retrying and timeouts for RPCs.
@@ -60,7 +60,7 @@ namespace Google\GAX;
  * ```
  *
  * It is also possible to create a new RetrySettings object from an existing
- * object using the {@see Google\GAX\RetrySettings::with()} method.
+ * object using the {@see Google\ApiCore\RetrySettings::with()} method.
  *
  * Example modifying an existing RetrySettings object using `with()`:
  * ```
@@ -73,12 +73,12 @@ namespace Google\GAX;
  * ---------------------------------------------
  *
  * RetrySettings objects can be used to control retries for many RPC methods in
- * [google-cloud-php](https://github.com/GoogleCloudPlatform/google-cloud-php).
+ * [google-cloud-php](https://github.com/googleapis/google-cloud-php).
  * The examples below make use of the
- * [GroupServiceClient](https://googlecloudplatform.github.io/google-cloud-php/#/docs/google-cloud/monitoring/v3/groupserviceclient)
- * from the [Monitoring V3 API](https://github.com/GoogleCloudPlatform/google-cloud-php/tree/master/src/Monitoring/V3),
+ * [GroupServiceClient](https://googleapis.github.io/google-cloud-php/#/docs/google-cloud/monitoring/v3/groupserviceclient)
+ * from the [Monitoring V3 API](https://github.com/googleapis/google-cloud-php/tree/master/src/Monitoring/V3),
  * but they can be applied to other APIs in the
- * [google-cloud-php](https://github.com/GoogleCloudPlatform/google-cloud-php) repository.
+ * [google-cloud-php](https://github.com/googleapis/google-cloud-php) repository.
  *
  * It is possible to specify the retry behavior to be used by an RPC via the
  * `retrySettings` field in the `optionalArgs` parameter. The `retrySettings`
@@ -86,7 +86,7 @@ namespace Google\GAX;
  * the particular retry parameters to be updated.
  *
  * Example of disabling retries for a single call to the
- * [listGroups](https://googlecloudplatform.github.io/google-cloud-php/#/docs/google-cloud/monitoring/v3/groupserviceclient?method=listGroups)
+ * [listGroups](https://googleapis.github.io/google-cloud-php/#/docs/google-cloud/monitoring/v3/groupserviceclient?method=listGroups)
  * method, and setting a custom timeout:
  * ```
  * $result = $client->listGroups($name, [
@@ -99,7 +99,7 @@ namespace Google\GAX;
  *
  * Example of creating a new RetrySettings object and using it to override
  * the retry settings for a call to the
- * [listGroups](https://googlecloudplatform.github.io/google-cloud-php/#/docs/google-cloud/monitoring/v3/groupserviceclient?method=listGroups)
+ * [listGroups](https://googleapis.github.io/google-cloud-php/#/docs/google-cloud/monitoring/v3/groupserviceclient?method=listGroups)
  * method:
  * ```
  * $customRetrySettings = new RetrySettings([
@@ -124,10 +124,10 @@ namespace Google\GAX;
  * It is also possible to specify the retry behavior for RPC methods when
  * constructing a client object using the 'retrySettingsArray'. The examples
  * below again make use of the
- * [GroupServiceClient](https://googlecloudplatform.github.io/google-cloud-php/#/docs/google-cloud/monitoring/v3/groupserviceclient)
- * from the [Monitoring V3 API](https://github.com/GoogleCloudPlatform/google-cloud-php/tree/master/src/Monitoring/V3),
+ * [GroupServiceClient](https://googleapis.github.io/google-cloud-php/#/docs/google-cloud/monitoring/v3/groupserviceclient)
+ * from the [Monitoring V3 API](https://github.com/googleapis/google-cloud-php/tree/master/src/Monitoring/V3),
  * but they can be applied to other APIs in the
- * [google-cloud-php](https://github.com/GoogleCloudPlatform/google-cloud-php) repository.
+ * [google-cloud-php](https://github.com/googleapis/google-cloud-php) repository.
  *
  * The GroupServiceClient object accepts an optional `retrySettingsArray`
  * parameter, which can be used to specify retry behavior for RPC methods
@@ -202,7 +202,7 @@ class RetrySettings
      *                   if $retriesEnabled is false, in milliseconds. It not specified, the value
      *                   of $initialRpcTimeoutMillis is used.
      *     @type array   $retryableCodes The Status codes that are retryable. Each status should be
-     *                   either one of the string constants defined on {@see \Google\GAX\ApiStatus}
+     *                   either one of the string constants defined on {@see \Google\ApiCore\ApiStatus}
      *                   or an integer constant defined on {@see \Google\Rpc\Code}.
      *     @type int     $initialRetryDelayMillis The initial delay of retry in milliseconds.
      *     @type int     $retryDelayMultiplier The exponential multiplier of retry delay.
@@ -242,12 +242,92 @@ class RetrySettings
     }
 
     /**
+     * Constructs an array mapping method names to CallSettings.
+     *
+     * @param string $serviceName
+     *     The fully-qualified name of this service, used as a key into
+     *     the client config file.
+     * @param array $clientConfig
+     *     An array parsed from the standard API client config file.
+     * @param bool $disableRetries
+     *     Disable retries in all loaded RetrySettings objects. Defaults to false.
+     * @throws ValidationException
+     * @return RetrySettings[] $retrySettings
+     */
+    public static function load(
+        $serviceName,
+        $clientConfig,
+        $disableRetries = false
+    ) {
+        $serviceRetrySettings = [];
+
+        $serviceConfig = $clientConfig['interfaces'][$serviceName];
+        $retryCodes = $serviceConfig['retry_codes'];
+        $retryParams = $serviceConfig['retry_params'];
+        foreach ($serviceConfig['methods'] as $methodName => $methodConfig) {
+            $timeoutMillis = $methodConfig['timeout_millis'];
+
+            if (empty($methodConfig['retry_codes_name']) || empty($methodConfig['retry_params_name'])) {
+                // Construct a RetrySettings object with retries disabled
+                $retrySettings = self::constructDefault()->with([
+                    'noRetriesRpcTimeoutMillis' => $timeoutMillis,
+                ]);
+            } else {
+                $retryCodesName = $methodConfig['retry_codes_name'];
+                $retryParamsName = $methodConfig['retry_params_name'];
+
+                if (!array_key_exists($retryCodesName, $retryCodes)) {
+                    throw new ValidationException("Invalid retry_codes_name setting: '$retryCodesName'");
+                }
+                if (!array_key_exists($retryParamsName, $retryParams)) {
+                    throw new ValidationException("Invalid retry_params_name setting: '$retryParamsName'");
+                }
+
+                foreach ($retryCodes[$retryCodesName] as $status) {
+                    if (!ApiStatus::isValidStatus($status)) {
+                        throw new ValidationException("Invalid status code: '$status'");
+                    }
+                }
+
+                $retryParameters = self::convertArrayFromSnakeCase($retryParams[$retryParamsName]) + [
+                    'retryableCodes' => $retryCodes[$retryCodesName],
+                    'noRetriesRpcTimeoutMillis' => $timeoutMillis,
+                ];
+                if ($disableRetries) {
+                    $retryParameters['retriesEnabled'] = false;
+                }
+
+                $retrySettings = new RetrySettings($retryParameters);
+            }
+
+            $serviceRetrySettings[$methodName] = $retrySettings;
+        }
+
+        return $serviceRetrySettings;
+    }
+
+    public static function constructDefault()
+    {
+        return new RetrySettings([
+            'retriesEnabled' => false,
+            'noRetriesRpcTimeoutMillis' => 30000,
+            'initialRetryDelayMillis' => 100,
+            'retryDelayMultiplier' => 1.3,
+            'maxRetryDelayMillis' => 60000,
+            'initialRpcTimeoutMillis' => 20000,
+            'rpcTimeoutMultiplier' => 1,
+            'maxRpcTimeoutMillis' => 20000,
+            'totalTimeoutMillis' => 600000,
+            'retryableCodes' => []]);
+    }
+
+    /**
      * Creates a new instance of RetrySettings that updates the settings in the existing instance
      * with the settings specified in the $settings parameter.
      *
      * @param array $settings {
      *     Settings for configuring the retry behavior. Supports all of the options supported by
-     *     the constructor; see {@see \Google\GAX\RetrySettings::__construct()}. All parameters
+     *     the constructor; see {@see \Google\ApiCore\RetrySettings::__construct()}. All parameters
      *     are optional - all unset parameters will default to the value in the existing instance.
      * }
      * @return RetrySettings
@@ -359,5 +439,15 @@ class RetrySettings
     public function getTotalTimeoutMillis()
     {
         return $this->totalTimeoutMillis;
+    }
+
+    private static function convertArrayFromSnakeCase($settings)
+    {
+        $camelCaseSettings = [];
+        foreach ($settings as $key => $value) {
+            $camelCaseKey = str_replace(' ', '', ucwords(str_replace('_', ' ', $key)));
+            $camelCaseSettings[lcfirst($camelCaseKey)] = $value;
+        }
+        return $camelCaseSettings;
     }
 }

@@ -130,7 +130,7 @@ trait BatchTrait
      *
      * @return array
      */
-    abstract protected function getCallback();
+    protected abstract function getCallback();
 
     /**
      * @param array $options [optional] {
@@ -161,7 +161,7 @@ trait BatchTrait
      *           responsible for serializing closures used in the
      *           `$clientConfig`. This is especially important when using the
      *           batch daemon. **Defaults to**
-     *           {@see \Google\Cloud\Core\Batch\OpisClosureSerializer} if the
+     *           {@see Google\Cloud\Core\Batch\OpisClosureSerializer} if the
      *           `opis/closure` library is installed.
      * }
      * @throws \InvalidArgumentException
@@ -183,15 +183,23 @@ trait BatchTrait
         $this->setSerializableClientOptions($options);
         $this->batchMethod = $options['batchMethod'];
         $this->identifier = $options['identifier'];
-        $this->debugOutputResource = $options['debugOutputResource'] ?? fopen('php://stderr', 'w');
-        $this->debugOutput = $options['debugOutput'] ?? false;
-        $batchOptions = $options['batchOptions'] ?? [];
+        $this->debugOutputResource = isset($options['debugOutputResource'])
+            ? $options['debugOutputResource']
+            : fopen('php://stderr', 'w');
+        $this->debugOutput = isset($options['debugOutput'])
+            ? $options['debugOutput']
+            : false;
+        $batchOptions = isset($options['batchOptions'])
+            ? $options['batchOptions']
+            : [];
         $this->batchOptions = $batchOptions + [
             'batchSize' => 1000,
             'callPeriod' => 2.0,
             'numWorkers' => 2
         ];
-        $this->batchRunner = $options['batchRunner'] ?? new BatchRunner();
+        $this->batchRunner = isset($options['batchRunner'])
+            ? $options['batchRunner']
+            : new BatchRunner();
         $this->batchRunner->registerJob(
             $this->identifier,
             [$this, 'send'],

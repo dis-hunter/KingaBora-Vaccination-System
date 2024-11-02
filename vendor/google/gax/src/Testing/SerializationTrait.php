@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2017, Google Inc.
+ * Copyright 2017 Google LLC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-namespace Google\GAX\Testing;
+namespace Google\ApiCore\Testing;
+
+use Google\Protobuf\Internal\Message;
 
 trait SerializationTrait
 {
@@ -46,10 +48,11 @@ trait SerializationTrait
         // Proto3 implementation
         if (is_array($deserialize)) {
             list($className, $deserializeFunc) = $deserialize;
+            /** @var Message $obj */
             $obj = new $className();
             if (method_exists($obj, $deserializeFunc)) {
                 $obj->$deserializeFunc($message);
-            } else {
+            } elseif (is_string($message)) {
                 $obj->mergeFromString($message);
             }
 

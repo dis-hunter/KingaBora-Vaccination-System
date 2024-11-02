@@ -62,7 +62,6 @@ class FileListFilterIterator extends \FilterIterator
      * @experimental
      * @internal
      */
-    #[\ReturnTypeWillChange]
     public function accept()
     {
         /** @var \SplFileInfo */

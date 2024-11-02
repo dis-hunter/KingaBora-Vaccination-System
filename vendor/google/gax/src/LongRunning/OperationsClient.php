@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2017, Google Inc. All rights reserved.
+ * Copyright 2017 Google LLC
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -12,7 +12,7 @@
  * copyright notice, this list of conditions and the following disclaimer
  * in the documentation and/or other materials provided with the
  * distribution.
- *     * Neither the name of Google Inc. nor the names of its
+ *     * Neither the name of Google LLC nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
  *
@@ -35,21 +35,22 @@
  * https://github.com/google/googleapis/blob/master/google/longrunning/operations.proto
  * and updates to that file get reflected here through a refresh process.
  *
- * EXPERIMENTAL: this client library class has not yet been declared beta. This class may change
- * more frequently than those which have been declared beta or 1.0, including changes which break
- * backwards compatibility.
+ * EXPERIMENTAL: This client library class has not yet been declared GA (1.0). This means that
+ * even though we intend the surface to be stable, we may make backwards incompatible changes
+ * if necessary.
  *
  * @experimental
  */
 
-namespace Google\GAX\LongRunning;
+namespace Google\ApiCore\LongRunning;
 
-use Google\GAX\LongRunning\Gapic\OperationsGapicClient;
+use Google\ApiCore\LongRunning\Gapic\OperationsGapicClient;
 
 /**
  * {@inheritdoc}
  */
 class OperationsClient extends OperationsGapicClient
 {
-    // This class is intentionally empty, and is intended to hold manual additions to the generated {@see OperationsClientImpl} class.
+    // This class is intentionally empty, and is intended to hold manual
+    // additions to the generated {@see OperationsGapicClient} class.
 }

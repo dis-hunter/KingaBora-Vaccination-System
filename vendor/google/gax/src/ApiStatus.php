@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2017, Google Inc.
+ * Copyright 2017 Google LLC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-namespace Google\GAX;
+namespace Google\ApiCore;
 
 use Google\Rpc\Code;
 
@@ -54,6 +54,7 @@ class ApiStatus
     const UNAUTHENTICATED = 'UNAUTHENTICATED';
 
     const UNRECOGNIZED_STATUS = 'UNRECOGNIZED_STATUS';
+    const UNRECOGNIZED_CODE = -1;
 
     private static $apiStatusToCodeMap = [
         ApiStatus::OK => Code::OK,
@@ -93,6 +94,16 @@ class ApiStatus
         Code::DATA_LOSS => ApiStatus::DATA_LOSS,
         Code::UNAUTHENTICATED => ApiStatus::UNAUTHENTICATED,
     ];
+    private static $httpStatusCodeToRpcCodeMap = [
+        401 => Code::UNAUTHENTICATED,
+        403 => Code::PERMISSION_DENIED,
+        404 => Code::NOT_FOUND,
+        429 => Code::RESOURCE_EXHAUSTED,
+        499 => Code::CANCELLED,
+        501 => Code::UNIMPLEMENTED,
+        503 => Code::UNAVAILABLE,
+        504 => Code::DEADLINE_EXCEEDED,
+    ];
 
     /**
      * @param string $status
@@ -113,5 +124,33 @@ class ApiStatus
             return self::$codeToApiStatusMap[$code];
         }
         return ApiStatus::UNRECOGNIZED_STATUS;
+    }
+
+    /**
+     * @param string $status
+     * @return int
+     */
+    public static function rpcCodeFromStatus($status)
+    {
+        if (array_key_exists($status, self::$apiStatusToCodeMap)) {
+            return self::$apiStatusToCodeMap[$status];
+        }
+        return ApiStatus::UNRECOGNIZED_CODE;
+    }
+
+    /**
+     * Maps HTTP status codes to Google\Rpc\Code codes.
+     * Only map codes which do not map to multiple gRPC codes (e.g. excludes
+     * 400, 409, and 500).
+     *
+     * @param int $httpStatusCode
+     * @return int
+     */
+    public static function rpcCodeFromHttpStatusCode($httpStatusCode)
+    {
+        if (array_key_exists($httpStatusCode, self::$httpStatusCodeToRpcCodeMap)) {
+            return self::$httpStatusCodeToRpcCodeMap[$httpStatusCode];
+        }
+        return ApiStatus::UNRECOGNIZED_CODE;
     }
 }

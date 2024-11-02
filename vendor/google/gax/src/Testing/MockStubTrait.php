@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2016, Google Inc.
+ * Copyright 2016 Google LLC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,8 +29,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-namespace Google\GAX\Testing;
 
+namespace Google\ApiCore\Testing;
+
+use Google\Protobuf\Internal\Message;
+use Google\Rpc\Status;
 use UnderflowException;
 
 /**
@@ -45,6 +48,12 @@ trait MockStubTrait
     private $responses = [];
     private $serverStreamingStatus = null;
     private $callObjects = [];
+    private $deserialize;
+
+    public function __construct($deserialize = null)
+    {
+        $this->deserialize = $deserialize;
+    }
 
     /**
      * Overrides the _simpleRequest method in \Grpc\BaseStub
@@ -64,11 +73,6 @@ trait MockStubTrait
         array $metadata = [],
         array $options = []
     ) {
-        if (is_a($argument, '\Google\Protobuf\Internal\Message')) {
-            $newArgument = new $argument();
-            $newArgument->mergeFromString($argument->serializeToString());
-            $argument = $newArgument;
-        }
         $this->receivedFuncCalls[] = new ReceivedRequest($method, $argument, $deserialize, $metadata, $options);
         if (count($this->responses) < 1) {
             throw new UnderflowException("ran out of responses");
@@ -98,7 +102,6 @@ trait MockStubTrait
         array $metadata = [],
         array $options = []
     ) {
-
         $this->receivedFuncCalls[] = new ReceivedRequest($method, null, $deserialize, $metadata, $options);
         if (count($this->responses) < 1) {
             throw new UnderflowException("ran out of responses");
@@ -133,6 +136,7 @@ trait MockStubTrait
     ) {
 
         if (is_a($argument, '\Google\Protobuf\Internal\Message')) {
+            /** @var Message $newArgument */
             $newArgument = new $argument();
             $newArgument->mergeFromString($argument->serializeToString());
             $argument = $newArgument;
@@ -178,7 +182,7 @@ trait MockStubTrait
     {
         $strippedResponses = [];
         foreach ($responses as $response) {
-            list($resp, $status) = $response;
+            list($resp, $_) = $response;
             $strippedResponses[] = $resp;
         }
         return $strippedResponses;
@@ -192,6 +196,10 @@ trait MockStubTrait
      */
     public function addResponse($response, $status = null)
     {
+        if (!$this->deserialize && $response) {
+            $this->deserialize = [get_class($response), 'decode'];
+        }
+
         if (is_a($response, '\Google\Protobuf\Internal\Message')) {
             $response = $response->serializeToString();
         }
@@ -245,5 +253,42 @@ trait MockStubTrait
     {
         return count($this->receivedFuncCalls) === 0
             && count($this->responses) === 0;
+    }
+
+    /**
+     * @param mixed $responseObject
+     * @param $status
+     * @param callable $deserialize
+     * @return static An instance of the current class type.
+     */
+    public static function create($responseObject, $status = null, $deserialize = null)
+    {
+        $stub = new static($deserialize);
+        $stub->addResponse($responseObject, $status);
+        return $stub;
+    }
+
+    /**
+     * Creates a sequence such that the responses are returned in order.
+     * @param mixed[] $sequence
+     * @param callable $deserialize
+     * @param Status $finalStatus
+     * @return static An instance of the current class type.
+     */
+    public static function createWithResponseSequence($sequence, $deserialize = null, $finalStatus = null)
+    {
+        $stub = new static($deserialize);
+        foreach ($sequence as $elem) {
+            if (count($elem) == 1) {
+                list($resp, $status) = [$elem, null];
+            } else {
+                list($resp, $status) = $elem;
+            }
+            $stub->addResponse($resp, $status);
+        }
+        if ($finalStatus) {
+            $stub->setStreamingStatus($finalStatus);
+        }
+        return $stub;
     }
 }

@@ -17,12 +17,10 @@
 
 namespace Google\Cloud\Core;
 
-use Google\Auth\GetUniverseDomainInterface;
 use Google\ApiCore\CredentialsWrapper;
 use Google\Cloud\Core\ArrayTrait;
 use Google\Cloud\Core\Duration;
 use Google\Cloud\Core\Exception\NotFoundException;
-use Google\Cloud\Core\Exception\ServiceException;
 use Google\Cloud\Core\GrpcRequestWrapper;
 use Google\Protobuf\NullValue;
 
@@ -68,15 +66,13 @@ trait GrpcTrait
      * @param array $args
      * @param bool $whitelisted
      * @return \Generator|array
-     * @throws ServiceException
      */
     public function send(callable $request, array $args, $whitelisted = false)
     {
         $requestOptions = $this->pluckArray([
             'grpcOptions',
             'retries',
-            'requestTimeout',
-            'grpcRetryFunction'
+            'requestTimeout'
         ], $args[count($args) - 1]);
 
         try {
@@ -95,14 +91,10 @@ trait GrpcTrait
      *
      * @param string $version
      * @param callable|null $authHttpHandler
-     * @param string|null $universeDomain
      * @return array
      */
-    private function getGaxConfig(
-        $version,
-        callable $authHttpHandler = null,
-        string $universeDomain = null
-    ) {
+    private function getGaxConfig($version, callable $authHttpHandler = null)
+    {
         $config = [
             'libName' => 'gccl',
             'libVersion' => $version,
@@ -115,8 +107,7 @@ trait GrpcTrait
         if (class_exists(CredentialsWrapper::class)) {
             $config['credentials'] = new CredentialsWrapper(
                 $this->requestWrapper->getCredentialsFetcher(),
-                $authHttpHandler,
-                $universeDomain ?: GetUniverseDomainInterface::DEFAULT_UNIVERSE_DOMAIN
+                $authHttpHandler
             );
         } else {
             $config += [
@@ -244,8 +235,6 @@ trait GrpcTrait
 
                 return ['list_value' => $this->formatListForApi($value)];
         }
-
-        return [];
     }
 
     /**
