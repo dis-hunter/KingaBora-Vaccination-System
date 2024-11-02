@@ -9,6 +9,7 @@ from firebase_admin import credentials, firestore, auth, initialize_app
 from config import Config
 from datetime import datetime, timedelta
 import os
+import pytz
 import requests
 
 firebase_config = Config.firebaseConfig
@@ -156,64 +157,123 @@ def parentDetails():
         logging.error(f"Error fetching child details: {str(e)}")
         return jsonify({"errors": str(e)}), 500
     
+def parse_date(date_string):
+    """Try multiple date formats"""
+    formats = [
+        '%B %d, %Y at %I:%M:%S %p GMT+3',
+        '%B %d, %Y at %I:%M:%S %p',
+        '%B %d, %Y at %I:%M:%S %p GMT',
+        '%B %d, %Y',
+        # Add more formats if needed
+    ]
+    
+    for fmt in formats:
+        try:
+            return datetime.strptime(date_string, fmt)
+        except ValueError:
+            continue
+    
+    # If no format works, log the problematic string and return None
+    logging.error(f"Could not parse date string: {date_string}")
+    return None    
 @app.route('/vaccinationupdate')
 def vaccinationupdate():
     try:
-        child_local_id = request.args.get("localId")  # Get the localId from the query parameters
-
-        doc_ref=db.collection('VaccinationHistory')
-        query=doc_ref.where(filter=FieldFilter("child_local_ID","==",child_local_id))
-        docs=query.stream()
-        document_list=[]
+        child_local_id = request.args.get("localId")
+        
+        doc_ref = db.collection('VaccinationHistory')
+        query = doc_ref.where(filter=FieldFilter("child_local_ID", "==", child_local_id))
+        docs = query.stream()
+        document_list = []
+        
         for doc in docs:
-            data=doc.to_dict()
+            data = doc.to_dict()
             document_list.append(data)
-       
-        if data:
-            logging.info(f"Vaccination file: {document_list}")
-            return jsonify({"message": "Vaccination file", "Vaccination": document_list}), 200
+
+        if document_list:
+            # Sort documents, putting any with unparseable dates at the end
+            try:
+                document_list.sort(
+                    key=lambda x: parse_date(x['DateofVaccination']) or datetime.min,
+                    reverse=True
+                )
+            except Exception as sort_error:
+                logging.error(f"Sorting error: {sort_error}")
+                # Continue with unsorted list
+            
+            return jsonify({
+                "message": "Vaccination file",
+                "Vaccination": document_list
+            }), 200
         else:
             logging.info("No children found.")
-            return jsonify({"error": "No vaccine found for the given ParentName"}), 404
-
-       
+            return jsonify({
+                "error": "No vaccine found for the given ParentName"
+            }), 404
 
     except Exception as e:
         logging.error(f"Error fetching child details: {str(e)}")
-        return jsonify({"errors": str(e)}), 500    
+        return jsonify({"errors": str(e)}), 500
 
-@app.route('/Vaccines')
+@app.route('/Vaccines', methods=['GET'])
 def Vaccines():
-  try:
-    period = request.args.get("period")  # Get the period from the query parameters
-    logging.info(f"Searching for period: {period}")  # Debug logging
+    try:
+        period = request.args.get("period")  # Get the period from the query parameters
+        logging.info(f"Searching for period: {period}")  # Debug logging
 
-    doc_ref = db.collection('DrugInventory')
-    # This is correct now since DrugPeriod is an array
-    query = doc_ref.where('DrugPeriod', 'array_contains', period)
+        doc_ref = db.collection('DrugInventory')
+        query = doc_ref.where('DrugPeriod', 'array_contains', period)
+        docs = query.stream()
 
-    docs = query.stream()
-    document_list = []
-    for doc in docs:
-      data = doc.to_dict()
-      logging.info(f"Found document: {data}")  # Debug logging
-      drug_name = data.get('DrugName')
-      if drug_name:
-        document_list.append(drug_name)
+        # Create a list of dictionaries with DrugName as the key and DrugPrice as the value
+        document_list = {}
+        for doc in docs:
+            data = doc.to_dict()
+            logging.info(f"Found document: {data}")  # Debug logging
+            
+            drug_name = data.get('DrugName')
+            drug_price = data.get('DrugPrice')
+            
+            # Only add if both DrugName and DrugPrice are available
+            if drug_name and drug_price is not None:
+                document_list[drug_name] = drug_price
 
-    if document_list:
-      logging.info(f"Drugs found with period {period}: {document_list}")
-      return jsonify({"message": "Drug list", "Drugs": document_list}), 200
-    else:
-      logging.info(f"No drugs found with period {period}.")
-      return jsonify({"error": "No drugs found for the given period"}), 404
+        if document_list:
+            logging.info(f"Drugs found with period {period}: {document_list}")
+            return jsonify({"message": "Drug list", "Drugs": document_list}), 200
+        else:
+            logging.info(f"No drugs found with period {period}.")
+            return jsonify({"error": "No drugs found for the given period"}), 404
 
-  except Exception as e:
-    logging.error(f"Error fetching drugs: {str(e)}")
-    import traceback
-    logging.error(traceback.format_exc())  # Add full stack trace
-    return jsonify({"error": str(e)}), 500
+    except Exception as e:
+        logging.error(f"Error fetching drugs: {str(e)}")
+        import traceback
+        logging.error(traceback.format_exc())  # Add full stack trace
+        return jsonify({"error": str(e)}), 500
 
+@app.route('/DrugAdministered', methods=['POST'])
+def DrugAdministered():
+    data = request.get_json()
+    selected_drugs = data.get("SelectedDrug", [])
+    total_price = 0
+
+    try:
+        for drug_name in selected_drugs:
+            # Query Firestore for each drug in the DrugInventory collection
+            drug_query = db.collection('DrugInventory').where('DrugName', '==', drug_name).stream()
+            
+            # For each document that matches the drug name, get the price
+            for doc in drug_query:
+                drug_data = doc.to_dict()
+                price = drug_data.get('DrugPrice', 0)
+                total_price += price
+
+        return jsonify({"message": "Prices retrieved successfully", "total_price": total_price}), 200
+
+    except Exception as firestore_error:
+        logging.error(f"Error retrieving drug prices from Firestore: {firestore_error}")
+        return jsonify({"error": "Error retrieving drug prices"}), 500
+    
 @app.route('/storevaccinereceipt', methods=['POST'])
 def storevaccinereceipt():
     data = request.get_json()
@@ -227,6 +287,7 @@ def storevaccinereceipt():
     nextscheduletime = data.get("nextscheduletime")
     vaccinesIssued = data.get("vaccinesIssued")
     height = data.get("height")
+    parentEmailAddress = data.get("parentEmailAddress")
     weight=data.get("weight")
 
     # Create a new user in Firestore
@@ -239,7 +300,8 @@ def storevaccinereceipt():
         'nextscheduletime': nextscheduletime,
         'vaccinesIssued': vaccinesIssued,
         'weight':weight,
-        'height':height
+        'height':height,
+        'parentEmailAddress':parentEmailAddress
     }
 
     try:
@@ -254,7 +316,10 @@ def storevaccinereceipt():
     except Exception as firestore_error:
         logging.error(f"Error adding user data to Firestore: {firestore_error}")
         return jsonify({"error": "Error adding data to Firestore"}), 500
- 
+
+
+
+    
 @app.route('/registerNurse', methods=['POST'])
 def registerNurse():
     data = request.get_json()  # Get JSON data from the request
@@ -342,6 +407,75 @@ def getParentDetails():
 
     # this is sections for admin data
     
+    
+    
+ #this is the nurse profile
+ # 
+ #    
+ 
+ 
+ 
+ 
+ 
+@app.route('/getEmailList', methods=['GET'])
+def getEmailList():
+    try:
+        # Get the 'NextVisit' query parameter
+        NextVisit = request.args.get("NextVisit")
+        
+        # Check if NextVisit is provided
+        if not NextVisit:
+            return jsonify({"error": "Missing 'NextVisit' parameter"}), 400
+
+        # Parse the provided NextVisit parameter into a datetime object (without timezone)
+        NextVisit_no_tz = NextVisit.rsplit(" GMT", 1)[0]
+        visit_datetime = datetime.strptime(NextVisit_no_tz, "%B %d, %Y at %I:%M:%S %p")
+        
+        # Manually add timezone (GMT+3) and convert to UTC
+        input_tz = pytz.FixedOffset(3 * 60)  # GMT+3 is 3 hours ahead of UTC
+        localized_datetime = input_tz.localize(visit_datetime)
+        utc_datetime = localized_datetime.astimezone(pytz.UTC)
+
+        # Query Firestore for all documents in 'VaccinationHistory'
+        doc_ref = db.collection('VaccinationHistory')
+        docs = doc_ref.stream()
+
+        # Prepare response data by filtering based on NextVisit
+        response_data = []
+        for doc in docs:
+            doc_data = doc.to_dict()
+            
+            # Convert each document's NextVisit string to a datetime for comparison
+            doc_next_visit = doc_data.get("NextVisit")
+            if doc_next_visit:
+                doc_next_visit_no_tz = doc_next_visit.rsplit(" GMT", 1)[0]
+                doc_visit_datetime = datetime.strptime(doc_next_visit_no_tz, "%B %d, %Y at %I:%M:%S %p")
+                
+                # Localize and convert document datetime to UTC
+                doc_localized_datetime = input_tz.localize(doc_visit_datetime)
+                doc_utc_datetime = doc_localized_datetime.astimezone(pytz.UTC)
+                
+                # Compare document's UTC NextVisit with the provided UTC NextVisit
+                if doc_utc_datetime <= utc_datetime:
+                    response_data.append({
+                        "childName": doc_data.get("childName"),
+                        "DateofVaccination": doc_data.get("DateofVaccination"),
+                        "parentEmailAddress": doc_data.get("parentEmailAddress"),
+                        "NextVisit": doc_data.get("NextVisit"),
+                    })
+        
+        # Return results or 404 if none found
+        if response_data:
+            return jsonify({"message": "Parent details found", "data": response_data}), 200
+        else:
+            return jsonify({"error": "No documents found for the given 'NextVisit'"}), 404
+
+    except Exception as e:
+        logging.error(f"Error fetching parent details: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+ 
+ 
 @app.route('/ViewActivities', methods=['GET'])
 def ViewActivities():
     try:
