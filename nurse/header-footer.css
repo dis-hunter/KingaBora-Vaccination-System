@@ -1,0 +1,422 @@
+@import url('https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@100..800&display=swap');
+        * {
+           
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body{
+            font-family: "Roboto", sans-serif;
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+        }
+        nav img {
+            width: 130px;
+            height: 130px;
+        }
+        nav ul {
+            display: flex;
+            justify-content: space-around;
+            width: 30%;
+        }
+        nav ul li {
+            list-style-type: none;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #6b7280;
+            font-size: 20px;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        nav ul li a::after {
+            content: "";
+            display: block;
+            width: 0;
+            height: 3px;
+            background-color:#008080;
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            transition: width 0.3s ease;
+        }
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+        .header-buttons {
+            margin-right: 80px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 1s ease 0.5s, transform 1s ease 0.5s;
+        }
+        .header-buttons.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        @keyframes zoomIn {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.1);
+            }
+        }
+        .header-buttons button {
+            padding: 0.8rem 1.6rem;
+            outline: none;
+            border: none;
+            font-size: 1rem;
+            color: white;
+            background-color: #008080;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-left: 30px;
+            transition: background-color 0.5s ease, color 0.3s ease;
+        }
+        .header-buttons button:hover {
+            background-color: white;
+            color: black;
+            border: 2px solid black;
+            animation: zoomIn 0.3s forwards;
+        }
+        .nav__menu__btn {
+            font-size: 1.5rem;
+            color: black;
+            cursor: pointer;
+            display: none;
+            margin-right: 50px;
+        }
+        .nav__links {
+            display: flex;
+            position: static;
+            gap: 0;
+            background-color: transparent;
+            flex-direction: row;
+            padding: 0;
+        }
+        @keyframes slideIn {
+            0% {
+                transform: translateX(-50px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @media (max-width: 900px) {
+            .nav__menu__btn {
+                display: block;
+            }
+            .nav__links {
+                position: absolute;
+                top: 90px; /* Ensure it starts below the menu icon */
+                right: 0px; /* Stick to the left side of the screen */
+                width: 20%; /* Adjust the width as needed */
+                padding: 2rem 1rem;
+                list-style: none;
+                display: flex;
+                align-items: flex-start; /* Align links to the left */
+                justify-content: flex-start; /* Push links to the side */
+                flex-direction: column;
+                gap: 2rem;
+                background-color: transparent;
+                transition: transform 0.5s, opacity 0.5s ease;
+                z-index: 10;
+                transform: translateY(-100%);
+                opacity: 0;
+                visibility: hidden;
+                padding-left: 20px; /* Add some space from the edge of the screen */
+            }
+
+            .nav__links li a{
+                color: black;
+                text-align: left;
+            }
+            .nav__links.open {
+                transform: translateY(0);
+                opacity: 1;
+                visibility: visible;
+            }
+            nav{
+                z-index: 20;
+            }
+        }
+        @media (min-width: 910px) {
+            .nav__links {
+                position: static;
+                flex-direction: row;
+                transform: translateY(0);
+                opacity: 1;
+                visibility: visible;
+                transition: none;
+            }
+            .nav__links li {
+                opacity: 0;
+                animation: slideIn 0.5s forwards;
+            }
+            .nav__links li:nth-child(1) {
+                animation-delay: 0.1s;
+            }
+            .nav__links li:nth-child(2) {
+                animation-delay: 0.2s;
+            }
+            .nav__links li:nth-child(3) {
+                animation-delay: 0.3s;
+            }
+            .nav__links li:nth-child(4) {
+                animation-delay: 0.4s;
+            }
+        }
+
+
+ /*footer styles*/
+ footer {
+    display: flex;
+    justify-content: space-between;
+    background-color: white;
+    color: black;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    height: 40vh;
+ 
+}
+.news-letter p{
+    margin:15px;
+}
+
+footer img {
+    width: 160px;
+    height: 100px;
+}
+
+table {
+    width: 50%; /* Adjust the table width to fit your design */
+    border-collapse: collapse; /* Ensure that borders don't double up */
+    margin-right: 20px; /* Add margin to separate from newsletter */
+}
+
+table th, table td {
+    padding: 10px;
+    text-align: center; /* Center text in table cells */
+}
+
+table td a {
+    text-decoration: none;
+    color: black;
+}
+
+table td a i {
+    font-size: 18px; /* Uniform font size */
+    margin-right: 8px; /* Adds space between icon and text */
+    color: black;
+    transition: 0.5s;
+    vertical-align: middle; /* Ensure vertical alignment */
+}
+
+table td a:hover i {
+    color: black; /* Change icon color on hover */
+}
+
+.fa-youtube {
+    color: red;
+}
+
+.fa-facebook {
+    color: blue;
+}
+
+.fa-twitter {
+    color: #1DA1F2;
+}
+/* Fix for Twitter icon */
+table td a i.fa-twitter {
+    position: fixed;
+    left:1172px;
+   /* Adjust position of Twitter icon */
+}
+.fa-linkedin {
+    color: blue;
+}
+
+.fa-instagram {
+    color: red;
+}
+
+input[type="email"] {
+    padding: 10px;
+    border: 1px solid black;
+    border-radius: 5px;
+    margin-right: 20px;
+}
+
+.Subscribe-btn {
+    padding: 10px;
+    border: none;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 1s;
+}
+
+.Subscribe-btn:hover { 
+    background-color: var(--primary-color-dark);
+    color: black;
+    border: 2px solid black; 
+}
+
+/* tim */
+/*Nurse Registration Form styles */
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+h1 {
+    margin-bottom: 20px;
+    font-size: 2rem;
+    color: #008080; /* Header color */
+}
+
+form {
+    background-color: #f9f9f9; /* Light background for the form */
+    padding: 20px;
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    width: 400px; /* Fixed width for the form */
+}
+
+label {
+    font-weight: bold;
+    margin-top: 15px;
+    display: block;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="file"] {
+    width: 100%; /* Full width for inputs */
+    padding: 10px; /* Padding for inputs */
+    margin-top: 5px; /* Space above inputs */
+    border: 1px solid #ccc; /* Border color */
+    border-radius: 5px; /* Rounded corners */
+    transition: border-color 0.3s; /* Transition for border color */
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus {
+    border-color: #008080; /* Change border color on focus */
+}
+
+button[type="submit"] {
+    background-color: #008080; /* Button background color */
+    color: white; /* Button text color */
+    padding: 10px; /* Padding for button */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor */
+    margin-top: 15px; /* Space above button */
+    width: 100%; /* Full width for button */
+    transition: background-color 0.3s; /* Transition for background color */
+}
+
+button[type="submit"]:hover {
+    background-color: #005f5f; /* Darker color on hover */
+}
+
+input[type="radio"] {
+    margin: 0 5px; /* Space around radio buttons */
+}
+
+/* nurse page */
+/* Header styles */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f1f1f1; /* Light gray background for header */
+    padding: 15px;
+}
+
+header img {
+    height: 50px; /* Logo size */
+}
+
+header .account-info {
+    display: flex;
+    align-items: center;
+}
+
+.account-info p {
+    margin-right: 10px; /* Space between account name and profile picture */
+    font-weight: bold;
+}
+
+.profile-picture {
+    border-radius: 50%; /* Round profile picture */
+    height: 40px; /* Profile picture size */
+    width: 40px; /* Profile picture size */
+}
+
+/* Form section styles */
+form {
+    background-color: #ffffff; /* White background for the form */
+    padding: 20px;
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    margin: 20px auto; /* Center the form */
+    width: 500px; /* Fixed width for the form */
+}
+
+h2 {
+    text-align: center; /* Center the section title */
+    color: #008080; /* Header color */
+}
+
+.label {
+    font-weight: bold;
+    display: block;
+    margin: 10px 0 5px; /* Space above labels */
+}
+
+.input-field {
+    width: 100%; /* Full width for inputs */
+    padding: 10px; /* Padding for inputs */
+    margin-bottom: 15px; /* Space below inputs */
+    border: 1px solid #ccc; /* Border color */
+    border-radius: 5px; /* Rounded corners */
+}
+
+.input-field:focus {
+    border-color: #008080; /* Change border color on focus */
+}
+
+.radio-group {
+    display: flex;
+    align-items: center;
+    margin-top: 10px; /* Space above radio group */
+}
+
+button[type="submit"] {
+    background-color: #008080; /* Button background color */
+    color: white; /* Button text color */
+    padding: 10px; /* Padding for button */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor */
+    width: 100%; /* Full width for button */
+    transition: background-color 0.3s; /* Transition for background color */
+}
+
+button[type="submit"]:hover {
+    background-color: #005f5f; /* Darker color on hover */
+}
