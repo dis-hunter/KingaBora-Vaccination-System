@@ -23,13 +23,6 @@
   margin: 4%;
 }
 
-.profile-pic {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  margin-right: 20px;
-}
-
 .profile-info {
   flex-grow: 1;  /* Allow profile info to take up available space */
 }
@@ -86,10 +79,17 @@
     <main>
  
     <div class="profile-header">
-      <!-- <img src="profile-picture.jpg" alt="Profile Picture" class="profile-pic"> -->
+
+
       <div class="profile-info">
-        <h1>Oloisudori Lemayan</h1>
-        <p>Parent</p>
+        <!-- parentName -->
+        <h1 id="parentName"></h1>    
+                               
+        <p id="parentEmailAddress"></p>
+        <p id="parentPhoneNumber">Parent</p>
+        <p id="parentNationalID">Parent</p>
+
+        
         <p>South B, Nairobi</p>
       </div>
       <div class="profile-actions">
@@ -97,7 +97,7 @@
         <button>Settings</button>
       </div>
     </div>
-    <form class="d-flex" role="search" onsubmit="searchBar(); return false;">
+    <form class="d-flex" role="search" onsubmit="getChildren(); return false;">
       <input class="form-control me-2" type="search" id="searchQuery" placeholder="Enter Parent Name" aria-label="Search">
       <button class="btn btn-outline-success" type="submit">Search</button>
   </form>
@@ -107,9 +107,12 @@
 
   
     <section class="children">
-      <h2>Children</h2>
+      <h1>Children</h1>
+      <a id="childname" href="#">Child Name (Document ID)</a>
+
       <ul>
         <li>Zawadi</li>
+        <li>{{data.childName}}</li>
         <li>Taiyo</li>
       </ul>
     </section>
@@ -124,83 +127,39 @@
     </section>
   </main>
   <special-footer></special-footer>
-
-</body>
-</html>
-<script>
- document.querySelector("form").addEventListener("submit", function(event) {
-    event.preventDefault(); // Prevent form from submitting and reloading the page
-    searchBar();  // Call your async function
-  });
-
-  async function searchBar() {
-    const storedLocalId = localStorage.getItem('localId');
-    console.log("Stored Local ID:", storedLocalId);
-
-    const parentName = document.getElementById('searchQuery').value;  // Get the parent name from the input field
-    console.log(parentName);
-
-    try {
-      // Define the API URL and include the ParentName as a query parameter
-      const url = `http://127.0.0.1:5000/childDetails?ParentName=${encodeURIComponent(parentName)}`;
-
-      // Send a GET request to the backend
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',  // You can keep headers if needed
-        }
-      });
-
-      // Process the response
-      const data = await response.json();
-
-      if (response.ok) {
-        console.log('Children found:', data);  // Log child names in the console
-        
-        // Call a function to update the DOM with the list of children
-        displayChildren(data.children); // Assuming the children are in `data.children`
-      } else {
-        console.error('Error fetching child details:', data.error || response.statusText);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  }
-
-  // Function to dynamically update the DOM with the children- not yet donee
-  function displayChildren(children) {
-    const childrenList = document.querySelector('.children ul');
-    childrenList.innerHTML = '';  // Clear the list first
-
-    // Loop through the children array and create list items for each child
-    children.forEach(child => {
-      const listItem = document.createElement('li');
-      listItem.textContent = child.ChildName;  // Assuming each child object has a 'ChildName' property
-      childrenList.appendChild(listItem);
+  <script>
+    let parentNationalID;
+    document.querySelector("form").addEventListener("submit", function (event) {
+      event.preventDefault(); // Prevent form from submitting and reloading the page
+      getChildren();  // Call your async function
     });
-  }
+
+    
 async function ParentDetails() {
   
-  parent_localId=getParentDetails()
+  parent_localId= await getParentDetails()
 
-  try {
-    // Define the API URL and include the ParentName as a query parameter
-    const url = `http://127.0.0.1:5000/childDetails?ParentName=${encodeURIComponent(parentName)}`;
+      try {
+        // Use localId in the API URL
+        const url = `http://127.0.0.1:5000/parentDetails?ParentlocalID=${encodeURIComponent(parent_localId)}`;
 
-    // Send a GET request to the backend (no body needed for GET requests)
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',  // You can keep headers if needed
-      }
-    });
+        // Send a GET request to the backend (no body needed for GET requests)
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json', // You can keep headers if needed
+          }
+        });
 
-    // Process the response
-    const data = await response.json();
+        // Process the response
+        const data = await response.json();
+                                                                                              
+          
 
     if (response.ok) {
       console.log('Children found:', data);  // Log child names in the console
+                                                                                //the function for filling the dom is being executed here
+      await ParentDomPopulation(data);
     } else {
       console.error('Error fetching child details:', data.error || response.statusText);    }
   } catch (error) {
@@ -224,9 +183,60 @@ async function getParentDetails()
     console.log(localId);
     return localId;
 }
-// document.addEventListener('DOMContentLoaded', () => {
-//   ParentDetails();  // Call the function when the DOM is fully loaded
-// });
+// this function is the one that displays the attributes on the dom
+async function ParentDomPopulation(data)
+{
+  const parentjson = data.parentDetails; // Assuming there's only one child for simplicity
+     let parentName= parentjson.parentName;
+     let parentEmailAddress=parentjson.parentEmailAddress;
+     let parentPhoneNumber=parentjson.parentPhoneNumber;
+      parentNationalID=parentjson.parentNationalID;
+
+      //  parentName=parentjson.parentName;                                      //child details
+    console.log("parentname", parentjson);
+    document.getElementById("parentName").innerHTML=parentName;
+    document.getElementById("parentEmailAddress").innerHTML =parentEmailAddress;
+    document.getElementById("parentPhoneNumber").innerHTML =parentPhoneNumber;
+    document.getElementById("parentNationalID").innerHTML =parentNationalID;
+    await getChildren(parentNationalID);
+      
+      
+}
+async function getChildren(parentNationalID) {   //gets the children using parentNationalID
+  
+
+  try {
+    const url = `http://127.0.0.1:5000/childDetails?ParentNationalID=${encodeURIComponent(parentNationalID)}`;
+    const response = await fetch(url, { method: 'GET' });
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log('Children found:', data);
+
+      const child = data.childNames[0]; // Assuming there's only one child for simplicity
+      const childName = child.ChildName;
+      const childDocId = child.id; // Access the document ID
+
+      const childProfileLink = document.getElementById("childname");
+      childProfileLink.href = `vaccinationpage.html?localId=${childDocId}`;
+      childProfileLink.textContent = `${childName} (${childDocId})`;
+    } else {
+      console.error('Error fetching child details:', data.error || response.statusText);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+    document.addEventListener('DOMContentLoaded', () => {
+        ParentDetails(); // Call the function when the DOM is fully loaded
+    });
+
+  </script>
 
 
-</script>
+</body>
+</html>
+
+
+  
