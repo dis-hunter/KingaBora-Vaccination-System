@@ -114,6 +114,7 @@ table{
         <div class="dosage">
         <h2>child Details</h2>
         <div id="childprofile"></div>
+        <div id = "parentEmail"></div>
         <h2>Todays vaccines</h2>
         <div id="drugs"></div>
         <div id="TodaysVaccine"></div>
@@ -123,7 +124,7 @@ table{
             <option value="0">Birth</option>
             <option value="6">6 Weeks</option>
             <option value="4">10 Weeks</option>
-            <option value="4">14 Weeks</option>
+            <option value="14">14 Weeks</option>
             <option value="22">9 Month</option>
           </select>
           <div>
@@ -168,6 +169,7 @@ table{
       
     </div>
     <div id="measurementsDiv">
+      <div id="DrugAdministered"></div>
     <h2>Measurements</h2>
     <label for="weight">Weight (kg):</label>
     <input type="number" id="weight" name="weight"><br><br>
@@ -183,7 +185,7 @@ table{
 </body>
 </html>
 <script>
-  let period,ChildName,Child_local_ID,DateofVaccination,NextVisit,NurseName,Nurse_local_ID,nextscheduletime ;
+  let period,ChildName,Child_local_ID,DateofVaccination,NextVisit,NurseName,Nurse_local_ID,nextscheduletime,parentEmailAddress ;
   let selectedDrugs = [];
  let period_passed;
   let vaccinesIssued=[];
@@ -202,6 +204,14 @@ myDropdown.addEventListener('change', () => {
    else if(dropdownvalue=='4')
    {
     dropdownvalue="10 Weeks";
+   }
+   else if(dropdownvalue=='14')
+   {
+    dropdownvalue='14 Weeks'
+   }
+   else if(dropdownvalue=='22')
+   {
+    dropdownvalue='22 Weeks'
    }
    nextscheduletime=dropdownvalue;
   // NextVisit= dropdownselected + " Weeks";
@@ -262,11 +272,12 @@ async function VaccineReceipt() {
       preiod_passed=10;
     }
     else if(period=="14 Weeks"){
-       period_passed=14;
+       period_passed=4;
     }
-     nextscheduletime=period_passed +" Weeks";
+     nextscheduletime=period_passed +" Week";
       console.log(period);
       getVaccines(period);
+      console.log("demo",nextscheduletime);
       
       document.getElementById("childprofile").innerHTML=ChildName;
 
@@ -281,35 +292,34 @@ async function VaccineReceipt() {
     // displayVaccination(null);
   }
 }
-async function getVaccines(period) {                              //gets vaccine which has the its period to be administered specified
+async function getVaccines(period) {
   try {
- 
     console.log('Requesting vaccines for period:', period); // Debug logging
-    
     const url = `http://127.0.0.1:5000/Vaccines?period=${encodeURIComponent(period)}`;
     console.log('Request URL:', url); // Debug logging
-    
+
     const response = await fetch(url, { method: 'GET' });
     const data = await response.json();
 
     if (response.ok) {
       console.log('Vaccines found:', data);
       const drugsContainer = document.getElementById('drugs');
-      if (data.Drugs && data.Drugs.length > 0) {
+      
+      if (data.Drugs && Object.keys(data.Drugs).length > 0) {
         // Clear any existing content
         drugsContainer.innerHTML = '';
-        
+
         // Create checkboxes for each drug
-        data.Drugs.forEach((drug, index) => {
+        for (const [drugName, drugPrice] of Object.entries(data.Drugs)) {
           const checkboxDiv = document.createElement('div');
           checkboxDiv.innerHTML = `
             <label>
-              <input type="checkbox" name="drug" value="${drug}">
-              ${drug}
+              <input type="checkbox" name="drug" value="${drugName}">
+              ${drugName} - $${drugPrice}
             </label>
           `;
           drugsContainer.appendChild(checkboxDiv);
-        });
+        }
       } else {
         drugsContainer.textContent = 'No vaccines found for this period';
       }
@@ -322,10 +332,14 @@ async function getVaccines(period) {                              //gets vaccine
     document.getElementById('vaccineList').textContent = 'Error: ' + error.message;
   }
 }
+
 function getFormattedDate(weeksToAdd = 0) {
   const now = new Date();
   DateofVaccinationtime=new Date();
-  
+  if(weeksToAdd=14)
+{
+  weeksToAdd=4;
+}
   // Add the specified number of weeks to the current date
   now.setDate(now.getDate() + weeksToAdd * 7);
 
@@ -359,7 +373,7 @@ function getFormattedDate(weeksToAdd = 0) {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              vaccinesIssued,ChildName,Child_local_ID,DateofVaccination,NextVisit,NurseName,nextscheduletime,weight,height
+              vaccinesIssued,ChildName,Child_local_ID,DateofVaccination,NextVisit,NurseName,nextscheduletime,weight,height,parentEmailAddress
             })
           });
       
@@ -391,7 +405,38 @@ function getFormattedDate(weeksToAdd = 0) {
       }
 
 
+      async function DrugAdministered(SelectedDrugs) {
+        SelectedDrug=selectedDrugs;
+       
       
+        try {
+          backendUrl='http://127.0.0.1:5000'
+          const response = await fetch(`${backendUrl}/DrugAdministered`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              SelectedDrug
+            })
+          });
+      
+          if (response.ok) {
+            const data = await response.json();
+            console.log("the prices are", data);
+            document.getElementById("DrugAdministered").innerHTML=data.total_price;     //this prints out the cost on the 
+            // window.location.href = data.redirectUrl;  // Redirect to provided URL
+          } else {
+            const errorData = await response.json();
+            console.error("Error creating user:", errorData.error);
+            // Handle error message display or other actions
+          }
+      
+        } catch (error) {
+          console.error("Error during request:", error);
+          // Handle network errors or other exceptions
+        }
+      }
       
       async function getParentDetails(localID) {                              //gets vaccine which has the its period to be administered specified
   try {
@@ -406,6 +451,12 @@ function getFormattedDate(weeksToAdd = 0) {
 
     if (response.ok) {
       console.log('parentDetails found:', data);
+      const emailaddr=data.data;
+       parentEmailAddress=emailaddr.emailaddress;
+      console.log('email found:', emailaddr.emailaddress);
+      document.getElementById("parentEmail").innerHTML=parentEmailAddress;
+
+      
       
      
     } else {
@@ -426,6 +477,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const checkboxes = document.querySelectorAll('#drugs input[type="checkbox"]:checked');
   checkboxes.forEach(checkbox => {
     selectedDrugs.push(checkbox.value);
+    
     // selectedDrugsJson = JSON.stringify(selectedDrugs);
     vaccinesIssued=selectedDrugs;
   });
@@ -438,6 +490,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('drugs').addEventListener('change', (event) => {
     if (event.target.type === 'checkbox') {
       storeSelectedDrugs();
+      DrugAdministered(selectedDrugs);
       console.log(period,ChildName,Child_local_ID,DateofVaccination,NextVisit,NurseName,Nurse_local_ID,nextscheduletime);
       console.log("today",DateofVaccination);
 
