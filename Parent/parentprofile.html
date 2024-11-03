@@ -217,39 +217,62 @@
   </main>
 
   <!--child form-->
-  <div id="addChildModal" class="modal">
-    <div class="modal-content">
+  <!-- Update the modal form section in your HTML -->
+<div id="addChildModal" class="modal">
+  <div class="modal-content">
       <span class="close">&times;</span>
       <h2>Add New Child</h2>
       <form id="addChildForm">
-        <div class="form-group">
-          <label for="birthCertificateID">Birth Certificate ID:</label>
-          <input type="text" id="birthCertificateID" required>
-        </div>
-        
-        <div class="form-group">
-          <label for="childName">Child Name:</label>
-          <input type="text" id="childName" required>
-        </div>
-        
-        <div class="form-group">
-          <label for="dateOfBirth">Date of Birth:</label>
-          <input type="date" id="dateOfBirth" required>
-        </div>
-        
-        <div class="form-group">
-          <label for="gender">Gender:</label>
-          <select id="gender" required>
-            <option value="">Select Gender</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-          </select>
-        </div>
-        
-        <button type="submit">Add Child</button>
+          <div class="form-group">
+              <label for="birthCertificateID">Birth Certificate ID:</label>
+              <input type="text" id="birthCertificateID" required>
+          </div>
+          
+          <div class="form-group">
+              <label for="childName">Child Name:</label>
+              <input type="text" id="childName" required>
+          </div>
+          
+          <div class="form-group">
+              <label for="dateOfBirth">Date of Birth:</label>
+              <input type="date" id="dateOfBirth" required>
+          </div>
+          
+          <div class="form-group">
+              <label for="gender">Gender:</label>
+              <select id="gender" required>
+                  <option value="">Select Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+              </select>
+          </div>
+
+          <!-- New Weight Field -->
+          <div class="form-group">
+              <label for="weight">Weight (kg):</label>
+              <input type="number" 
+                     id="weight" 
+                     step="0.1" 
+                     min="0" 
+                     required 
+                     placeholder="Enter weight in kilograms">
+          </div>
+
+          <!-- New Height Field -->
+          <div class="form-group">
+              <label for="height">Height (cm):</label>
+              <input type="number" 
+                     id="height" 
+                     step="0.1" 
+                     min="0" 
+                     required 
+                     placeholder="Enter height in centimeters">
+          </div>
+          
+          <button type="submit">Add Child</button>
       </form>
-    </div>
   </div>
+</div>
 
   <special-footer></special-footer>
 
