@@ -52,7 +52,7 @@ def register():
 
     try:
         # Create a new user in Firebase Authentication
-        user = auth.create_user_with_email_and_password(email, password)
+        user = auth.create_user_with_email_and_password(email, password)    #this does the creation of an account 
         user_data = {
             'parentName': username,
             'parentEmailAddress': email,

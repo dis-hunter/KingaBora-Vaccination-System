@@ -274,6 +274,10 @@ async function VaccineReceipt() {
     else if(period=="14 Weeks"){
        period_passed=4;
     }
+    else if(period=="22 Weeks")
+    {
+      period_passed=22;
+    }
      nextscheduletime=period_passed +" Week";
       console.log(period);
       getVaccines(period);
@@ -336,10 +340,11 @@ async function getVaccines(period) {
 function getFormattedDate(weeksToAdd = 0) {
   const now = new Date();
   DateofVaccinationtime=new Date();
-  if(weeksToAdd=14)
+  if(weeksToAdd==14)
 {
   weeksToAdd=4;
 }
+
   // Add the specified number of weeks to the current date
   now.setDate(now.getDate() + weeksToAdd * 7);
 
@@ -358,6 +363,7 @@ function getFormattedDate(weeksToAdd = 0) {
   DateofVaccination = `${DateofVaccinationdDate} at ${DateofVaccinationdTime}`;
   
   return NextVisit;
+
 }
 
  async function saveVaccine() {
