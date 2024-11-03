@@ -4,92 +4,188 @@
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profile Page</title>
-  <!-- <script src="../Header-Footer/header-footer.js"></script> -->
   <link rel="stylesheet" href="../Header-Footer/Stylesheets/style.css">
-  <style>
-    body {
-  font-family: sans-serif;
-  margin: 0;
-  padding: 20px;
-}
+<style>
+  body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 20px;
+  }
 
-/* Header */
-.profile-header {
-  display: flex;
-  align-items: center;  /* Vertically align items */
-  padding: 20px;
-  background-color: #40e0d0;
-  border-radius: 8px;
-  margin: 4%;
-}
+  /* Header */
+  .profile-header {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    background-color: #40e0d0;
+    border-radius: 8px;
+    margin: 4%;
+  }
 
-.profile-info {
-  flex-grow: 1;  /* Allow profile info to take up available space */
-}
+  .profile-info {
+    flex-grow: 1;
+  }
 
-.profile-actions button {
-  margin-left: 10px; 
-  padding: 8px 12px;
-  background-color: #008080; /* Example blue color */
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
+  .profile-actions button {
+    margin-left: 10px; 
+    padding: 8px 12px;
+    background-color: #008080;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
 
-/* Skills Section */
-.children ul {
-  list-style: none;
-  padding-left:10px;
-  display: flex;  /* Arrange skills horizontally */
-  flex-wrap: wrap; /* Allow wrapping to next line */
-}
+ 
+  .children ul {
+    list-style: none;
+    padding-left:10px;
+    display: flex;
+    flex-wrap: wrap;
+  }
 
-.children li {
-  margin: 5px;
-  padding: 8px 12px;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-}
+  .children li {
+    margin: 5px;
+    padding: 8px 12px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+  }
 
-/* Updates Section */
-.updates {
-  margin-top: 20px;
-}
+  .updates {
+    margin-top: 20px;
+  }
 
-.update {
-  background-color: #fff;
-  padding: 15px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+  .update {
+    background-color: #fff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
 
-.update p {
-  margin-bottom: 5px;
-}
+  .update p {
+    margin-bottom: 5px;
+  }
 
-.update button {
-  /* ... similar styling as profile-actions buttons ... */
-}
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+    display: none;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal-content {
+    background-color: #fefefe;
+    position: relative;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 8px;
+    max-height: 80vh;
+    overflow-y: auto;
+    margin: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .close {
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .close:hover {
+    color: black;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+
+  .add-child-btn {
+    background-color: #008080;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
+
+  #addChildForm button[type="submit"] {
+    background-color: #008080;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 15px;
+  }
+
+  #addChildForm button[type="submit"]:hover {
+    background-color: #006666;
+  }
+
+  .modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-right: 30px;
+  }
+
+  @media (max-width: 600px) {
+    .modal-content {
+      width: 95%;
+      margin: 10px;
+      padding: 15px;
+    }
+    
+    .form-group input,
+    .form-group select {
+      font-size: 16px; 
+    }
+  }
+</style>
   </style>
 </head>
 <body>
     <special-header></special-header>
     <main>
- 
     <div class="profile-header">
-
-
       <div class="profile-info">
-        <!-- parentName -->
         <h1 id="parentName"></h1>    
-                               
         <p id="parentEmailAddress"></p>
         <p id="parentPhoneNumber">Parent</p>
         <p id="parentNationalID">Parent</p>
-
-        
         <p>South B, Nairobi</p>
       </div>
       <div class="profile-actions">
@@ -100,16 +196,12 @@
     <form class="d-flex" role="search" onsubmit="getChildren(); return false;">
       <input class="form-control me-2" type="search" id="searchQuery" placeholder="Enter Parent Name" aria-label="Search">
       <button class="btn btn-outline-success" type="submit">Search</button>
-  </form>
-  
-  
-  </div>
-
+    </form>
   
     <section class="children">
       <h1>Children</h1>
+      <button onclick="openAddChildForm()" class="add-child-btn">Add Child</button>
       <a id="childname" href="#">Child Name (Document ID)</a>
-
       <ul>
         <li>Zawadi</li>
         <li>{{data.childName}}</li>
@@ -118,125 +210,177 @@
     </section>
 
     <section class="updates">
-      
       <div class="update">
         <h2>Messages</h2>
         <p>Receive latest results and reminders on vaccinations to come!</p>
       </div>
-      
     </section>
   </main>
+
+  <!--child form-->
+  <div id="addChildModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Add New Child</h2>
+      <form id="addChildForm">
+        <div class="form-group">
+          <label for="birthCertificateID">Birth Certificate ID:</label>
+          <input type="text" id="birthCertificateID" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="childName">Child Name:</label>
+          <input type="text" id="childName" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="dateOfBirth">Date of Birth:</label>
+          <input type="date" id="dateOfBirth" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="gender">Gender:</label>
+          <select id="gender" required>
+            <option value="">Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div>
+        
+        <button type="submit">Add Child</button>
+      </form>
+    </div>
+  </div>
+
   <special-footer></special-footer>
+
   <script>
     let parentNationalID;
     document.querySelector("form").addEventListener("submit", function (event) {
-      event.preventDefault(); // Prevent form from submitting and reloading the page
-      getChildren();  // Call your async function
+      event.preventDefault();
+      getChildren();
     });
 
-    
-async function ParentDetails() {
-  
-  parent_localId= await getParentDetails()
-
+    async function ParentDetails() {
+      parent_localId = await getParentDetails()
       try {
-        // Use localId in the API URL
         const url = `http://127.0.0.1:5000/parentDetails?ParentlocalID=${encodeURIComponent(parent_localId)}`;
-
-        // Send a GET request to the backend (no body needed for GET requests)
         const response = await fetch(url, {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/json', // You can keep headers if needed
+            'Content-Type': 'application/json',
           }
         });
-
-        // Process the response
         const data = await response.json();
-                                                                                              
-          
+        if (response.ok) {
+          console.log('Children found:', data);
+          await ParentDomPopulation(data);
+        } else {
+          console.error('Error fetching child details:', data.error || response.statusText);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
 
-    if (response.ok) {
-      console.log('Children found:', data);  // Log child names in the console
-                                                                                //the function for filling the dom is being executed here
-      await ParentDomPopulation(data);
-    } else {
-      console.error('Error fetching child details:', data.error || response.statusText);    }
-  } catch (error) {
-    console.error('Error:', error);
-  }
-}
-async function getParentDetails()
-{
-  function getLocalIdFromUrl() {
+    async function getParentDetails() {
+      function getLocalIdFromUrl() {
         const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get('localId'); // Change 'localId' to whatever the parameter name is
-    }
-
-    // Extract the localId
-    const localId = getLocalIdFromUrl();
-    
-    if (!localId) {
+        return urlParams.get('localId');
+      }
+      const localId = getLocalIdFromUrl();
+      if (!localId) {
         console.error("localId not found in URL");
-        return; // Exit the function if localId is not found
+        return;
+      }
+      console.log(localId);
+      return localId;
     }
-    console.log(localId);
-    return localId;
-}
-// this function is the one that displays the attributes on the dom
-async function ParentDomPopulation(data)
-{
-  const parentjson = data.parentDetails; // Assuming there's only one child for simplicity
-     let parentName= parentjson.parentName;
-     let parentEmailAddress=parentjson.parentEmailAddress;
-     let parentPhoneNumber=parentjson.parentPhoneNumber;
-      parentNationalID=parentjson.parentNationalID;
 
-      //  parentName=parentjson.parentName;                                      //child details
-    console.log("parentname", parentjson);
-    document.getElementById("parentName").innerHTML=parentName;
-    document.getElementById("parentEmailAddress").innerHTML =parentEmailAddress;
-    document.getElementById("parentPhoneNumber").innerHTML =parentPhoneNumber;
-    document.getElementById("parentNationalID").innerHTML =parentNationalID;
-    await getChildren(parentNationalID);
-      
-      
-}
-async function getChildren(parentNationalID) {   //gets the children using parentNationalID
-  
-
-  try {
-    const url = `http://127.0.0.1:5000/childDetails?ParentNationalID=${encodeURIComponent(parentNationalID)}`;
-    const response = await fetch(url, { method: 'GET' });
-    const data = await response.json();
-
-    if (response.ok) {
-      console.log('Children found:', data);
-
-      const child = data.childNames[0]; // Assuming there's only one child for simplicity
-      const childName = child.ChildName;
-      const childDocId = child.id; // Access the document ID
-
-      const childProfileLink = document.getElementById("childname");
-      childProfileLink.href = `vaccinationpage.html?localId=${childDocId}`;
-      childProfileLink.textContent = `${childName} (${childDocId})`;
-    } else {
-      console.error('Error fetching child details:', data.error || response.statusText);
+    async function ParentDomPopulation(data) { const parentjson = data.parentDetails;
+      let parentName = parentjson.parentName;
+      let parentEmailAddress = parentjson.parentEmailAddress;
+      let parentPhoneNumber = parentjson.parentPhoneNumber;
+      parentNationalID = parentjson.parentNationalID;
+      console.log("parentname", parentjson);
+      document.getElementById("parentName").innerHTML = parentName;
+      document.getElementById("parentEmailAddress").innerHTML = parentEmailAddress;
+      document.getElementById("parentPhoneNumber").innerHTML = parentPhoneNumber;
+      document.getElementById("parentNationalID").innerHTML = parentNationalID;
+      await getChildren(parentNationalID);
     }
-  } catch (error) {
-    console.error('Error:', error);
-  }
-}
 
-    document.addEventListener('DOMContentLoaded', () => {
-        ParentDetails(); // Call the function when the DOM is fully loaded
+    async function getChildren(parentNationalID) {
+      try {
+        const url = `http://127.0.0.1:5000/childDetails?ParentNationalID=${encodeURIComponent(parentNationalID)}`;
+        const response = await fetch(url, { method: 'GET' });
+        const data = await response.json();
+        if (response.ok) {
+          console.log('Children found:', data);
+          const child = data.childNames[0];
+          const childName = child.ChildName;
+          const childDocId = child.id;
+          const childProfileLink = document.getElementById("childname");
+          childProfileLink.href = `vaccinationpage.html?localId=${childDocId}`;
+          childProfileLink.textContent = `${childName} (${childDocId})`;
+        } else {
+          console.error('Error fetching child details:', data.error || response.statusText);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    function openAddChildForm() {
+      document.getElementById('addChildModal').style.display = 'block';
+    }
+
+    document.querySelector('.close').onclick = function() {
+      document.getElementById('addChildModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+      if (event.target == document.getElementById('addChildModal')) {
+        document.getElementById('addChildModal').style.display = 'none';
+      }
+    }
+
+    document.getElementById('addChildForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const childData = {
+        birthCertificateID: document.getElementById('birthCertificateID').value,
+        childName: document.getElementById('childName').value,
+        dateOfBirth: document.getElementById('dateOfBirth').value,
+        gender: document.getElementById('gender').value,
+        parentName: document.getElementById('parentName').textContent,
+        parentNationalID: parentNationalID,
+        emailaddress: document.getElementById('parentEmailAddress').textContent
+      };
+      try {
+        const response = await fetch('http://127.0.0.1:5000/addChild', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(childData)
+        });
+        const data = await response.json();
+        if (response.ok) {
+          alert('Child added successfully!');
+          document.getElementById('addChildModal').style.display = 'none';
+          await getChildren(parentNationalID);
+        } else {
+          alert('Error adding child: ' + (data.error || 'Unknown error'));
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error adding child');
+      }
     });
 
+    document.addEventListener('DOMContentLoaded', () => {
+      ParentDetails();
+    });
   </script>
-
-
 </body>
 </html>
-
-
-  
