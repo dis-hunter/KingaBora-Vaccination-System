@@ -82,7 +82,7 @@
 </head>
 <body>
   <div id="header">
-    <img id="logo" src="../Header-Footer\images\KingaBoraLogo.jpg">
+    <img id="logo" src="../Header-Footer/images/KingaBoraLogo.jpg">
     <h1>KingaBora Vaccination System</h1>
   </div>
   <div class="container">
@@ -92,7 +92,8 @@
       <input class="form-control me-2" type="search" id="searchQuery" placeholder="Enter Parent Name" aria-label="Search">
       <button class="btn btn-outline-success" type="submit">Search</button>
     </form>
-    <a id="childname" href="#">Child Name (Document ID)</a>
+    <!-- Container for child links -->
+    <div id="childLinksContainer"></div>
   </div>
 
   <script>
@@ -107,13 +108,22 @@
         if (response.ok) {
           console.log('Children found:', data);
 
-          const child = data.childNames[0]; 
-          const childName = child.ChildName;
-          const childDocId = child.id; 
+          const childLinksContainer = document.getElementById("childLinksContainer");
+          childLinksContainer.innerHTML = ''; // Clear previous links
 
-          const childProfileLink = document.getElementById("childname");
-          childProfileLink.href = `vaccinationpage.html?localId=${childDocId}`;
-          childProfileLink.textContent = `${childName} (${childDocId})`;
+          data.childNames.forEach(child => {
+            const childName = child.ChildName;
+            const childDocId = child.id;
+
+            // Create a link element for each child
+            const childLink = document.createElement('a');
+            childLink.href = `vaccinationpage.html?localId=${childDocId}`;
+            childLink.textContent = `${childName} (${childDocId})`;
+            childLink.className = 'child-link';
+
+            // Append the link to the container
+            childLinksContainer.appendChild(childLink);
+          });
         } else {
           console.error('Error fetching child details:', data.error || response.statusText);
         }

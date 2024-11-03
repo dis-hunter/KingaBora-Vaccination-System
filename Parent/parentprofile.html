@@ -313,7 +313,7 @@
       try {
         const url = `http://127.0.0.1:5000/childDetails?ParentNationalID=${encodeURIComponent(parentNationalID)}`;
         const response = await fetch(url, { method: 'GET' });
-        const data = await response.json();
+        const data = await response.json();               //parentdetails received
         if (response.ok) {
           console.log('Children found:', data);
           const child = data.childNames[0];
