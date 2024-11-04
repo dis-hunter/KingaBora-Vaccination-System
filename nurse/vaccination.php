@@ -21,17 +21,11 @@ body {
 }
 #logo{
     float: left;
-    margin: 5px;
-    width: 130px;
-    height: 105px;
-    border-radius: 4px;
-    
+    margin-left: 5px;
 }
 .topnav {
-  overflow: auto;
+  overflow: hidden;
   background-color: #008080;
-  border-radius: 4px;
-
 }
 h1, h2 {
   font-family: 'Playpen Sans', sans-serif;
@@ -41,7 +35,6 @@ h1, h2 {
 .dosage{
   background-color: #87CEEB;
   width: 60%;
-  border-radius: 6px;
 }
 .tbody{
   text-align: centre;
@@ -104,10 +97,12 @@ table{
 <body>
   <div class="topnav">
     <div>
-    <img src="../Header-Footer\images\KingaBoraLogo.jpg" id="logo" alt="Software Engineering Logo" width="170" height="120">
+    <img src="../img/logo.png" id="logo" alt="Software Engineering Logo" width="170" height="120">
     </div>
     <h2>Child Vaccination Profile</h2>
     <form class="d-flex" role="search" onsubmit="searchBar(); return false;">
+      <input class="form-control me-2" type="search" id="searchQuery" placeholder="Enter Parent Name" aria-label="Search">
+      <button class="btn btn-outline-success" type="submit">Search</button>
   </form>
   <label>Child's Name: </label>
     <input type="text" name="child_name" placeholder="Child's Name">

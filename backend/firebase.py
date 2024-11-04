@@ -504,6 +504,38 @@ def ViewActivities():
         logging.error(f"Error fetching child details: {str(e)}")
         return jsonify({"errors": str(e)}), 500
 
+
+#child data
+@app.route('/addChild', methods=['POST'])
+def addChild():
+    try:
+        data = request.get_json()
+        
+        # Create child data document
+        child_data = {
+            'BirthCertificateID': data.get('birthCertificateID'),
+            'ChildName': data.get('childName'),
+            'DateOfBirth': data.get('dateOfBirth'),
+            'Gender': data.get('gender'),
+            'ParentName': data.get('parentName'),
+            'ParentNationalID': data.get('parentNationalID'),
+            'emailaddress': data.get('emailaddress'),
+            'Weight': data.get('weight'),
+            'Height': data.get('height')
+        }
+
+        # Add document to 'childData' collection
+        doc_ref = db.collection('childData').add(child_data)
+        
+        return jsonify({
+            "message": "Child added successfully",
+            "childId": doc_ref[1].id
+        }), 201
+
+    except Exception as e:
+        logging.error(f"Error adding child: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
 # Run the Flask application
 if __name__ == '__main__':
     app.run(debug=True, port=5000)  # Running on localhost:5000
