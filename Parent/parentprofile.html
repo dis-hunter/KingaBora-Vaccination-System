@@ -174,7 +174,6 @@
     }
   }
 </style>
-  </style>
 </head>
 <body>
     <special-header></special-header>
@@ -191,10 +190,6 @@
         <button>Settings</button>
       </div>
     </div>
-    <form class="d-flex" role="search" onsubmit="getChildren(); return false;">
-      <input class="form-control me-2" type="search" id="searchQuery" placeholder="Enter Parent Name" aria-label="Search">
-      <button class="btn btn-outline-success" type="submit">Search</button>
-    </form>
   
     <section class="children">
       <h1>Children</h1>
@@ -434,17 +429,6 @@ async function getChildren(parentNationalID) {
     }
 });
 document.addEventListener('DOMContentLoaded', () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const localId = urlParams.get('localId');
-    
-    if (!localId) {
-        // Redirect to login page if no localId is present
-        window.location.href = '/login.html';
-        return;
-    }
-    
-    ParentDetails();
-});
     // Get the localId from URL parameters
 const urlParams = new URLSearchParams(window.location.search);
 const localId = urlParams.get('localId');
@@ -456,6 +440,7 @@ if (localId) {
 } else {
     console.error("No localId found in URL");
 }
+});
   </script>
 </body>
 </html>
