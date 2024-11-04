@@ -539,3 +539,65 @@ def addChild():
 # Run the Flask application
 if __name__ == '__main__':
     app.run(debug=True, port=5000)  # Running on localhost:5000
+
+# from today (kangskii)
+
+from datetime import datetime
+
+@app.route('/ChildVaccinationProgress', methods=['GET'])
+def ChildVaccinationProgress():
+    try:
+        docs = db.collection('VaccinationHistory').stream()
+        child_data = {}
+
+        for doc in docs:
+            data = doc.to_dict()
+            child_name = data.get("childName")
+            vaccination_date = data.get("DateofVaccination")
+            weight = data.get("weight")
+            height = data.get("height")
+
+            # Ensure we have necessary data
+            if child_name and vaccination_date and weight is not None and height is not None:
+                # Parse the date
+                try:
+                    date_parsed = datetime.strptime(vaccination_date.rsplit(" GMT", 1)[0], "%B %d, %Y at %I:%M:%S %p")
+                except ValueError as e:
+                    logging.error(f"Date parsing error for {vaccination_date}: {e}")
+                    continue  # Skip if date is not in expected format
+
+                # Initialize child entry if it doesn't exist
+                if child_name not in child_data:
+                    child_data[child_name] = []
+
+                # Append the entry with parsed date
+                child_data[child_name].append({
+                    "date": date_parsed,
+                    "weight": weight,
+                    "height": height
+                })
+
+        # Sort each child's records by date
+        for child_name in child_data:
+            child_data[child_name].sort(key=lambda x: x["date"])
+
+        # Convert dates back to strings for JSON response
+        formatted_data = {}
+        for child_name, records in child_data.items():
+            formatted_data[child_name] = {
+                "dates": [record["date"].strftime("%B %d, %Y at %I:%M:%S %p") for record in records],
+                "weights": [record["weight"] for record in records],
+                "heights": [record["height"] for record in records]
+            }
+
+        # Log the sorted data to verify structure
+        logging.info("Child vaccination progression data prepared: %s", formatted_data)
+
+        return jsonify({
+            "message": "Child vaccination progression data fetched",
+            "data": formatted_data
+        }), 200
+
+    except Exception as e:
+        logging.error(f"Error fetching child vaccination progression data: {str(e)}")
+        return jsonify({"error": str(e)}), 500
