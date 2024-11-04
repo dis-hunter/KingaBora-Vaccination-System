@@ -5,15 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Parent Registration Form</title>
     <link rel="stylesheet" href="header-footer.css">
+    <link rel="stylesheet" href="../Header-Footer/Stylesheets/style.css">
 </head>
+<style>
+  body {
+  font-family: sans-serif; 
+  margin: 20px;
+}
+#registration-form {
+  background-color: #f4f4f4; 
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+}
+h2 {
+  color: teal; /* Teal heading */
+  text-align: center;
+}
+
+/* Labels */
+.label {
+  display: block;
+  margin-bottom: 5px;
+  color: #333; /* Darker label color */
+}
+
+/* Input Fields */
+.input-field {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box; /* Include padding in width calculation */
+}
+
+/* Input Fields - Focus State */
+.input-field:focus {
+  border-color: teal; /* Teal border on focus */
+  outline: none; /* Remove default outline */
+  box-shadow: 0 0 5px rgba(0, 128, 128, 0.3); /* Subtle teal shadow on focus */
+}
+
+/* Radio Buttons */
+.radio-group {
+  margin-bottom: 15px;
+}
+
+.radio-group label {
+  display: inline-block;
+  margin-right: 15px;
+  color: #333;
+}
+
+/* Submit Button */
+button[type="submit"] {
+  background-color: teal;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition:   
+ background-color 0.3s ease; /* Smooth transition for hover effect   
+ */
+}
+
+/* Submit Button - Hover State */
+button[type="submit"]:hover {
+  background-color: #008080; /* Darker teal on hover */
+}
+
+
+</style>
 <body>
-    <header>
-        <img src="project\logo.jpg" alt="Logo">
-        <div class="account-info">
-            <p>Account Name</p>
-            <img src="profile-picture.png" alt="Profile Picture" class="profile-picture">
-        </div>
-    </header>
+    
     
     <form id="registration-form">
         <h2>PARENT REGISTRATION</h2>
