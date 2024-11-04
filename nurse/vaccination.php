@@ -238,7 +238,7 @@ svg.append("g")
   .call(d3.axisLeft(y));   
 
 
-</script>
+</script> 
 
     </div>
     <div id="measurementsDiv">
