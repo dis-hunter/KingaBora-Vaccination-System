@@ -185,7 +185,6 @@
         <p id="parentEmailAddress"></p>
         <p id="parentPhoneNumber">Parent</p>
         <p id="parentNationalID">Parent</p>
-        <p>South B, Nairobi</p>
       </div>
       <div class="profile-actions">
         <button>Edit Profile</button>
@@ -283,65 +282,50 @@
       getChildren();
     });
 
+   
+
     async function ParentDetails() {
-      parent_localId = await getParentDetails()
-      try {
-        const url = `http://127.0.0.1:5000/parentDetails?ParentlocalID=${encodeURIComponent(parent_localId)}`;
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        });
-        const data = await response.json();
-        if (response.ok) {
-          console.log('Children found:', data);
-          await ParentDomPopulation(data);
-        } else {
-          console.error('Error fetching child details:', data.error || response.statusText);
-        }
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    }
-
-    async function ParentDetails(parent_localId) {
     try {
-        console.log("Fetching parent details for ID:", parent_localId);
-        const url = `http://127.0.0.1:5000/parentDetails?ParentlocalID=${encodeURIComponent(parent_localId)}`;
-        console.log("Requesting URL:", url);
+        const urlParams = new URLSearchParams(window.location.search);
+        const localId = urlParams.get('localId');
         
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
-        
-        console.log("Response status:", response.status);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        if (!localId) {
+            console.error("No localId found in URL");
+            return;
         }
-        
-        const data = await response.json();
-        console.log("Received data:", data);
 
-        if (data.parentDetails) {
-            document.getElementById("parentName").textContent = data.parentDetails.ParentName || "N/A";
-            document.getElementById("parentNationalID").textContent = data.parentDetails.ParentNationalID || "N/A";
-            document.getElementById("parentEmailAddress").textContent = data.parentDetails.emailaddress || "N/A";
+        console.log("Fetching details for localId:", localId); // Debug log
+
+        const url = `http://127.0.0.1:5000/parentDetails?ParentlocalID=${encodeURIComponent(localId)}`;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        console.log("Received data:", data); // Debug log
+
+        if (response.ok && data.parentDetails) {
+            // Update the DOM with parent details - matching exact field names from Firebase
+            document.getElementById("parentName").textContent = data.parentDetails.parentName;
+            document.getElementById("parentEmailAddress").textContent = data.parentDetails.parentEmailAddress;
+            document.getElementById("parentPhoneNumber").textContent = data.parentDetails.parentPhoneNumber;
+            document.getElementById("parentNationalID").textContent = data.parentDetails.parentNationalID;
 
             // Update hidden fields
-            document.getElementById("parentNameHidden").value = data.parentDetails.ParentName || "";
-            document.getElementById("parentNationalIDHidden").value = data.parentDetails.ParentNationalID || "";
-            document.getElementById("parentEmailHidden").value = data.parentDetails.emailaddress || "";
+            document.getElementById("parentNameHidden").value = data.parentDetails.parentName;
+            document.getElementById("parentNationalIDHidden").value = data.parentDetails.parentNationalID;
+            document.getElementById("parentEmailHidden").value = data.parentDetails.parentEmailAddress;
 
-            // Now fetch child details using the parent's national ID
-            await getChildren(data.parentDetails.ParentNationalID);
+            // Store parentNationalID for later use
+            parentNationalID = data.parentDetails.parentNationalID;
+
+            // Fetch children for this parent
+            if (data.parentDetails.parentNationalID) {
+                await getChildren(data.parentDetails.parentNationalID);
+            }
+        } else {
+            console.error('Error fetching parent details:', data.error);
         }
     } catch (error) {
-        console.error("Error in ParentDetails:", error);
+        console.error('Error:', error);
     }
 }
 
@@ -449,9 +433,18 @@ async function getChildren(parentNationalID) {
         alert('Error adding child');
     }
 });
-    document.addEventListener('DOMContentLoaded', () => {
-      ParentDetails();
-    });
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const localId = urlParams.get('localId');
+    
+    if (!localId) {
+        // Redirect to login page if no localId is present
+        window.location.href = '/login.html';
+        return;
+    }
+    
+    ParentDetails();
+});
     // Get the localId from URL parameters
 const urlParams = new URLSearchParams(window.location.search);
 const localId = urlParams.get('localId');

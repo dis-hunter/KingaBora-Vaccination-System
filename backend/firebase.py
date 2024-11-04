@@ -109,53 +109,36 @@ def email_authenticate():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-@app.route('/childDetails', methods=['GET'])
-def ChildDetails():
-    try:
-        # Get the correct query parameter
-        parentNationalID = request.args.get("ParentNationalID")
-        
-        # Query Firestore correctly
-        doc_ref = db.collection('childData')   #this is the collection of the children (table in sql)
-        query = doc_ref.where("ParentNationalID", "==", parentNationalID)  # Correct usage without FieldFilter , this filters
-        docs = query.stream()
-        
-        document_list = [
-         {"id": doc.id, **doc.to_dict()} for doc in docs
-        ]  # Unpack document data and add ID
-
-        if document_list:
-          logging.info(f"Children found: {document_list}")
-          return jsonify({"message": "Children found", "childNames": document_list}), 200
-        else:
-          logging.info("No children found.")
-          return jsonify({"error": "No children found for the given ParentNationalID"}), 404
-
-    except Exception as e:
-       logging.error(f"Error fetching child details: {str(e)}")
-       return jsonify({"errors": str(e)}), 500
-
-
 
 @app.route('/parentDetails', methods=['GET'])
 def parentDetails():
     try:
-        parentlocalId = request.args.get("ParentlocalID")  # Get the localId from the query parameters
+        parentlocalId = request.args.get("ParentlocalID")
+        if not parentlocalId:
+            return jsonify({"error": "No ParentlocalID provided"}), 400
+
         doc_ref = db.collection('parentData').document(parentlocalId)
         doc = doc_ref.get()
 
-        data = doc.to_dict()
-       
-        if data:
-            logging.info(f"Parent found: {data}")
-            return jsonify({"message": "Parent found", "parentDetails": data}), 200  # Ensure the key matches what the frontend expects
+        if doc.exists:
+            data = doc.to_dict()
+            # Exact field names from your Firebase
+            return jsonify({
+                "message": "Parent found", 
+                "parentDetails": {
+                    "parentName": data.get('parentName'),
+                    "parentEmailAddress": data.get('parentEmailAddress'),
+                    "parentPhoneNumber": data.get('parentPhoneNumber'),
+                    "parentNationalID": data.get('parentNationalID')
+                }
+            }), 200
         else:
-            logging.info("No Parent found.")
-            return jsonify({"error": "No parent found for the given Parent ID"}), 404
+            return jsonify({"error": "No parent found for the given ID"}), 404
 
     except Exception as e:
-        logging.error(f"Error fetching child details: {str(e)}")
-        return jsonify({"errors": str(e)}), 500
+        logging.error(f"Error fetching parent details: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+    
     
 def parse_date(date_string):
     """Try multiple date formats"""
@@ -506,34 +489,26 @@ def ViewActivities():
 
 
 #child data
-@app.route('/addChild', methods=['POST'])
-def addChild():
+@app.route('/childDetails', methods=['GET'])
+def ChildDetails():
     try:
-        data = request.get_json()
-        
-        # Create child data document
-        child_data = {
-            'BirthCertificateID': data.get('birthCertificateID'),
-            'ChildName': data.get('childName'),
-            'DateOfBirth': data.get('dateOfBirth'),
-            'Gender': data.get('gender'),
-            'ParentName': data.get('parentName'),
-            'ParentNationalID': data.get('parentNationalID', 'Not provided'),
-            'emailaddress': data.get('emailaddress', 'Not provided'),
-            'Weight': data.get('weight'),
-            'Height': data.get('height')
-        }
+        parentNationalID = request.args.get("ParentNationalID")
+        if not parentNationalID:
+            return jsonify({"error": "No ParentNationalID provided"}), 400
 
-        # Add document to 'childData' collection
-        doc_ref = db.collection('childData').add(child_data)
+        doc_ref = db.collection('childData')
+        query = doc_ref.where("ParentNationalID", "==", parentNationalID)
+        docs = query.stream()
         
-        return jsonify({
-            "message": "Child added successfully",
-            "childId": doc_ref[1].id
-        }), 201
+        document_list = [{"id": doc.id, **doc.to_dict()} for doc in docs]
+
+        if document_list:
+            return jsonify({"message": "Children found", "childNames": document_list}), 200
+        else:
+            return jsonify({"error": "No children found for this parent"}), 404
 
     except Exception as e:
-        logging.error(f"Error adding child: {str(e)}")
+        logging.error(f"Error fetching child details: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 
