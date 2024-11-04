@@ -28,7 +28,7 @@ db = firestore.client()
 # Initialize the Flask application
 app = Flask(__name__)
 cors = CORS(app)
-CORS(app, resources={r"/*": {"origins": "http://localhost:8080"}})
+CORS(app, resources={r"/*": {"origins": ["http://127.0.0.1:3307", "http://127.0.0.1:5000"]}})
 
 # Set a secret key if using sessions or forms
 app.secret_key = 'your_secret_key'
@@ -72,7 +72,7 @@ def register():
             return jsonify({"error": "Error adding data to Firestore"}), 500
 
         # Redirect URL after successful registration
-        redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/Parent/PARENTPROFILE.html?localId={local_id}"
+        redirect_url = f"http://127.0.0.1:3307/KingaBora-Vaccination-System/Parent/PARENTPROFILE.html?localId={local_id}"
 
         return jsonify({"message": "Successfully created the user", "localId": local_id, "redirectUrl": redirect_url}), 201
 
@@ -102,9 +102,9 @@ def email_authenticate():
         # session['username'] = username
 
         # Return JSON response with redirect URL
-        # redirect_url = "http://localhost:8080/KingaBora-Vaccination-System/landingpage/altIndex.html"
+        # redirect_url = "http://127.0.0.1:3307/KingaBora-Vaccination-System/landingpage/altIndex.html"
         # return jsonify({"message": "Successfully logged in", "localId": local_id, "redirectUrl": redirect_url}), 201
-        redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/Parent/PARENTPROFILE.html?localId={local_id}"
+        redirect_url = f"http://127.0.0.1:3307/KingaBora-Vaccination-System/Parent/PARENTPROFILE.html?localId={local_id}"
         return jsonify({"message": "Successfully created the user", "localId": local_id, "redirectUrl": redirect_url}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 400
@@ -309,7 +309,7 @@ def storevaccinereceipt():
         doc_id = doc_ref.id  # Get the generated document ID
 
         # Redirect URL after successful registration
-        redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/Parent/PARENTPROFILE.html?localId={doc_id}"
+        redirect_url = f"http://127.0.0.1:3307/KingaBora-Vaccination-System/Parent/PARENTPROFILE.html?localId={doc_id}"
 
         return jsonify({"message": "Successfully created the user", "localId": doc_id, "redirectUrl": redirect_url}), 201
 
@@ -367,7 +367,7 @@ def registerNurse():
             return jsonify({"error": "Error adding data to Firestore"}), 500
 
         # Redirect URL after successful registration
-        redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/JoyAdmin/Admin/manage_profile.html?localId={local_id}"
+        redirect_url = f"http://127.0.0.1:3307/KingaBora-Vaccination-System/JoyAdmin/Admin/manage_profile.html?localId={local_id}"
 
         return jsonify({"message": "Successfully created the user", "localId": local_id, "redirectUrl": redirect_url}), 201
 
@@ -503,6 +503,38 @@ def ViewActivities():
     except Exception as e:
         logging.error(f"Error fetching child details: {str(e)}")
         return jsonify({"errors": str(e)}), 500
+
+
+#child data
+@app.route('/addChild', methods=['POST'])
+def addChild():
+    try:
+        data = request.get_json()
+        
+        # Create child data document
+        child_data = {
+            'BirthCertificateID': data.get('birthCertificateID'),
+            'ChildName': data.get('childName'),
+            'DateOfBirth': data.get('dateOfBirth'),
+            'Gender': data.get('gender'),
+            'ParentName': data.get('parentName'),
+            'ParentNationalID': data.get('parentNationalID'),
+            'emailaddress': data.get('emailaddress'),
+            'Weight': data.get('weight'),
+            'Height': data.get('height')
+        }
+
+        # Add document to 'childData' collection
+        doc_ref = db.collection('childData').add(child_data)
+        
+        return jsonify({
+            "message": "Child added successfully",
+            "childId": doc_ref[1].id
+        }), 201
+
+    except Exception as e:
+        logging.error(f"Error adding child: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 # Run the Flask application
 if __name__ == '__main__':
