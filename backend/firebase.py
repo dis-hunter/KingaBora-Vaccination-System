@@ -536,9 +536,7 @@ def addChild():
         logging.error(f"Error adding child: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
-# Run the Flask application
-if __name__ == '__main__':
-    app.run(debug=True, port=5000)  # Running on localhost:5000
+
 
 # from today (kangskii)
 
@@ -601,3 +599,7 @@ def ChildVaccinationProgress():
     except Exception as e:
         logging.error(f"Error fetching child vaccination progression data: {str(e)}")
         return jsonify({"error": str(e)}), 500
+    
+    # Run the Flask application
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)  # Running on localhost:5000

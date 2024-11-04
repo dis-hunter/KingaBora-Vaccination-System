@@ -378,15 +378,21 @@ async function getChildren(parentNationalID) {
         console.log("Received children data:", data);
 
         if (data.childNames && data.childNames.length > 0) {
-            const childNameElement = document.getElementById("childname");
-            // Update this part according to your HTML structure
-            childNameElement.textContent = data.childNames.map(child => child.ChildName).join(", ");
+            const childrenList = document.querySelector('.children ul');
+            childrenList.innerHTML = ''; // Clear existing list
+            data.childNames.forEach(child => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = `child.html?childId=${encodeURIComponent(child.BirthCertificateID)}`;
+                a.textContent = `${child.ChildName} (${child.BirthCertificateID})`;
+                li.appendChild(a);
+                childrenList.appendChild(li);
+            });
         }
     } catch (error) {
         console.error("Error fetching children:", error);
     }
 }
-
 
     function openAddChildForm() {
     // Ensure parent information is populated in hidden fields
