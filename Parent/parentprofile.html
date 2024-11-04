@@ -328,13 +328,17 @@
         console.log("Received data:", data);
 
         if (data.parentDetails) {
-            document.getElementById("parentName").textContent = data.parentDetails.parentName || "N/A";
-            document.getElementById("parentNationalID").textContent = data.parentDetails.parentNationalID || "N/A";
-            document.getElementById("phoneNumber").textContent = data.parentDetails.parentPhoneNumber || "N/A";
-            document.getElementById("email").textContent = data.parentDetails.parentEmailAddress || "N/A";
+            document.getElementById("parentName").textContent = data.parentDetails.ParentName || "N/A";
+            document.getElementById("parentNationalID").textContent = data.parentDetails.ParentNationalID || "N/A";
+            document.getElementById("parentEmailAddress").textContent = data.parentDetails.emailaddress || "N/A";
+
+            // Update hidden fields
+            document.getElementById("parentNameHidden").value = data.parentDetails.ParentName || "";
+            document.getElementById("parentNationalIDHidden").value = data.parentDetails.ParentNationalID || "";
+            document.getElementById("parentEmailHidden").value = data.parentDetails.emailaddress || "";
 
             // Now fetch child details using the parent's national ID
-            await getChildren(data.parentDetails.parentNationalID);
+            await getChildren(data.parentDetails.ParentNationalID);
         }
     } catch (error) {
         console.error("Error in ParentDetails:", error);
@@ -392,7 +396,6 @@ async function getChildren(parentNationalID) {
 }
 
     function openAddChildForm() {
-    // Ensure parent information is populated in hidden fields
     document.getElementById("parentNameHidden").value = document.getElementById("parentName").textContent;
     document.getElementById("parentNationalIDHidden").value = parentNationalID;
     document.getElementById("parentEmailHidden").value = document.getElementById("parentEmailAddress").textContent;
@@ -419,8 +422,8 @@ async function getChildren(parentNationalID) {
         weight: document.getElementById('weight').value,
         height: document.getElementById('height').value,
         parentName: document.getElementById('parentNameHidden').value,
-        parentNationalID: document.getElementById('parentNationalIDHidden').value,
-        emailaddress: document.getElementById('parentEmailHidden').value
+        parentNationalID: document.getElementById('parentNationalIDHidden').value || "Not provided",
+        emailaddress: document.getElementById('parentEmailHidden').value || "Not provided"
     };
 
     try {
@@ -436,11 +439,8 @@ async function getChildren(parentNationalID) {
             alert('Child added successfully!');
             document.getElementById('addChildModal').style.display = 'none';
             document.getElementById('addChildForm').reset();
-            // Restore the hidden field values after form reset
-            document.getElementById("parentNameHidden").value = document.getElementById("parentName").textContent;
-            document.getElementById("parentNationalIDHidden").value = parentNationalID;
-            document.getElementById("parentEmailHidden").value = document.getElementById("parentEmailAddress").textContent;
-            await getChildren(parentNationalID); // Refresh the children list
+            // Refresh the children list
+            await getChildren(childData.parentNationalID);
         } else {
             alert('Error adding child: ' + (data.error || 'Unknown error'));
         }

@@ -518,8 +518,8 @@ def addChild():
             'DateOfBirth': data.get('dateOfBirth'),
             'Gender': data.get('gender'),
             'ParentName': data.get('parentName'),
-            'ParentNationalID': data.get('parentNationalID'),
-            'emailaddress': data.get('emailaddress'),
+            'ParentNationalID': data.get('parentNationalID', 'Not provided'),
+            'emailaddress': data.get('emailaddress', 'Not provided'),
             'Weight': data.get('weight'),
             'Height': data.get('height')
         }
