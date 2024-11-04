@@ -139,7 +139,7 @@ def parentDetails():
         logging.error(f"Error fetching parent details: {str(e)}")
         return jsonify({"error": str(e)}), 500
     
-    
+
 def parse_date(date_string):
     """Try multiple date formats"""
     formats = [
@@ -509,6 +509,42 @@ def ChildDetails():
 
     except Exception as e:
         logging.error(f"Error fetching child details: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+@app.route('/addChild', methods=['POST'])
+def addChild():
+    try:
+        data = request.get_json()
+        
+        # Create child document data
+        child_data = {
+            'BirthCertificateID': data.get('birthCertificateID'),
+            'ChildName': data.get('childName'),
+            'DateOfBirth': data.get('dateOfBirth'),
+            'Gender': data.get('gender'),
+            'Weight': float(data.get('weight')),
+            'Height': float(data.get('height')),
+            'ParentName': data.get('parentName'),
+            'ParentNationalID': data.get('parentNationalID'),
+            'emailaddress': data.get('emailaddress')
+        }
+
+        # Validate required fields
+        required_fields = ['BirthCertificateID', 'ChildName', 'ParentNationalID']
+        for field in required_fields:
+            if not child_data.get(field):
+                return jsonify({"error": f"Missing required field: {field}"}), 400
+
+        # Add to Firestore
+        doc_ref = db.collection('childData').document(child_data['BirthCertificateID'])
+        doc_ref.set(child_data)
+
+        return jsonify({
+            "message": "Child added successfully",
+            "childId": child_data['BirthCertificateID']
+        }), 201
+
+    except Exception as e:
+        logging.error(f"Error adding child: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 
