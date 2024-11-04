@@ -331,8 +331,8 @@
         console.log("Received data:", data);
 
         if (data.parentDetails) {
-            document.getElementById("fullName").textContent = data.parentDetails.parentName || "N/A";
-            document.getElementById("nationalID").textContent = data.parentDetails.parentNationalID || "N/A";
+            document.getElementById("parentName").textContent = data.parentDetails.parentName || "N/A";
+            document.getElementById("parentNationalID").textContent = data.parentDetails.parentNationalID || "N/A";
             document.getElementById("phoneNumber").textContent = data.parentDetails.parentPhoneNumber || "N/A";
             document.getElementById("email").textContent = data.parentDetails.parentEmailAddress || "N/A";
 
