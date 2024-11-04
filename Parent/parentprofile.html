@@ -217,12 +217,17 @@
   </main>
 
   <!--child form-->
-  <!-- Update the modal form section in your HTML -->
+ <!-- Replace your existing modal form section with this -->
 <div id="addChildModal" class="modal">
   <div class="modal-content">
       <span class="close">&times;</span>
       <h2>Add New Child</h2>
       <form id="addChildForm">
+          <!-- Hidden fields for parent information -->
+          <input type="hidden" id="parentNameHidden">
+          <input type="hidden" id="parentNationalIDHidden">
+          <input type="hidden" id="parentEmailHidden">
+          
           <div class="form-group">
               <label for="birthCertificateID">Birth Certificate ID:</label>
               <input type="text" id="birthCertificateID" required>
@@ -247,7 +252,6 @@
               </select>
           </div>
 
-          <!-- New Weight Field -->
           <div class="form-group">
               <label for="weight">Weight (kg):</label>
               <input type="number" 
@@ -258,7 +262,6 @@
                      placeholder="Enter weight in kilograms">
           </div>
 
-          <!-- New Height Field -->
           <div class="form-group">
               <label for="height">Height (cm):</label>
               <input type="number" 
@@ -305,58 +308,94 @@
       }
     }
 
-    async function getParentDetails() {
-      function getLocalIdFromUrl() {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get('localId');
-      }
-      const localId = getLocalIdFromUrl();
-      if (!localId) {
-        console.error("localId not found in URL");
-        return;
-      }
-      console.log(localId);
-      return localId;
-    }
-
-    async function ParentDomPopulation(data) { const parentjson = data.parentDetails;
-      let parentName = parentjson.parentName;
-      let parentEmailAddress = parentjson.parentEmailAddress;
-      let parentPhoneNumber = parentjson.parentPhoneNumber;
-      parentNationalID = parentjson.parentNationalID;
-      console.log("parentname", parentjson);
-      document.getElementById("parentName").innerHTML = parentName;
-      document.getElementById("parentEmailAddress").innerHTML = parentEmailAddress;
-      document.getElementById("parentPhoneNumber").innerHTML = parentPhoneNumber;
-      document.getElementById("parentNationalID").innerHTML = parentNationalID;
-      await getChildren(parentNationalID);
-    }
-
-    async function getChildren(parentNationalID) {
-      try {
-        const url = `http://127.0.0.1:5000/childDetails?ParentNationalID=${encodeURIComponent(parentNationalID)}`;
-        const response = await fetch(url, { method: 'GET' });
-        const data = await response.json();               //parentdetails received
-        if (response.ok) {
-          console.log('Children found:', data);
-          const child = data.childNames[0];
-          const childName = child.ChildName;
-          const childDocId = child.id;
-          const childProfileLink = document.getElementById("childname");
-          childProfileLink.href = `vaccinationpage.html?localId=${childDocId}`;
-          childProfileLink.textContent = `${childName} (${childDocId})`;
-        } else {
-          console.error('Error fetching child details:', data.error || response.statusText);
+    async function ParentDetails(parent_localId) {
+    try {
+        console.log("Fetching parent details for ID:", parent_localId);
+        const url = `http://127.0.0.1:5000/parentDetails?ParentlocalID=${encodeURIComponent(parent_localId)}`;
+        console.log("Requesting URL:", url);
+        
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        
+        console.log("Response status:", response.status);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-      } catch (error) {
-        console.error('Error:', error);
-      }
+        
+        const data = await response.json();
+        console.log("Received data:", data);
+
+        if (data.parentDetails) {
+            document.getElementById("fullName").textContent = data.parentDetails.parentName || "N/A";
+            document.getElementById("nationalID").textContent = data.parentDetails.parentNationalID || "N/A";
+            document.getElementById("phoneNumber").textContent = data.parentDetails.parentPhoneNumber || "N/A";
+            document.getElementById("email").textContent = data.parentDetails.parentEmailAddress || "N/A";
+
+            // Now fetch child details using the parent's national ID
+            await getChildren(data.parentDetails.parentNationalID);
+        }
+    } catch (error) {
+        console.error("Error in ParentDetails:", error);
     }
+}
+
+    async function ParentDomPopulation(data) {
+    const parentjson = data.parentDetails;
+    let parentName = parentjson.parentName;
+    let parentEmailAddress = parentjson.parentEmailAddress;
+    let parentPhoneNumber = parentjson.parentPhoneNumber;
+    parentNationalID = parentjson.parentNationalID;
+    
+    // Update visible elements
+    document.getElementById("parentName").innerHTML = parentName;
+    document.getElementById("parentEmailAddress").innerHTML = parentEmailAddress;
+    document.getElementById("parentPhoneNumber").innerHTML = parentPhoneNumber;
+    document.getElementById("parentNationalID").innerHTML = parentNationalID;
+    
+    // Update hidden form fields
+    document.getElementById("parentNameHidden").value = parentName;
+    document.getElementById("parentNationalIDHidden").value = parentNationalID;
+    document.getElementById("parentEmailHidden").value = parentEmailAddress;
+    
+    await getChildren(parentNationalID);
+}
+
+async function getChildren(parentNationalID) {
+    try {
+        console.log("Fetching children for parent ID:", parentNationalID);
+        const url = `http://127.0.0.1:5000/childDetails?ParentNationalID=${encodeURIComponent(parentNationalID)}`;
+        console.log("Requesting URL:", url);
+        
+        const response = await fetch(url);
+        console.log("Response status:", response.status);
+        
+        const data = await response.json();
+        console.log("Received children data:", data);
+
+        if (data.childNames && data.childNames.length > 0) {
+            const childNameElement = document.getElementById("childname");
+            // Update this part according to your HTML structure
+            childNameElement.textContent = data.childNames.map(child => child.ChildName).join(", ");
+        }
+    } catch (error) {
+        console.error("Error fetching children:", error);
+    }
+}
+
 
     function openAddChildForm() {
-      document.getElementById('addChildModal').style.display = 'block';
+    // Ensure parent information is populated in hidden fields
+    document.getElementById("parentNameHidden").value = document.getElementById("parentName").textContent;
+    document.getElementById("parentNationalIDHidden").value = parentNationalID;
+    document.getElementById("parentEmailHidden").value = document.getElementById("parentEmailAddress").textContent;
+    
+    document.getElementById('addChildModal').style.display = 'block';
     }
-
     document.querySelector('.close').onclick = function() {
       document.getElementById('addChildModal').style.display = 'none';
     }
@@ -368,41 +407,60 @@
     }
 
     document.getElementById('addChildForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      const childData = {
+    e.preventDefault();
+    const childData = {
         birthCertificateID: document.getElementById('birthCertificateID').value,
         childName: document.getElementById('childName').value,
         dateOfBirth: document.getElementById('dateOfBirth').value,
         gender: document.getElementById('gender').value,
-        parentName: document.getElementById('parentName').textContent,
-        parentNationalID: parentNationalID,
-        emailaddress: document.getElementById('parentEmailAddress').textContent
-      };
-      try {
+        weight: document.getElementById('weight').value,
+        height: document.getElementById('height').value,
+        // Get parent info from hidden fields
+        parentName: document.getElementById('parentNameHidden').value,
+        parentNationalID: document.getElementById('parentNationalIDHidden').value,
+        emailaddress: document.getElementById('parentEmailHidden').value
+    };
+
+    try {
         const response = await fetch('http://127.0.0.1:5000/addChild', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(childData)
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(childData)
         });
         const data = await response.json();
         if (response.ok) {
-          alert('Child added successfully!');
-          document.getElementById('addChildModal').style.display = 'none';
-          await getChildren(parentNationalID);
+            alert('Child added successfully!');
+            document.getElementById('addChildModal').style.display = 'none';
+            document.getElementById('addChildForm').reset();
+            // Restore the hidden field values after form reset
+            document.getElementById("parentNameHidden").value = document.getElementById("parentName").textContent;
+            document.getElementById("parentNationalIDHidden").value = parentNationalID;
+            document.getElementById("parentEmailHidden").value = document.getElementById("parentEmailAddress").textContent;
+            await getChildren(parentNationalID);
         } else {
-          alert('Error adding child: ' + (data.error || 'Unknown error'));
+            alert('Error adding child: ' + (data.error || 'Unknown error'));
         }
-      } catch (error) {
+    } catch (error) {
         console.error('Error:', error);
         alert('Error adding child');
-      }
-    });
-
+    }
+});
     document.addEventListener('DOMContentLoaded', () => {
       ParentDetails();
     });
+    // Get the localId from URL parameters
+const urlParams = new URLSearchParams(window.location.search);
+const localId = urlParams.get('localId');
+
+// Call ParentDetails when the page loads
+if (localId) {
+    console.log("Found localId in URL:", localId);
+    ParentDetails(localId);
+} else {
+    console.error("No localId found in URL");
+}
   </script>
 </body>
 </html>
