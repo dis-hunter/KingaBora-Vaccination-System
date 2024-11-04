@@ -4,87 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vaccination Table</title>
+  <link rel="stylesheet" href="header-footer.css">
+    <script defer src="header-footer.js"></script>
+    </head>
   <style>
-    body {
-      font-family: sans-serif;
-      background-color: #e0f2f1; 
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      /* justify-content: center; Remove this to allow the header to go to the top */
-      min-height: 100vh;
-      margin: 0;
+    .container{
+      margin-top: 30px;
+    }
+    main{
+      background: radial-gradient(ellipse, #e0f2f1, teal); /* Teal to light teal gradient */
     }
 
-    .container {
-      background-color: #ffffff;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      text-align: center;
-      margin-top: 20px; /* Add margin between header and container */
-    }
-
-    h2 {
-      color: #008080; 
-      margin-bottom: 20px;
-    }
-
-    label {
-      color: #00897b; 
-      margin-right: 10px;
-    }
-
-    input[type="search"] {
-      border: 1px solid #80cbc4; 
-      padding: 8px;
-      border-radius: 4px;
-      margin-right: 10px;
-    }
-
-    button {
-      background-color: #009688;
-      color: white;
-      border: none;
-      padding: 8px 15px;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    a {
-      color: #004d40;
-      text-decoration: none;
-      margin-top: 20px;
-      display: block;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    #header {
-      background-color: #008080;
-      color: white;
-      text-align: center;
-      width: 100%;
-      display: flex; 
-      align-items: center; 
-      padding: 10px; 
-      justify-content: flex-start; /* Push items to the left */
-    }
-
-    #logo {
-      width: 100px;
-      height: 85px;
-      margin-right: 280px; /* Add some space between the logo and the title */
-    }
+   
   </style>
-</head>
+
 <body>
-  <div id="header">
-    <img id="logo" src="../Header-Footer/images/KingaBoraLogo.jpg">
-    <h1>KingaBora Vaccination System</h1>
-  </div>
+  <special-header></special-header>
+  <main>
   <div class="container">
     <h2>Search for children using parent national ID</h2>
     <form class="d-flex" role="search" onsubmit="searchBar(); return false;">
@@ -95,7 +31,8 @@
     <!-- Container for child links -->
     <div id="childLinksContainer"></div>
   </div>
-
+  </main>
+  <special-footer></special-footer>
   <script>
     async function searchBar() {
       const parentNationalID = document.getElementById('searchQuery').value;

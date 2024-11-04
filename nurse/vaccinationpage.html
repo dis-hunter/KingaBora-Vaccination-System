@@ -1,17 +1,26 @@
+
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parent Registration Form</title>
+    <link rel="stylesheet" href="header-footer.css">
+    <script defer src="header-footer.js"></script>
+</head>
+
 <style>
 body {
   font-family: 'Playpen Sans', sans-serif;
 }
 .dosage {
   padding: 20px;
-  border: 1px solid #ccc;
+  
   text-align: center; 
   margin: 20px auto; /* Center the div */
-  width: 60%; /* Adjust width as needed */
-  background-color: #87CEEB;
+  width: 70%; /* Adjust width as needed */
+  
 }
 .tbody{
   border: 1px solid black;
@@ -25,19 +34,27 @@ body {
 .topnav {
   overflow: hidden;
   background-color: #008080;
+  padding-bottom: 3%;
+}
+.row{
+  display:flex;
+
+}
+.col-md-6 img { 
+  width: 100%;
+  max-width: 300px; 
+  height: 200px;
+  display: block;
+  margin-left: 10%;
+  border-radius: 10px; 
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
 }
 h1, h2 {
   font-family: 'Playpen Sans', sans-serif;
   font-weight: 700; /* Apply the bold weight to headings */
   color: black;
 }
-.dosage{
-  background-color: #87CEEB;
-  width: 60%;
-}
-.tbody{
-  text-align: centre;
-}
+
 tr, tbody, td, th{
     text-align: center;
     border: 2px solid black;
@@ -81,6 +98,9 @@ th:nth-child(1), td:nth-child(1) {
 label, input{
   font-size: 12pt;
 }
+input[type="text"]{
+  width: 50%;
+}
 .date{
   border-radius:2px;
   text-align: centre;
@@ -103,19 +123,30 @@ table{
   width: 80%; /* Set width to 80% of the parent container */
   margin: 20px auto; /* Center the chart container */
 }
+#measurementsDiv{
+  margin: 20px auto;
+  width: 60%;
+}
+.main{
+  background-image: url("images/syringe.jpeg");
+  
+}
 
 canvas {
   max-height: 400px; /* Set maximum height for the canvas */
   height: 400px; /* Set fixed height */
 }
-
+#pay{
+  color: white;
+  text-decoration: none;
+}
 </style>
-</head>
+
 <body>
+
+  <special-header></special-header>
   <div class="topnav">
-    <div>
-    <img src="..\Header-Footer\images\KingaBoraLogo.jpg" id="logo" alt="Software Engineering Logo" width="170" height="120">
-    </div>
+    
     <h2>Child Vaccination Profile</h2>
   <label>Child's Name: </label>
     <input type="text" name="child_name" placeholder="Child's Name">
@@ -129,10 +160,10 @@ canvas {
           <?php echo "Date: " . date("d-m-Y"); ?>
         </div>
         <div class="dosage">
-        <h2>child Details</h2>
+        <h2>Child Details</h2>
         <div id="childprofile"></div>
         <div id = "parentEmail"></div>
-        <h2>Todays vaccines</h2>
+        <h2>Today's Vaccines</h2>
         <div id="drugs"></div>
         <div id="TodaysVaccine"></div>
 
@@ -282,8 +313,10 @@ canvas {
       
     </div>
     <div id="measurementsDiv">
+      <div class="row">
+        <div class="col-md-6">
       <div id="DrugAdministered"></div>
-    <h2>Measurements</h2>
+    <h3>Measurements</h3>
     <label for="weight">Weight (kg):</label>
     <input type="number" id="weight" name="weight"><br><br>
     <label for="height">Height (cm):</label>
@@ -291,9 +324,13 @@ canvas {
     <br><br>
     <button type="button" id="update" onclick="saveVaccine()">UPDATE</button>
   </div>
+  <div class="col-md-6"></div>
 </div>
 </div>
-<button type="button" id="paymentBtn">PAYMENT</button>
+</div>
+
+<button type="button" id="paymentBtn"><a href="../Payments/payments.html" id="pay">PAYMENT</a></button>
+<special-footer></special-footer>
   
 </body>
 </html>
