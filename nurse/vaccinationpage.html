@@ -98,6 +98,16 @@ table{
 .vaccine-checkbox {
   margin-right: 7px; /* Add spacing between checkboxes and text */
 }
+/* Styles for the chart containers */
+.chart-container {
+  width: 80%; /* Set width to 80% of the parent container */
+  margin: 20px auto; /* Center the chart container */
+}
+
+canvas {
+  max-height: 400px; /* Set maximum height for the canvas */
+  height: 400px; /* Set fixed height */
+}
 
 </style>
 </head>
@@ -140,6 +150,102 @@ table{
         </div>
        
         </div>
+        <!-- <div id="graph">
+        /* Styles for the chart containers */
+        .chart-container {
+            width: 80%; /* Set width to 80% of the parent container */
+            margin: 20px auto; /* Center the chart container */
+        }
+
+        canvas {
+            max-height: 400px; /* Set maximum height for the canvas */
+            height: 400px; /* Set fixed height */
+        }
+
+<body>
+    <div class="chart-container">
+        <canvas id="weightChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="heightChart"></canvas>
+    </div>
+
+    <script>
+    async function fetchChildVaccinationProgress() {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/ChildVaccinationProgress');
+            if (!response.ok) throw new Error(HTTP error! Status: ${response.status});
+            const data = await response.json();
+
+            // Prepare datasets for each chart
+            const weightDatasets = [];
+            const heightDatasets = [];
+
+            Object.keys(data.data).forEach((childName, index) => {
+                const childData = data.data[childName];
+                
+                // Add datasets for weight and height charts
+                weightDatasets.push({
+                    label: ${childName}'s Weight progress,
+                    data: childData.weights,
+                    borderColor: hsl(${index * 50}, 70%, 50%),
+                    fill: false,
+                    tension: 0.4
+                });
+
+                heightDatasets.push({
+                    label: ${childName}'s Height progress,
+                    data: childData.heights,
+                    borderColor: hsl(${index * 50 + 25}, 70%, 50%),
+                    fill: false,
+                    tension: 0.4
+                });
+            });
+
+            // Weight Chart
+            const weightCtx = document.getElementById('weightChart').getContext('2d');
+            new Chart(weightCtx, {
+                type: 'line',
+                data: {
+                    labels: data.data[Object.keys(data.data)[0]].dates,
+                    datasets: weightDatasets
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { title: { display: true, text: 'Vaccination Date' } },
+                        y: { title: { display: true, text: 'Weight (kg)' } }
+                    }
+                }
+            });
+
+            // Height Chart
+            const heightCtx = document.getElementById('heightChart').getContext('2d');
+            new Chart(heightCtx, {
+                type: 'line',
+                data: {
+                    labels: data.data[Object.keys(data.data)[0]].dates,
+                    datasets: heightDatasets
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { title: { display: true, text: 'Vaccination Date' } },
+                        y: { title: { display: true, text: 'Height (cm)' } }
+                    }
+                }
+            });
+
+        } catch (error) {
+            console.error('Error fetching child vaccination progression data:', error);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchChildVaccinationProgress();
+    });
+    </script>
+   </div> -->
 
     <!-- <table>
       <thead>
