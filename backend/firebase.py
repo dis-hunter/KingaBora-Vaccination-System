@@ -410,7 +410,7 @@ def registerNurse():
             return jsonify({"error": "Error adding data to Firestore"}), 500
 
         # Redirect URL after successful registration
-        redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/JoyAdmin/Admin/manage_profile.html?localId={local_id}"
+        redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/Admin/admin_dashboard.html?localId={local_id}"
 
         return jsonify({"message": "Successfully created the user", "localId": local_id, "redirectUrl": redirect_url}), 201
 
