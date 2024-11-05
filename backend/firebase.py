@@ -147,6 +147,7 @@ def parse_date(date_string):
         '%B %d, %Y at %I:%M:%S %p',
         '%B %d, %Y at %I:%M:%S %p GMT',
         '%B %d, %Y',
+        '%Y-%m-%d',
         # Add more formats if needed
     ]
     
@@ -517,11 +518,19 @@ def addChild():
     try:
         data = request.get_json()
         
+        # Parse and format the date
+        original_date = data.get('dateOfBirth')
+        parsed_date = parse_date(original_date)
+        if parsed_date is None:
+            return jsonify({"error": "Invalid date format"}), 400
+        
+        formatted_date = parsed_date.strftime("%B %d, %Y at %I:%M:%S %p GMT+3")
+        
         # Create child document data
         child_data = {
             'BirthCertificateID': data.get('birthCertificateID'),
             'ChildName': data.get('childName'),
-            'DateOfBirth': data.get('dateOfBirth'),
+            'DateOfBirth': formatted_date,  # Use the formatted date
             'Gender': data.get('gender'),
             'Weight': float(data.get('weight')),
             'Height': float(data.get('height')),
@@ -556,7 +565,6 @@ def addChild():
     except Exception as e:
         logging.error(f"Error adding child: {str(e)}")
         return jsonify({"error": str(e)}), 500
-
 
 
 # from today (kangskii)

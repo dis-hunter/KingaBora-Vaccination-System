@@ -233,6 +233,10 @@
               <label for="dateOfBirth">Date of Birth:</label>
               <input type="date" id="dateOfBirth" required>
           </div>
+          <div class="form-group">
+            <label for="formattedDateOfBirth">Formatted Date of Birth:</label>
+            <input type="text" id="formattedDateOfBirth" readonly>
+        </div>
           
           <div class="form-group">
               <label for="gender">Gender:</label>
@@ -455,6 +459,30 @@ if (localId) {
     console.error("No localId found in URL");
 }
 });
+
+document.getElementById('dateOfBirth').addEventListener('change', displayFormattedDate);
+
+function displayFormattedDate() {
+    const dobInput = document.getElementById('dateOfBirth');
+    const formattedDobInput = document.getElementById('formattedDateOfBirth');
+    const dob = new Date(dobInput.value);
+
+    if (!isNaN(dob)) {
+        const options = {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric',
+            hour12: true,
+            timeZoneName: 'short'
+        };
+        formattedDobInput.value = dob.toLocaleString('en-US', options);
+    } else {
+        formattedDobInput.value = ''; // Clear the field if the date is invalid
+    }
+}
   </script>
 </body>
 </html>
