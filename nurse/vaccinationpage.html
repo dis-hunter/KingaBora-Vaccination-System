@@ -21,7 +21,7 @@ body {
 }
 .topnav {
   overflow: hidden;
-  background-color: #008080;
+  /* background-color: #008080; */
 }
 h1, h2 {
   font-family: 'Playpen Sans', sans-serif;
@@ -49,7 +49,7 @@ th:nth-child(1), td:nth-child(1) {
   width: 40%; /* Increase width of vaccine column */
 }
 #update{
-  background-color: #008080;
+  background-color: white;
   font-size: 16px;
   color: white;
   padding: 8px 4px;
@@ -85,18 +85,31 @@ table{
 .vaccine-column {
   text-align: left; /* Align checkboxes to the left */
 }
-.vaccine-checkbox {
-  margin-right: 7px; /* Add spacing between checkboxes and text */
+/* .vaccine-checkbox {
+  margin-right: 7px;  */
+/* } */
+.drugs-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center; /* Center-aligns the items */
 }
+
+.vaccine-checkbox {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+}
+
 </style>
 </head>
 <body>
-  <div class="topnav">
+  <!-- <div class="topnav">
     <div>
     <img src="../img/logo.png" id="logo" alt="Software Engineering Logo" width="170" height="120">
-    </div>
+    </div> -->
     <h2>Child Vaccination Profile</h2>
-    <form class="d-flex" role="search" onsubmit="searchBar(); return false;">
+    <!-- <form class="d-flex" role="search" onsubmit="searchBar(); return false;">
       <input class="form-control me-2" type="search" id="searchQuery" placeholder="Enter Parent Name" aria-label="Search">
       <button class="btn btn-outline-success" type="submit">Search</button>
   </form>
@@ -106,17 +119,17 @@ table{
     <input type="text" name="child_name" placeholder="Parent/Guardian's Name">
   <label>Last Visit:</label>
     <input type="text" name="lstvisit" placeholder="Last Visit">
-  </div>
+  </div> -->
     <div class="main">
         <div class="date">
           <?php echo "Date: " . date("d-m-Y"); ?>
         </div>
         <div class="dosage">
-        <h2>child Details</h2>
+        <h2>Child Details</h2>
+        <h4>Child Name:</h4>
         <div id="childprofile"></div>
-        <div id = "parentEmail"></div>
-        <h2>Todays vaccines</h2>
-        <div id="drugs"></div>
+        <h4>Parent Email:</h4><div id = "parentEmail"></div>
+        <h2>Today's Vaccines:</h2><div id="drugs"></div>
         <div id="TodaysVaccine"></div>
 
           <h2>Next Visit</h2>
@@ -134,37 +147,6 @@ table{
        
         </div>
 
-    <!-- <table>
-      <thead>
-        <tr>
-          <th>AGE</th>
-          <th>VACCINE(S)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php
-        // Replace this with your actual vaccine data (from database or array)
-        $vaccineData = array(
-          array("Birth", "BCG, Birth Polio, HepB"),
-          // array("Dosage 2", "OPV-1, Penta-1, PCV-1, Rota-1"),
-          // array("Dosage 3", "OPV-2, Penta-2, PCV-2, Rota-2"),
-          // ... add more dosages and vaccines
-        );
-
-        foreach ($vaccineData as $vaccine) {
-          echo "<tr>";
-          echo "<td>" . $vaccine[0] . "</td>";
-          echo "<td class='vaccine-column'>";
-          $vaccines = explode(",", $vaccine[1]);
-          foreach ($vaccines as $v) {
-            echo "<input type='checkbox' class='vaccine-checkbox' name='vaccine[]' value='" . trim($v) . "'> " . trim($v) . "<br>";
-          }
-          echo "</td>";
-          echo "</tr>";
-        }
-        ?>
-      </tbody>
-    </table> -->
     <div id="graph">
       
     </div>
@@ -261,9 +243,9 @@ async function VaccineReceipt() {
       
 9      
         period= vaccinereceipt.nextscheduletime;
-        document.getElementById("TodaysVaccine").innerHTML="todays vaccines are for "+period
+        document.getElementById("TodaysVaccine").innerHTML="Todays vaccines are for "+period
         
-        console.log("what vaccine period its for:",period);
+        console.log("What vaccine period its for:",period);
  
 
 // Extract the '6' from the string and convert it to a number
