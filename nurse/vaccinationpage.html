@@ -1,40 +1,46 @@
+
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parent Registration Form</title>
+    <link rel="stylesheet" href="header-footer.css">
+    <script defer src="header-footer.js"></script>
+</head>
+
 <style>
 body {
   font-family: 'Playpen Sans', sans-serif;
 }
 .dosage {
   padding: 20px;
-  border: 1px solid #ccc;
+  
   text-align: center; 
   margin: 20px auto; /* Center the div */
-  width: 50%; /* Adjust width as needed */
+  width: 70%; /* Adjust width as needed */
+  
 }
 .tbody{
   border: 1px solid black;
+  text-align: center;
 }
+
 #logo{
     float: left;
     margin-left: 5px;
 }
 .topnav {
   overflow: hidden;
-  /* background-color: #008080; */
+
 }
 h1, h2 {
   font-family: 'Playpen Sans', sans-serif;
   font-weight: 700; /* Apply the bold weight to headings */
   color: black;
 }
-.dosage{
-  background-color: #87CEEB;
-  width: 60%;
-}
-.tbody{
-  text-align: centre;
-}
+
 tr, tbody, td, th{
     text-align: center;
     border: 2px solid black;
@@ -58,6 +64,13 @@ th:nth-child(1), td:nth-child(1) {
   cursor: pointer;
   border-radius: 4px;
 }
+#logo{
+  float: left;
+  margin-left: 5px;
+  width: 135px;
+  height: 120px;
+  padding: 4px;
+}
 #paymentBtn{
   background-color: #008080;
   font-size: 20px;
@@ -70,6 +83,9 @@ th:nth-child(1), td:nth-child(1) {
 }
 label, input{
   font-size: 12pt;
+}
+input[type="text"]{
+  width: 50%;
 }
 .date{
   border-radius:2px;
@@ -102,17 +118,9 @@ table{
 }
 
 </style>
-</head>
+
 <body>
-  <!-- <div class="topnav">
-    <div>
-    <img src="../img/logo.png" id="logo" alt="Software Engineering Logo" width="170" height="120">
-    </div> -->
-    <h2>Child Vaccination Profile</h2>
-    <!-- <form class="d-flex" role="search" onsubmit="searchBar(); return false;">
-      <input class="form-control me-2" type="search" id="searchQuery" placeholder="Enter Parent Name" aria-label="Search">
-      <button class="btn btn-outline-success" type="submit">Search</button>
-  </form>
+
   <label>Child's Name: </label>
     <input type="text" name="child_name" placeholder="Child's Name">
   <label>Parent/Guardian's name: </label>
@@ -126,10 +134,7 @@ table{
         </div>
         <div class="dosage">
         <h2>Child Details</h2>
-        <h4>Child Name:</h4>
-        <div id="childprofile"></div>
-        <h4>Parent Email:</h4><div id = "parentEmail"></div>
-        <h2>Today's Vaccines:</h2><div id="drugs"></div>
+
         <div id="TodaysVaccine"></div>
 
           <h2>Next Visit</h2>
@@ -146,13 +151,111 @@ table{
         </div>
        
         </div>
+        <!-- <div id="graph">
+        /* Styles for the chart containers */
+        .chart-container {
+            width: 80%; /* Set width to 80% of the parent container */
+            margin: 20px auto; /* Center the chart container */
+        }
+
+        canvas {
+            max-height: 400px; /* Set maximum height for the canvas */
+            height: 400px; /* Set fixed height */
+        }
+
+<body>
+    <div class="chart-container">
+        <canvas id="weightChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="heightChart"></canvas>
+    </div>
+
+    <script>
+    async function fetchChildVaccinationProgress() {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/ChildVaccinationProgress');
+            if (!response.ok) throw new Error(HTTP error! Status: ${response.status});
+            const data = await response.json();
+
+            // Prepare datasets for each chart
+            const weightDatasets = [];
+            const heightDatasets = [];
+
+            Object.keys(data.data).forEach((childName, index) => {
+                const childData = data.data[childName];
+                
+                // Add datasets for weight and height charts
+                weightDatasets.push({
+                    label: ${childName}'s Weight progress,
+                    data: childData.weights,
+                    borderColor: hsl(${index * 50}, 70%, 50%),
+                    fill: false,
+                    tension: 0.4
+                });
+
+                heightDatasets.push({
+                    label: ${childName}'s Height progress,
+                    data: childData.heights,
+                    borderColor: hsl(${index * 50 + 25}, 70%, 50%),
+                    fill: false,
+                    tension: 0.4
+                });
+            });
+
+            // Weight Chart
+            const weightCtx = document.getElementById('weightChart').getContext('2d');
+            new Chart(weightCtx, {
+                type: 'line',
+                data: {
+                    labels: data.data[Object.keys(data.data)[0]].dates,
+                    datasets: weightDatasets
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { title: { display: true, text: 'Vaccination Date' } },
+                        y: { title: { display: true, text: 'Weight (kg)' } }
+                    }
+                }
+            });
+
+            // Height Chart
+            const heightCtx = document.getElementById('heightChart').getContext('2d');
+            new Chart(heightCtx, {
+                type: 'line',
+                data: {
+                    labels: data.data[Object.keys(data.data)[0]].dates,
+                    datasets: heightDatasets
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { title: { display: true, text: 'Vaccination Date' } },
+                        y: { title: { display: true, text: 'Height (cm)' } }
+                    }
+                }
+            });
+
+        } catch (error) {
+            console.error('Error fetching child vaccination progression data:', error);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchChildVaccinationProgress();
+    });
+    </script>
+   </div> -->
 
     <div id="graph">
       
     </div>
     <div id="measurementsDiv">
+      <div class="row">
+        <div class="col-md-6">
       <div id="DrugAdministered"></div>
-    <h2>Measurements</h2>
+    <h3>Measurements</h3>
     <label for="weight">Weight (kg):</label>
     <input type="number" id="weight" name="weight"><br><br>
     <label for="height">Height (cm):</label>
@@ -160,19 +263,14 @@ table{
     <br><br>
     <button type="button" id="update" onclick="saveVaccine()">UPDATE</button>
   </div>
+  <div class="col-md-6"></div>
 </div>
 </div>
-<button type="button" id="paymentBtn">PAYMENT</button>
+</div>
 
-<script>
-  document.getElementById("paymentBtn").addEventListener("click", function() {
-    // Define the URL of the M-Pesa payment page
-    const mpesaPaymentUrl = "http://localhost/KingaBora-Vaccination-System/Payments/payments.html"; // Replace with actual URL
+<button type="button" id="paymentBtn"><a href="../Payments/payments.html" id="pay">PAYMENT</a></button>
 
-    // Redirect to the M-Pesa payment page
-    window.location.href = mpesaPaymentUrl;
-  });
-</script>
+  
 </body>
 </html>
 <script>
@@ -402,126 +500,38 @@ function getFormattedDate(weeksToAdd = 0) {
       }
 
 
-//       async function DrugAdministered(SelectedDrugs) {
-//         SelectedDrug=selectedDrugs;
+      async function DrugAdministered(SelectedDrugs) {
+        SelectedDrug=selectedDrugs;
        
       
-//         try {
-//           backendUrl='http://127.0.0.1:5000'
-//           const response = await fetch(`${backendUrl}/DrugAdministered`, {
-//             method: 'POST',
-//             headers: {
-//               'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify({
-//               SelectedDrug
-//             })
-//           });
+        try {
+          backendUrl='http://127.0.0.1:5000'
+          const response = await fetch(`${backendUrl}/DrugAdministered`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              SelectedDrug
+            })
+          });
       
-//           // if (response.ok) {
-//           //   const data = await response.json();
-//           //   console.log("the prices are", data);
-//           //   document.getElementById("DrugAdministered").innerHTML=data.total_price;     //this prints out the cost on the 
-//           //   // window.location.href = data.redirectUrl;  // Redirect to provided URL
-//           // } else {
-//           //   const errorData = await response.json();
-//           //   console.error("Error creating user:", errorData.error);
-//           //   // Handle error message display or other actions
-//           // }
-// ai 1
-//           if (response.ok) {
-//   const data = await response.json();
-//   console.log("The prices are:", data);
-  
-//   // Display the total price in the element with ID "DrugAdministered"
-//   document.getElementById("DrugAdministered").textContent = `Total Cost: KES ${data.total_price}`;
-  
-//   // Store the total price in session storage
-//   sessionStorage.setItem("totalPrice", data.total_price);
-
-//   // Redirect to the M-Pesa payment page if a redirect URL is provided
-//   if (data.redirectUrl) {
-//     window.location.href = data.redirectUrl;
-//   }
-// } else {
-//   const errorData = await response.json();
-//   console.error("Error:", errorData.error);
-  
-//   // Display an error message
-//   document.getElementById("errorMessage").textContent = `Error: ${errorData.error}`;
-// }
-//ai1
+          if (response.ok) {
+            const data = await response.json();
+            console.log("the prices are", data);
+            document.getElementById("DrugAdministered").innerHTML=data.total_price;     //this prints out the cost on the 
+            // window.location.href = data.redirectUrl;  // Redirect to provided URL
+          } else {
+            const errorData = await response.json();
+            console.error("Error creating user:", errorData.error);
+            // Handle error message display or other actions
+          }
       
-      //   } catch (error) {
-      //     console.error("Error during request:", error);
-      //     // Handle network errors or other exceptions
-      //   }
-      // }
-      // In the first page (vaccination profile page)
-// Update the DrugAdministered function
-async function DrugAdministered(SelectedDrugs) {
-  try {
-    const backendUrl = 'http://127.0.0.1:5000';
-    const response = await fetch(`${backendUrl}/DrugAdministered`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        SelectedDrug: SelectedDrugs
-      })
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      console.log("The prices are:", data);
-      
-      // Store the total price in both sessionStorage and localStorage as backup
-      const totalPrice = data.total_price.toString();
-      sessionStorage.setItem("totalPrice", totalPrice);
-      localStorage.setItem("totalPrice", totalPrice);
-      
-      // Display the total price
-      document.getElementById("DrugAdministered").textContent = `Total Cost: KES ${totalPrice}`;
-      
-      // Enable the payment button only when we have a price
-      const paymentBtn = document.getElementById("paymentBtn");
-      if (paymentBtn) {
-        paymentBtn.disabled = false;
+        } catch (error) {
+          console.error("Error during request:", error);
+          // Handle network errors or other exceptions
+        }
       }
-      
-      return totalPrice;
-    } else {
-      throw new Error("Failed to calculate price");
-    }
-  } catch (error) {
-    console.error("Error during price calculation:", error);
-    document.getElementById("DrugAdministered").textContent = "Error calculating price. Please try again.";
-    return null;
-  }
-}
-
-// Update the payment button click handler
-document.getElementById("paymentBtn").addEventListener("click", function() {
-  const totalPrice = sessionStorage.getItem("totalPrice") || localStorage.getItem("totalPrice");
-  
-  if (!totalPrice) {
-    alert("Please select vaccines first to calculate the total price");
-    return;
-  }
-  
-  // Add the price as a URL parameter as backup
-  const mpesaPaymentUrl = `http://localhost:8080/KingaBora-Vaccination-System/Payments/payments.html?amount=${totalPrice}`;
-  window.location.href = mpesaPaymentUrl;
-});
-
-// Disable payment button by default until price is calculated
-document.addEventListener('DOMContentLoaded', function() {
-  const paymentBtn = document.getElementById("paymentBtn");
-  if (paymentBtn) {
-    paymentBtn.disabled = true;
-  }
-});
       
       async function getParentDetails(localID) {                              //gets vaccine which has the its period to be administered specified
   try {

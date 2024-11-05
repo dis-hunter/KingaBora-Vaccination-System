@@ -3,3 +3,559 @@ button{
     text-align: center;
     align-tracks: center;
 }
+body {
+    background-color: white;
+    color: black;
+    margin: 0;
+    font-size: 1.0em !important;
+
+}
+
+main {
+    display: flex; /* Keep this to lay out children side by side */
+    width: 100%;
+}
+
+.sidebar {
+    width: 250px; /* Adjust this width as per your sidebar design */
+    height: 100vh; /* Full height */
+    background-color: teal;
+    flex-shrink: 0; /* Prevent shrinking */
+    font-size: 1.2em !important;
+}
+fieldset {
+    border: 2px solid #333 !important;
+    padding: 25px !important; /* Space between the border and contents */
+    margin: 0; /* Optional: Set margin if needed */
+    border-radius: 8px;
+    border-spacing: 2cm; /* This property doesn't apply to fieldset */
+    box-sizing: border-box; /* Ensure padding is included in width/height calculations */
+}
+#manageProfileSection {
+    width: 1300vh !important; /* You may want to use a more reasonable unit like px or % */
+    margin-left: 0 !important; /* Ensure no margin on the left */
+    float: left !important;
+    text-align: center; /* Center-align the contents */
+}
+
+#manageProfileSection table {
+    width: 170vh !important; /* Increase the size of the table */
+    margin-right: 30px !important; /* Center the table */
+    border-collapse: collapse; /* Optional: Collapse borders for a cleaner look */
+    table-layout: auto; /* Allow the table to adjust based on content */
+}
+
+#manageProfileSection table th,
+#manageProfileSection table td {
+    text-align: center !important; /* Center-align text within table cells */
+}
+#viewUsersSection {
+    width: 1300px !important; /* Adjust to a suitable pixel value */
+    margin-left: 0 !important; /* Ensure no margin on the left */
+    float: left !important;
+    text-align: center; /* Center-align the contents */
+}
+#viewActivitiesSection {
+    width: 1300px !important; /* Adjust to a suitable pixel value */
+    margin-left: 0 !important; /* Ensure no margin on the left */
+    float: left !important;
+    text-align: center; /* Center-align the contents */
+}
+#viewUsersSection table {
+    width: 170vh !important; /* Increase the size of the table to take full width */
+     /* Set a maximum width if desired */
+     align-self: center !important;
+    margin-right: 10px !important; /* Center the table */
+    border-collapse: collapse; /* Optional: Collapse borders for a cleaner look */
+    table-layout: auto; /* Allow the table to adjust based on content */
+}
+
+#viewActivitiesSection table {
+    width: 170vh !important; /* Increase the size of the table to take full width */
+     /* Set a maximum width if desired */
+     align-self: center !important;
+    margin-right: 10px !important; /* Center the table */
+    border-collapse: collapse; /* Optional: Collapse borders for a cleaner look */
+    table-layout: auto; /* Allow the table to adjust based on content */
+}
+
+#viewActivitiesSection table th,
+#viewActivitiesSection table td {
+    text-align: center !important; /* Center-align text within table cells */
+    padding: 15px; /* Optional: Add padding for spacing within cells */
+}
+
+.content-section {
+    flex-grow: 1; /* Allow this section to grow and fill available space */
+    padding: 20px; /* Add padding for spacing */
+    float: left !important; /* Force it to float left */
+    width: calc(100% - 250px) !important; /* Adjust width to fill the remaining space */
+    height: auto !important; /* Ensure it takes height dynamically */
+    margin-right: 20 !important;
+}
+#registerNurseSection {
+    width: 3800vh !important; /* Adjust width to take full space beside the sidebar */
+    margin-left: 0 !important; /* Ensure no margin on the left */
+    float: left !important; /* Force it to float left */
+    background-color: #f9f9f9;
+    margin-right: 20 !important; /* Background color */
+     /* Add padding for spacing */
+    box-sizing: border-box; /* Ensure padding is included in the width */
+    min-height: 100vh; /* Make sure it covers the full height */
+}
+/* Ensure maximum width and prevent overflow */
+#container-fluid {
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+#container-fluid > .content-section {
+    max-width: 100%; /* Prevent exceeding container width */
+}
+
+/* Optional: To make content larger */
+h1, p, table, input, select, button {
+    font-size: 1.2em; /* Adjust font size for larger text */
+}
+
+#nurses-table2 {
+    border: 1px solid black;
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 20px;
+    background-color: white;
+    color: black;
+}
+#nurses-table2 th, #nurses-table td {
+    padding: 15px;
+    border: 1px solid black;
+    text-align: left;
+}
+#nurses-table2 th {
+    background-color: #004d40;
+    color: white;
+}
+#nurses-table2 tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+#nurses-table2 tr:hover {
+    background-color: #d1d1d1;
+}
+h1 {
+    text-align: center;
+    color: black;
+}
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+.pagination a {
+    color: white;
+    padding: 10px;
+    text-decoration: none;
+    background-color: #004d40;
+    margin: 0 5px;
+    border-radius: 5px;
+}
+.pagination a.active {
+    background-color: #00796b;
+}
+.pagination a.disabled {
+    background-color: #cccccc;
+    pointer-events: none;
+    cursor: default;
+}
+.action-btn {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.delete-btn {
+    background-color: #e53935;
+    color: white;
+}
+    *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        main {
+    display: flex;
+    width: 100%;
+}
+
+.sidebar {
+    width: 250px; /* Sidebar width */
+    height: 100vh; /* Full height */
+    background-color: teal;
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+
+
+/* Ensure main content container prevents horizontal scrolling */
+#container-fluid {
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+/* Max width to avoid overflow */
+#container-fluid > .content-section {
+    max-width: 100%; /* Prevent exceeding container width */
+}
+fieldset {
+    border: 2px solid #333;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0; /* Add margin for spacing */
+}
+
+#registerNurseSection {
+    width: 100%;
+    background-color: #f9f9f9;
+    margin: 0 auto; /* Center the form section */
+}
+
+input, select {
+    width: calc(100% - 16px); /* Adjust for padding */
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+
+        #vaccineStockChart {
+            height: 400px;
+        }
+        .sidebar {
+        width: 250px; /* Adjust this width as per your sidebar design */
+        height: 100vh;
+        background-color: teal;
+        flex-shrink: 0; /* Prevents sidebar from shrinking */
+        }
+
+        .btn-teal {
+            background-color: teal;
+            color: white;
+        }
+        .btn-teal:hover {
+            background-color: #006666;
+        }
+        .card {
+            height: 100%;
+        }
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        /* Styling for the Register Nurse form section */
+        #registerNurseSection {
+            width: 100%;
+            background-color: #f9f9f9;
+        }
+        fieldset {
+            border: 2px solid #333;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        legend {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        #btn {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+        }
+        .col-md-6 img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        body {
+            background-color: white;
+            color: black;
+            margin: 0;
+        
+        }
+        #nurses-table {
+            border: 1px solid black;
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+            background-color: white;
+            color: black;
+        }
+        #nurses-table th, #nurses-table td {
+            padding: 15px;
+            border: 1px solid black;
+            text-align: left;
+        }
+        #nurses-table th {
+            background-color: #004d40;
+            color: white;
+        }
+        #nurses-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        #nurses-table tr:hover {
+            background-color: #d1d1d1;
+        }
+        h1 {
+            text-align: center;
+            color: black;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .pagination a {
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            background-color: #004d40;
+            margin: 0 5px;
+            border-radius: 5px;
+        }
+        .pagination a.active {
+            background-color: #00796b;
+        }
+        .pagination a.disabled {
+            background-color: #cccccc;
+            pointer-events: none;
+            cursor: default;
+        }
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .delete-btn {
+            background-color: #e53935;
+            color: white;
+        }
+        body {
+            background-color: white;
+            color: black;
+            margin: 0;
+            
+        }
+       /* Add this at the bottom of your existing CSS */
+.tb1 {
+    border: 1px solid black;
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 20px;
+    background-color: white;
+    color: black;
+}
+
+.tb1 th, .tb1 td {
+    padding: 15px;
+    border: 1px solid black;
+    text-align: left;
+}
+
+.tb1 th {
+    background-color: #004d40;
+    color: white;
+}
+
+.tb1 tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.tb1 tr:hover {
+    background-color: #d1d1d1;
+}
+
+/* Optional: If you want to have pagination like in the nurses table */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination a {
+    color: white;
+    padding: 10px;
+    text-decoration: none;
+    background-color: #004d40;
+    margin: 0 5px;
+    border-radius: 5px;
+}
+
+.pagination a.active {
+    background-color: #00796b;
+}
+
+.pagination a.disabled {
+    background-color: #cccccc;
+    pointer-events: none;
+    cursor: default;
+}
+
+        h1 {
+            text-align: center;
+            color: black;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .pagination a {
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            background-color: #004d40;
+            margin: 0 5px;
+            border-radius: 5px;
+        }
+        .pagination a.active {
+            background-color: #00796b;
+        }
+        .pagination a.disabled {
+            background-color: #cccccc;
+            pointer-events: none;
+            cursor: default;
+        }
+        body {
+            background-color: white;
+            color: black;
+            margin: 0;
+           
+        }
+        #activities-table {
+            border: 1px solid black;
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+            background-color: white;
+            color: black;
+        }
+        #activities-table th, #activities-table td {
+            padding: 15px;
+            border: 1px solid black;
+            text-align: left;
+        }
+        #activities-table th {
+            background-color: #004d40;
+            color: white;
+        }
+        #activities-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        #activities-table tr:hover {
+            background-color: #d1d1d1;
+        }
+         #activities-table2 {
+            border: 1px solid black;
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+            background-color: white;
+            color: black;
+        }
+        #activities-table2 th, #activities-table td {
+            padding: 15px;
+            border: 1px solid black;
+            text-align: left;
+        }
+        #activities-table2 th {
+            background-color: #004d40;
+            color: white;
+        }
+        #activities-table2 tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        #activities-table tr:hover {
+            background-color: #d1d1d1;
+        } #activities-table2 {
+            border: 1px solid black;
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+            background-color: white;
+            color: black;
+        }
+        #activities-table2 th, #activities-table td {
+            padding: 15px;
+            border: 1px solid black;
+            text-align: left;
+        }
+        #activities-table2 th {
+            background-color: #004d40;
+            color: white;
+        }
+        #activities-table2 tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        #activities-table2 tr:hover {
+            background-color: #d1d1d1;
+        }
+        h1 {
+            text-align: center;
+            color: black;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .pagination a {
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            background-color: #004d40;
+            margin: 0 5px;
+            border-radius: 5px;
+        }
+        .pagination a.active {
+            background-color: #00796b;
+        }
+        .pagination a.disabled {
+            background-color: #cccccc;
+            pointer-events: none;
+            cursor: default;
+        }
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .view-receipt-btn {
+            background-color: #2196F3;
+            color: white;
+        }
+        #charts{
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            grid-gap:20px;
+            width:100px;
+            padding:20px;
+            padding-top:0;
+        }
+        .chart{
+            background: #fff;
+            padding :20px;
+            border-radius: 10px;
+            box-shadow: 0 7px 25px rgba(0,0,0,0.08);
+            width:100px;
+        }
