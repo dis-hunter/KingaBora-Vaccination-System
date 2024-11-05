@@ -24,8 +24,8 @@ class SpecialHeader extends HTMLElement{
 
         <!-- Sign Up and Log In Buttons -->
         <div class="header-buttons" id="header-buttons">
-            <button>Sign Up</button>
-            <button>Log In</button>
+            <button><a href="../authentication/signup.html" class="headerlinks" >Sign Up</a></button>
+            <button><a href="../authentication/login.html" class="headerlinks">Log In</a></button>
         </div>
 
         <!-- Menu Icon for Small Screens -->

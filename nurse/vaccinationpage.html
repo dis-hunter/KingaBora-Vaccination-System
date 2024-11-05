@@ -1,20 +1,32 @@
+
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parent Registration Form</title>
+    <link rel="stylesheet" href="header-footer.css">
+    <script defer src="header-footer.js"></script>
+</head>
+
 <style>
 body {
   font-family: 'Playpen Sans', sans-serif;
 }
 .dosage {
   padding: 20px;
-  border: 1px solid #ccc;
+  
   text-align: center; 
   margin: 20px auto; /* Center the div */
-  width: 50%; /* Adjust width as needed */
+  width: 70%; /* Adjust width as needed */
+  
 }
 .tbody{
   border: 1px solid black;
+  text-align: center;
 }
+
 #logo{
     float: left;
     margin-left: 5px;
@@ -22,19 +34,27 @@ body {
 .topnav {
   overflow: hidden;
   background-color: #008080;
+  padding-bottom: 3%;
+}
+.row{
+  display:flex;
+
+}
+.col-md-6 img { 
+  width: 100%;
+  max-width: 300px; 
+  height: 200px;
+  display: block;
+  margin-left: 10%;
+  border-radius: 10px; 
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
 }
 h1, h2 {
   font-family: 'Playpen Sans', sans-serif;
   font-weight: 700; /* Apply the bold weight to headings */
   color: black;
 }
-.dosage{
-  background-color: #87CEEB;
-  width: 60%;
-}
-.tbody{
-  text-align: centre;
-}
+
 tr, tbody, td, th{
     text-align: center;
     border: 2px solid black;
@@ -58,6 +78,13 @@ th:nth-child(1), td:nth-child(1) {
   cursor: pointer;
   border-radius: 4px;
 }
+#logo{
+  float: left;
+  margin-left: 5px;
+  width: 135px;
+  height: 120px;
+  padding: 4px;
+}
 #paymentBtn{
   background-color: #008080;
   font-size: 20px;
@@ -70,6 +97,9 @@ th:nth-child(1), td:nth-child(1) {
 }
 label, input{
   font-size: 12pt;
+}
+input[type="text"]{
+  width: 50%;
 }
 .date{
   border-radius:2px;
@@ -88,18 +118,36 @@ table{
 .vaccine-checkbox {
   margin-right: 7px; /* Add spacing between checkboxes and text */
 }
+/* Styles for the chart containers */
+.chart-container {
+  width: 80%; /* Set width to 80% of the parent container */
+  margin: 20px auto; /* Center the chart container */
+}
+#measurementsDiv{
+  margin: 20px auto;
+  width: 60%;
+}
+.main{
+  background-image: url("images/syringe.jpeg");
+  
+}
+
+canvas {
+  max-height: 400px; /* Set maximum height for the canvas */
+  height: 400px; /* Set fixed height */
+}
+#pay{
+  color: white;
+  text-decoration: none;
+}
 </style>
-</head>
+
 <body>
+
+  <special-header></special-header>
   <div class="topnav">
-    <div>
-    <img src="../img/logo.png" id="logo" alt="Software Engineering Logo" width="170" height="120">
-    </div>
+    
     <h2>Child Vaccination Profile</h2>
-    <form class="d-flex" role="search" onsubmit="searchBar(); return false;">
-      <input class="form-control me-2" type="search" id="searchQuery" placeholder="Enter Parent Name" aria-label="Search">
-      <button class="btn btn-outline-success" type="submit">Search</button>
-  </form>
   <label>Child's Name: </label>
     <input type="text" name="child_name" placeholder="Child's Name">
   <label>Parent/Guardian's name: </label>
@@ -112,16 +160,19 @@ table{
           <?php echo "Date: " . date("d-m-Y"); ?>
         </div>
         <div class="dosage">
-        <h2>DOSAGE</h2>
+        <h2>Child Details</h2>
         <div id="childprofile"></div>
-        <h2>Todays vaccines</h2>
+        <div id = "parentEmail"></div>
+        <h2>Today's Vaccines</h2>
         <div id="drugs"></div>
+        <div id="TodaysVaccine"></div>
+
           <h2>Next Visit</h2>
           <select id="myDropdown">
             <option value="0">Birth</option>
             <option value="6">6 Weeks</option>
             <option value="4">10 Weeks</option>
-            <option value="4">14 Weeks</option>
+            <option value="14">14 Weeks</option>
             <option value="22">9 Month</option>
           </select>
           <div>
@@ -130,6 +181,102 @@ table{
         </div>
        
         </div>
+        <!-- <div id="graph">
+        /* Styles for the chart containers */
+        .chart-container {
+            width: 80%; /* Set width to 80% of the parent container */
+            margin: 20px auto; /* Center the chart container */
+        }
+
+        canvas {
+            max-height: 400px; /* Set maximum height for the canvas */
+            height: 400px; /* Set fixed height */
+        }
+
+<body>
+    <div class="chart-container">
+        <canvas id="weightChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="heightChart"></canvas>
+    </div>
+
+    <script>
+    async function fetchChildVaccinationProgress() {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/ChildVaccinationProgress');
+            if (!response.ok) throw new Error(HTTP error! Status: ${response.status});
+            const data = await response.json();
+
+            // Prepare datasets for each chart
+            const weightDatasets = [];
+            const heightDatasets = [];
+
+            Object.keys(data.data).forEach((childName, index) => {
+                const childData = data.data[childName];
+                
+                // Add datasets for weight and height charts
+                weightDatasets.push({
+                    label: ${childName}'s Weight progress,
+                    data: childData.weights,
+                    borderColor: hsl(${index * 50}, 70%, 50%),
+                    fill: false,
+                    tension: 0.4
+                });
+
+                heightDatasets.push({
+                    label: ${childName}'s Height progress,
+                    data: childData.heights,
+                    borderColor: hsl(${index * 50 + 25}, 70%, 50%),
+                    fill: false,
+                    tension: 0.4
+                });
+            });
+
+            // Weight Chart
+            const weightCtx = document.getElementById('weightChart').getContext('2d');
+            new Chart(weightCtx, {
+                type: 'line',
+                data: {
+                    labels: data.data[Object.keys(data.data)[0]].dates,
+                    datasets: weightDatasets
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { title: { display: true, text: 'Vaccination Date' } },
+                        y: { title: { display: true, text: 'Weight (kg)' } }
+                    }
+                }
+            });
+
+            // Height Chart
+            const heightCtx = document.getElementById('heightChart').getContext('2d');
+            new Chart(heightCtx, {
+                type: 'line',
+                data: {
+                    labels: data.data[Object.keys(data.data)[0]].dates,
+                    datasets: heightDatasets
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { title: { display: true, text: 'Vaccination Date' } },
+                        y: { title: { display: true, text: 'Height (cm)' } }
+                    }
+                }
+            });
+
+        } catch (error) {
+            console.error('Error fetching child vaccination progression data:', error);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchChildVaccinationProgress();
+    });
+    </script>
+   </div> -->
 
     <!-- <table>
       <thead>
@@ -166,7 +313,10 @@ table{
       
     </div>
     <div id="measurementsDiv">
-    <h2>Measurements</h2>
+      <div class="row">
+        <div class="col-md-6">
+      <div id="DrugAdministered"></div>
+    <h3>Measurements</h3>
     <label for="weight">Weight (kg):</label>
     <input type="number" id="weight" name="weight"><br><br>
     <label for="height">Height (cm):</label>
@@ -174,14 +324,18 @@ table{
     <br><br>
     <button type="button" id="update" onclick="saveVaccine()">UPDATE</button>
   </div>
+  <div class="col-md-6"></div>
 </div>
 </div>
-<button type="button" id="paymentBtn">PAYMENT</button>
+</div>
+
+<button type="button" id="paymentBtn"><a href="../Payments/payments.html" id="pay">PAYMENT</a></button>
+
   
 </body>
 </html>
 <script>
-  let period,ChildName,Child_local_ID,DateofVaccination,NextVisit,NurseName,Nurse_local_ID,nextscheduletime ;
+  let period,ChildName,Child_local_ID,DateofVaccination,NextVisit,NurseName,Nurse_local_ID,nextscheduletime,parentEmailAddress ;
   let selectedDrugs = [];
  let period_passed;
   let vaccinesIssued=[];
@@ -200,6 +354,14 @@ myDropdown.addEventListener('change', () => {
    else if(dropdownvalue=='4')
    {
     dropdownvalue="10 Weeks";
+   }
+   else if(dropdownvalue=='14')
+   {
+    dropdownvalue='14 Weeks'
+   }
+   else if(dropdownvalue=='22')
+   {
+    dropdownvalue='22 Weeks'
    }
    nextscheduletime=dropdownvalue;
   // NextVisit= dropdownselected + " Weeks";
@@ -228,8 +390,10 @@ async function VaccineReceipt() {
       console.log('Vaccine found:', data);
       const vaccinereceipt = data.Vaccination[0]; // Assuming there's only one child for simplicity
       
-      ChildName=vaccinereceipt.ChildName;                                      //child details
-      Child_local_ID=vaccinereceipt.Child_local_ID;
+      ChildName=vaccinereceipt.childName;                                      //child details
+      Child_local_ID=vaccinereceipt.child_local_ID;
+      await getParentDetails(Child_local_ID);
+      console.log("haya",Child_local_ID);
       NurseName=vaccinereceipt.NurseName;
        
       
@@ -238,6 +402,9 @@ async function VaccineReceipt() {
       
 9      
         period= vaccinereceipt.nextscheduletime;
+        document.getElementById("TodaysVaccine").innerHTML="todays vaccines are for "+period
+        
+        console.log("what vaccine period its for:",period);
  
 
 // Extract the '6' from the string and convert it to a number
@@ -247,15 +414,24 @@ async function VaccineReceipt() {
     {
        period_passed=6;
     }
+    else if(period=="Birth")
+    {
+      period_passed=0;
+    }
     else if(period=="10 Weeks"){
       preiod_passed=10;
     }
     else if(period=="14 Weeks"){
-       period_passed=14;
+       period_passed=4;
     }
-     nextscheduletime=period_passed +" Weeks";
+    else if(period=="22 Weeks")
+    {
+      period_passed=22;
+    }
+     nextscheduletime=period_passed +" Week";
       console.log(period);
       getVaccines(period);
+      console.log("demo",nextscheduletime);
       
       document.getElementById("childprofile").innerHTML=ChildName;
 
@@ -270,35 +446,34 @@ async function VaccineReceipt() {
     // displayVaccination(null);
   }
 }
-async function getVaccines(period) {                              //gets vaccine which has the its period to be administered specified
+async function getVaccines(period) {
   try {
- 
     console.log('Requesting vaccines for period:', period); // Debug logging
-    
     const url = `http://127.0.0.1:5000/Vaccines?period=${encodeURIComponent(period)}`;
     console.log('Request URL:', url); // Debug logging
-    
+
     const response = await fetch(url, { method: 'GET' });
     const data = await response.json();
 
     if (response.ok) {
       console.log('Vaccines found:', data);
       const drugsContainer = document.getElementById('drugs');
-      if (data.Drugs && data.Drugs.length > 0) {
+      
+      if (data.Drugs && Object.keys(data.Drugs).length > 0) {
         // Clear any existing content
         drugsContainer.innerHTML = '';
-        
+
         // Create checkboxes for each drug
-        data.Drugs.forEach((drug, index) => {
+        for (const [drugName, drugPrice] of Object.entries(data.Drugs)) {
           const checkboxDiv = document.createElement('div');
           checkboxDiv.innerHTML = `
             <label>
-              <input type="checkbox" name="drug" value="${drug}">
-              ${drug}
+              <input type="checkbox" name="drug" value="${drugName}">
+              ${drugName} - $${drugPrice}
             </label>
           `;
           drugsContainer.appendChild(checkboxDiv);
-        });
+        }
       } else {
         drugsContainer.textContent = 'No vaccines found for this period';
       }
@@ -311,10 +486,15 @@ async function getVaccines(period) {                              //gets vaccine
     document.getElementById('vaccineList').textContent = 'Error: ' + error.message;
   }
 }
+
 function getFormattedDate(weeksToAdd = 0) {
   const now = new Date();
   DateofVaccinationtime=new Date();
-  
+  if(weeksToAdd==14)
+{
+  weeksToAdd=4;
+}
+
   // Add the specified number of weeks to the current date
   now.setDate(now.getDate() + weeksToAdd * 7);
 
@@ -333,10 +513,13 @@ function getFormattedDate(weeksToAdd = 0) {
   DateofVaccination = `${DateofVaccinationdDate} at ${DateofVaccinationdTime}`;
   
   return NextVisit;
+
 }
 
  async function saveVaccine() {
-        
+        let weight=document.getElementById("weight").value
+        let height=document.getElementById("height").value
+
       
         try {
           backendUrl='http://127.0.0.1:5000'
@@ -346,7 +529,7 @@ function getFormattedDate(weeksToAdd = 0) {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              vaccinesIssued,ChildName,Child_local_ID,DateofVaccination,NextVisit,NurseName,nextscheduletime
+              vaccinesIssued,ChildName,Child_local_ID,DateofVaccination,NextVisit,NurseName,nextscheduletime,weight,height,parentEmailAddress
             })
           });
       
@@ -378,6 +561,69 @@ function getFormattedDate(weeksToAdd = 0) {
       }
 
 
+      async function DrugAdministered(SelectedDrugs) {
+        SelectedDrug=selectedDrugs;
+       
+      
+        try {
+          backendUrl='http://127.0.0.1:5000'
+          const response = await fetch(`${backendUrl}/DrugAdministered`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              SelectedDrug
+            })
+          });
+      
+          if (response.ok) {
+            const data = await response.json();
+            console.log("the prices are", data);
+            document.getElementById("DrugAdministered").innerHTML=data.total_price;     //this prints out the cost on the 
+            // window.location.href = data.redirectUrl;  // Redirect to provided URL
+          } else {
+            const errorData = await response.json();
+            console.error("Error creating user:", errorData.error);
+            // Handle error message display or other actions
+          }
+      
+        } catch (error) {
+          console.error("Error during request:", error);
+          // Handle network errors or other exceptions
+        }
+      }
+      
+      async function getParentDetails(localID) {                              //gets vaccine which has the its period to be administered specified
+  try {
+ 
+    console.log('Getting ParentName and email:', localID); // Debug logging
+    
+    const url = `http://127.0.0.1:5000/getParentDetails?localID=${encodeURIComponent(localID)}`;
+    console.log('Request URL:', url); // Debug logging
+    
+    const response = await fetch(url, { method: 'GET' });
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log('parentDetails found:', data);
+      const emailaddr=data.data;
+       parentEmailAddress=emailaddr.emailaddress;
+      console.log('email found:', emailaddr.emailaddress);
+      document.getElementById("parentEmail").innerHTML=parentEmailAddress;
+
+      
+      
+     
+    } else {
+      console.error('Error fetching parentdetails:', data.error || response.statusText);
+      // document.getElementById('vaccineList').textContent = `Error: ${data.error || 'Failed to fetch vaccines'}`;
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    document.getElementById('vaccineList').textContent = 'Error: ' + error.message;
+  }
+}
 document.addEventListener('DOMContentLoaded', () => {
   VaccineReceipt();
   getFormattedDate();
@@ -387,6 +633,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const checkboxes = document.querySelectorAll('#drugs input[type="checkbox"]:checked');
   checkboxes.forEach(checkbox => {
     selectedDrugs.push(checkbox.value);
+    
     // selectedDrugsJson = JSON.stringify(selectedDrugs);
     vaccinesIssued=selectedDrugs;
   });
@@ -399,6 +646,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('drugs').addEventListener('change', (event) => {
     if (event.target.type === 'checkbox') {
       storeSelectedDrugs();
+      DrugAdministered(selectedDrugs);
       console.log(period,ChildName,Child_local_ID,DateofVaccination,NextVisit,NurseName,Nurse_local_ID,nextscheduletime);
       console.log("today",DateofVaccination);
 

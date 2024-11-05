@@ -5,16 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Parent Registration Form</title>
     <link rel="stylesheet" href="header-footer.css">
+    <script defer src="header-footer.js"></script>
 </head>
+<style>
+  body{
+    font-family: 'Playpen Sans', sans-serif;
+  }
+  .row {
+  display: flex;
+  align-items: center;
+  margin: 10px;
+}
+
+
+.col-md-3 img { 
+  width: 100%;
+  max-width: 500px; 
+  height: 400px;
+  display: block;
+  margin-right: 20px;
+  border-radius: 10px; 
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+}
+
+.col-md-9{
+  margin-right: 40px;
+  padding-right: 20px;
+}
+  
+</style>
 <body>
-    <header>
-        <img src="project\logo.jpg" alt="Logo">
-        <div class="account-info">
-            <p>Account Name</p>
-            <img src="profile-picture.png" alt="Profile Picture" class="profile-picture">
-        </div>
-    </header>
-    
+  <special-header></special-header>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9"></div>
     <form id="registration-form">
         <h2>PARENT REGISTRATION</h2>
 
@@ -50,16 +74,54 @@
         <button type="submit">Submit</button>
     </form>
 
+    <div class="col-md-3">
+      <img src="images/parentspic1.jpeg" class="img-fluid" alt="Image"> 
+    </div>
+  </div>
+  </div>
+</div>
+    <special-footer></special-footer>
     <script>
-        document.getElementById('registration-form').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent the form from submitting normally
-            // Collect form data
-            const formData = new FormData(this);
-            // Log or handle form data here
-            console.log('Form submitted:', Object.fromEntries(formData));
-            alert('Form submitted successfully!');
-            this.reset(); // Reset the form
-        });
+        async function getEmailList(NextVisit) {
+  try {
+    console.log('Getting email and parent details for NextVisit:', NextVisit); // Debug logging
+    
+    const url = `http://127.0.0.1:5000/getEmailList?NextVisit=${encodeURIComponent(NextVisit)}`;
+    console.log('Request URL:', url); // Debug logging
+    
+    const response = await fetch(url, { method: 'GET' });
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log('Email list found:', data.data);
+      
+      // Assuming data.data is an array of results
+    //   data.data.forEach(item => {
+    //     console.log(`Child Name: ${item.childName}, Date of Vaccination: ${item.DateofVaccination}`);
+        
+    //     // Optionally update the DOM with the information
+    //     // For example, if you have elements to display them
+    //     // document.getElementById("parentEmail").innerHTML += item.emailaddress + '<br>';
+    //   });
+      
+    } else {
+      console.error('Error fetching email list:', data.error || response.statusText);
+      document.getElementById('vaccineList').textContent = `Error: ${data.error || 'Failed to fetch vaccines'}`;
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    document.getElementById('vaccineList').textContent = 'Error: ' + error.message;
+  }
+}
+
+
+ // Call the function when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+    getEmailList("November 27, 2024 at 02:06:40 PM GMT+3"); //this endpoint uses the november date to get the emails of users whose date is beyond this
+    // make a function that gets todays date, adds 14 days or 7 days depending on your reminder algorithmn, then the new date will be passed into the function to get data that are close past due so that reminder is sent
+    
+    });
+
     </script>
 </body>
 </html>
