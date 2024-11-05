@@ -186,10 +186,35 @@
         <p id="parentNationalID">Parent</p>
       </div>
       <div class="profile-actions">
-        <button>Edit Profile</button>
-        <button>Settings</button>
-      </div>
+        <button id="editProfileButton">Edit Profile</button>
     </div>
+    </div>
+    <!-- Edit Profile Modal -->
+<div id="editProfileModal" class="modal">
+  <div class="modal-content">
+      <span class="close" onclick="closeEditProfileModal()">&times;</span>
+      <h2>Edit Profile</h2>
+      <form id="editProfileForm">
+          <div class="form-group">
+              <label for="editParentName">Name:</label>
+              <input type="text" id="editParentName" required>
+          </div>
+          <div class="form-group">
+              <label for="editParentEmailAddress">Email:</label>
+              <input type="email" id="editParentEmailAddress" required>
+          </div>
+          <div class="form-group">
+              <label for="editParentPhoneNumber">Phone Number:</label>
+              <input type="text" id="editParentPhoneNumber" required>
+          </div>
+          <div class="form-group">
+              <label for="editParentNationalID">National ID:</label>
+              <input type="text" id="editParentNationalID" required>
+          </div>
+          <button type="submit">Update Profile</button>
+      </form>
+  </div>
+</div>
   
     <section class="children">
       <h1>Children</h1>
@@ -271,6 +296,7 @@
       </form>
   </div>
 </div>
+
 
   <special-footer></special-footer>
 
@@ -482,6 +508,61 @@ function displayFormattedDate() {
     } else {
         formattedDobInput.value = ''; // Clear the field if the date is invalid
     }
+}
+
+document.querySelector('.profile-actions button').addEventListener('click', openEditProfileModal);
+
+async function openEditProfileModal() {
+    const parentName = document.getElementById("parentName").textContent;
+    const parentEmailAddress = document.getElementById("parentEmailAddress").textContent;
+    const parentPhoneNumber = document.getElementById("parentPhoneNumber").textContent;
+    const parentNationalID = document.getElementById("parentNationalID").textContent;
+
+    // Populate modal fields
+    document.getElementById("editParentName").value = parentName;
+    document.getElementById("editParentEmailAddress").value = parentEmailAddress;
+    document.getElementById("editParentPhoneNumber").value = parentPhoneNumber;
+    document.getElementById("editParentNationalID").value = parentNationalID;
+
+    document.getElementById('editProfileModal').style.display = 'block';
+}
+document.getElementById('editProfileForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const updatedData = {
+        parentName: document.getElementById('editParentName').value,
+        parentEmailAddress: document.getElementById('editParentEmailAddress').value,
+        parentPhoneNumber: document.getElementById('editParentPhoneNumber').value,
+        parentNationalID: document.getElementById('editParentNationalID').value,
+    };
+
+    try {
+        const localId = new URLSearchParams(window.location.search).get('localId');
+        const response = await fetch(`http://127.0.0.1:5000/updateParentProfile?localId=${localId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedData)
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert('Profile updated successfully!');
+            closeEditProfileModal();
+            ParentDetails(); // Refresh the parent details
+        } else {
+            alert('Error updating profile: ' + (data.error || 'Unknown error'));
+        }
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        alert('Error updating profile: ' + error.message);
+    }
+});
+
+function closeEditProfileModal() {
+    document.getElementById('editProfileModal').style.display = 'none';
 }
   </script>
 </body>
