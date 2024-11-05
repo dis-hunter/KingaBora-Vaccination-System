@@ -110,65 +110,10 @@ def email_authenticate():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-@app.route('/childDetails', methods=['GET'])
-def ChildDetails():
-    try:
-        # Get the correct query parameter
-        parentNationalID = request.args.get("ParentNationalID")
-        
-        # Query Firestore correctly
-        doc_ref = db.collection('childData')   #this is the collection of the children (table in sql)
-        query = doc_ref.where("ParentNationalID", "==", parentNationalID)  # Correct usage without FieldFilter , this filters
-        docs = query.stream()
-        
-        document_list = [
-         {"id": doc.id, **doc.to_dict()} for doc in docs
-        ]  # Unpack document data and add ID
-
-        if document_list:
-          logging.info(f"Children found: {document_list}")
-          return jsonify({"message": "Children found", "childNames": document_list}), 200
-        else:
-          logging.info("No children found.")
-          return jsonify({"error": "No children found for the given ParentNationalID"}), 404
-
-    except Exception as e:
-       logging.error(f"Error fetching child details: {str(e)}")
-       return jsonify({"errors": str(e)}), 500
-    
-
-@app.route('/DrugAdministered', methods=['POST'])
-def DrugAdministered():
-    data = request.get_json()
-
-    # Extract data from the request
-    DateOfAdministration = data.get("December 12, 2024 at 02:06:40 PM GMT+3")
-    DrugName = data.get("Polio")
-    Price=data.get("240")
-    Quantity= 1
-
-    # Create a new user in Firestore
-    drug_data = {
-        'DateOfAdministration': DateOfAdministration,
-        'DrugName': DrugName,
-        'Price': Price,
-        'Quantity': Quantity,
-        
-    }
-
-    try:
-        doc_ref = db.collection('DrugsAdministered').add(drug_data)
-
-        # Redirect URL after successful registration
-        #redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/Parent/PARENTPROFILE.html?localId={doc_id}"
-
-        return jsonify({"message": "Successfully created the user"}), 201
-
-    except Exception as firestore_error:
-        logging.error(f"Error adding user data to Firestore: {firestore_error}")
-        return jsonify({"error": "Error adding data to Firestore"}), 500
 
 
+
+## parent det 1
 @app.route('/parentDetails', methods=['GET'])
 def parentDetails():
     try:
@@ -219,8 +164,8 @@ def parse_date(date_string):
     # If no format works, log the problematic string and return None
     logging.error(f"Could not parse date string: {date_string}")
     return None    
-        logging.error(f"Error fetching child details: {str(e)}")
-        return jsonify({"errors": str(e)}), 500
+    logging.error(f"Error fetching child details: {str(e)}")
+    return jsonify({"errors": str(e)}), 500
     
 
 @app.route('/GetUsersChart', methods=['GET'])
@@ -342,6 +287,7 @@ def Vaccines():
         logging.error(traceback.format_exc())  # Add full stack trace
         return jsonify({"error": str(e)}), 500
 
+## drugs 1
 @app.route('/DrugAdministered', methods=['POST'])
 def DrugAdministered():
     data = request.get_json()
@@ -394,7 +340,7 @@ def storevaccinereceipt():
         'vaccinesIssued': vaccinesIssued,
         'weight':weight,
         'height':height,
-        'parentEmailAddress':parentEmailAddress
+        'parentEmailAddress':parentEmailAddress,
         'vaccinesIssued': vaccinesIssued,
         'weight':weight,
         'height':height
@@ -415,7 +361,8 @@ def storevaccinereceipt():
 
 
 
-    
+   ##reg nurse 1
+   #  
 @app.route('/registerNurse', methods=['POST'])
 def registerNurse():
     data = request.get_json()  # Get JSON data from the request
@@ -573,145 +520,12 @@ def getEmailList():
  
  
  
-@app.route('/registerNurse', methods=['POST'])
-def registerNurse():
-    data = request.get_json()  # Get JSON data from the request
 
-# fullname,
-#               email,
-#               phonenumber,
-#               password,
-#               gender
-              
-    # Extract data from the request
-    fullname = data.get("fullname")
-    email = data.get("email")
-    phonenumber = data.get("phonenumber")
-    password = data.get("password")
-    gender = data.get("gender")
-    nationalID = data.get("nationalID")
-
-
-    # Validate required fields
-    if not email or not fullname or not password or not phonenumber or not gender or not  nationalID:
-        logging.error("Missing required fields: email, username, password, nationalID, or contacts")
-        return jsonify({"error": "Missing email, username, password, nationalID, or contacts"}), 400
-
-    try:
-        # Create a new user in Firebase Authentication
-        user = auth.create_user_with_email_and_password(email, password)
-        nurse_data = {
-            'nurseName': fullname,
-            'nurseEmailAddress': email,
-            'nursephonenumber': phonenumber,
-            'nurseGender': gender,
-            'nurseNationalID': nationalID
-        }
-
-        local_id = user['localId']
-
-        # Add data to Firestore with try-catch for error logging
-        try:
-            db.collection('nurseData').document(local_id).set(nurse_data)
-            logging.info(f"User data successfully stored in Firestore for localId: {local_id}")
-
-        except Exception as firestore_error:
-            logging.error(f"Error adding user data to Firestore for localId: {local_id}: {firestore_error}")
-            return jsonify({"error": "Error adding data to Firestore"}), 500
-        redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/Admin/admin_dashboard.html?localId={local_id}#manageProfileSection"
-
-
-        return jsonify({"message": "Successfully created the user", "localId": local_id, "redirectUrl": redirect_url}), 201
-
-    except Exception as e:
-        logging.error(f"Error creating user: {e}")
-        return jsonify({"error": str(e)}), 400  # Return error message  
     
-@app.route('/getParentDetails', methods=['GET'])
-def getParentDetails():
-    try:
-        # Get the 'localID' query parameter
-        child_localID = request.args.get("localID")
 
-        # Check if localID is provided
-        if not child_localID:
-            return jsonify({"error": "Missing 'localID' parameter"}), 400
-
-        # Directly reference the document by its ID
-        doc_ref = db.collection('childData').document(child_localID)
-        doc = doc_ref.get()
-
-        # Check if the document exists
-        if doc.exists:
-            # Retrieve 'emailaddress' and 'parentName' from the document
-            doc_data = doc.to_dict()
-            response_data = {
-                "emailaddress": doc_data.get("emailaddress"),
-                "parentName": doc_data.get("ParentName")
-            }
-            return jsonify({"message": "Parent details found", "data": response_data}), 200
-        else:
-            return jsonify({"error": "No document found for the given 'localID'"}), 404
-
-    except Exception as e:
-        logging.error(f"Error fetching parent details: {str(e)}")
-        return jsonify({"error": str(e)}), 500
-
-    # this is sections for admin data
-    
-    
-    
- #this is the nurse profile
- # 
- #    
  
  
  
- 
- 
-@app.route('/getEmailList', methods=['GET'])
-def getEmailList():
-    try:
-        # Get the 'NextVisit' query parameter
-        NextVisit = request.args.get("NextVisit")
-        
-        # Check if NextVisit is provided
-        if not NextVisit:
-            return jsonify({"error": "Missing 'NextVisit' parameter"}), 400
-
-        # Parse the NextVisit date
-        from google.cloud.firestore import SERVER_TIMESTAMP
-        from datetime import datetime
-
-        # Convert the string date to a datetime object (example)
-        visit_datetime = datetime.strptime(NextVisit, "%B %d, %Y at %I:%M:%S %p %Z")
-
-        # Query documents in the 'VaccinationHistory' collection with NextVisit after the given date
-        doc_ref = db.collection('VaccinationHistory')
-        query = doc_ref.where("NextVisit", ">=", visit_datetime)
-        docs = query.stream()
-
-        # Prepare a list to store the response data
-        response_data = []
-        for doc in docs:
-            doc_data = doc.to_dict()
-            response_data.append({
-                "childName": doc_data.get("childName"),
-                "DateofVaccination": doc_data.get("DateofVaccination"),
-                "emailaddress": doc_data.get("emailaddress"),
-                "parentName": doc_data.get("parentName"),
-            })
-        
-        # Check if we got any documents
-        if response_data:
-            return jsonify({"message": "Parent details found", "data": response_data}), 200
-        else:
-            return jsonify({"error": "No documents found for the given 'NextVisit'"}), 404
-
-    except Exception as e:
-        logging.error(f"Error fetching parent details: {str(e)}")
-        return jsonify({"error": str(e)}), 500
-
 
  
 @app.route('/ViewActivities', methods=['GET'])
@@ -911,63 +725,6 @@ def updateParentProfile():
     # Run the Flask application
 
 
-@app.route('/ChildVaccinationProgress', methods=['GET'])
-def ChildVaccinationProgress():
-    try:
-        docs = db.collection('VaccinationHistory').stream()
-        child_data = {}
-
-        for doc in docs:
-            data = doc.to_dict()
-            child_name = data.get("childName")
-            vaccination_date = data.get("DateofVaccination")
-            weight = data.get("weight")
-            height = data.get("height")
-
-            # Ensure we have necessary data
-            if child_name and vaccination_date and weight is not None and height is not None:
-                # Parse the date
-                try:
-                    date_parsed = datetime.strptime(vaccination_date.rsplit(" GMT", 1)[0], "%B %d, %Y at %I:%M:%S %p")
-                except ValueError as e:
-                    logging.error(f"Date parsing error for {vaccination_date}: {e}")
-                    continue  # Skip if date is not in expected format
-
-                # Initialize child entry if it doesn't exist
-                if child_name not in child_data:
-                    child_data[child_name] = []
-
-                # Append the entry with parsed date
-                child_data[child_name].append({
-                    "date": date_parsed,
-                    "weight": weight,
-                    "height": height
-                })
-
-        # Sort each child's records by date
-        for child_name in child_data:
-            child_data[child_name].sort(key=lambda x: x["date"])
-
-        # Convert dates back to strings for JSON response
-        formatted_data = {}
-        for child_name, records in child_data.items():
-            formatted_data[child_name] = {
-                "dates": [record["date"].strftime("%B %d, %Y at %I:%M:%S %p") for record in records],
-                "weights": [record["weight"] for record in records],
-                "heights": [record["height"] for record in records]
-            }
-
-        # Log the sorted data to verify structure
-        logging.info("Child vaccination progression data prepared: %s", formatted_data)
-
-        return jsonify({
-            "message": "Child vaccination progression data fetched",
-            "data": formatted_data
-        }), 200
-
-    except Exception as e:
-        logging.error(f"Error fetching child vaccination progression data: {str(e)}")
-        return jsonify({"error": str(e)}), 500
 
 
 
