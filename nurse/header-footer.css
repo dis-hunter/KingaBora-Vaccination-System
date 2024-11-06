@@ -6,7 +6,7 @@
             padding: 0;
         }
         body{
-            font-family: "Roboto", sans-serif;
+            font-family: 'Playpens Sans', sans-serif;
         }
         nav {
             display: flex;
@@ -373,7 +373,7 @@ form {
     padding: 20px;
     border-radius: 10px; /* Rounded corners */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    margin: 20px auto; /* Center the form */
+    margin: 20px ; /* Center the form */
     width: 500px; /* Fixed width for the form */
 }
 

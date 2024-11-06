@@ -181,11 +181,20 @@ table{
 </div>
 </div>
 <button type="button" id="paymentBtn">PAYMENT</button>
-  
+
+<script>
+  document.getElementById("paymentBtn").addEventListener("click", function() {
+    // Define the URL of the M-Pesa payment page
+    const mpesaPaymentUrl = "http://localhost/KingaBora-Vaccination-System/Payments/payments.html"; // Replace with actual URL
+
+    // Redirect to the M-Pesa payment page
+    window.location.href = mpesaPaymentUrl;
+  });
+</script>
 </body>
 </html>
 <script>
-  let period,ChildName,Child_local_ID,DateofVaccination,NextVisit,NurseName,Nurse_local_ID, scheduleTime,nextscheduletime,parentEmailAddress ;
+  let period,ChildName,Child_local_ID,DateofVaccination,NextVisit,NurseName,Nurse_local_ID,nextscheduletime,parentEmailAddress ;
   let selectedDrugs = [];
  let period_passed;
   let vaccinesIssued=[];
@@ -220,20 +229,17 @@ console.log(newDate);
   // console.log('Selected value:', nextVisit); // Do something with the value
   document.getElementById("NextVisit").innerText = newDate;
 });
-function getLocalIdFromUrl() {
+  function getLocalIdFromUrl() {
   const urlParams = new URLSearchParams(window.location.search);
-  const localId = urlParams.get('localId');
+  const localId = urlParams.get('localId'); // Change 'localId' to whatever the parameter name is
+  console.log(localId);
   return localId;
 }
 
- 
 
 
 async function VaccineReceipt() {     
   const localId = getLocalIdFromUrl();
-  console.log(localId);
-
-  
   try {
     const url = `http://127.0.0.1:5000/vaccinationupdate?localId=${encodeURIComponent(localId)}`;
     const response = await fetch(url, { method: 'GET' });
@@ -253,11 +259,8 @@ async function VaccineReceipt() {
       Nurse_local_ID=vaccinereceipt.Nurse_local_ID;
       // console.log(Nurse_local_ID);
       
-
-      
-  period = vaccinereceipt.nextscheduletime;
-
-    console.log(period);
+9      
+        period= vaccinereceipt.nextscheduletime;
         document.getElementById("TodaysVaccine").innerHTML="todays vaccines are for "+period
         
         console.log("what vaccine period its for:",period);
@@ -270,7 +273,7 @@ async function VaccineReceipt() {
     {
        period_passed=6;
     }
-    else if(period=="At Birth")
+    else if(period=="Birth")
     {
       period_passed=0;
     }
@@ -286,7 +289,7 @@ async function VaccineReceipt() {
     }
      nextscheduletime=period_passed +" Week";
       console.log(period);
-      await getVaccines(period);
+      getVaccines(period);
       console.log("demo",nextscheduletime);
       
       document.getElementById("childprofile").innerHTML=ChildName;
@@ -417,7 +420,64 @@ function getFormattedDate(weeksToAdd = 0) {
       }
 
 
-      async function DrugAdministered(SelectedDrugs) {
+//       async function DrugAdministered(SelectedDrugs) {
+//         SelectedDrug=selectedDrugs;
+       
+      
+//         try {
+//           backendUrl='http://127.0.0.1:5000'
+//           const response = await fetch(${backendUrl}/DrugAdministered, {
+//             method: 'POST',
+//             headers: {
+//               'Content-Type': 'application/json'
+//             },
+//             body: JSON.stringify({
+//               SelectedDrug
+//             })
+//           });
+      
+//           // if (response.ok) {
+//           //   const data = await response.json();
+//           //   console.log("the prices are", data);
+//           //   document.getElementById("DrugAdministered").innerHTML=data.total_price;     //this prints out the cost on the 
+//           //   // window.location.href = data.redirectUrl;  // Redirect to provided URL
+//           // } else {
+//           //   const errorData = await response.json();
+//           //   console.error("Error creating user:", errorData.error);
+//           //   // Handle error message display or other actions
+//           // }
+// ai 1
+//           if (response.ok) {
+//   const data = await response.json();
+//   console.log("The prices are:", data);
+  
+//   // Display the total price in the element with ID "DrugAdministered"
+//   document.getElementById("DrugAdministered").textContent = Total Cost: KES ${data.total_price};
+  
+//   // Store the total price in session storage
+//   sessionStorage.setItem("totalPrice", data.total_price);
+
+//   // Redirect to the M-Pesa payment page if a redirect URL is provided
+//   if (data.redirectUrl) {
+//     window.location.href = data.redirectUrl;
+//   }
+// } else {
+//   const errorData = await response.json();
+//   console.error("Error:", errorData.error);
+  
+//   // Display an error message
+//   document.getElementById("errorMessage").textContent = Error: ${errorData.error};
+// }
+//ai1
+      
+      //   } catch (error) {
+      //     console.error("Error during request:", error);
+      //     // Handle network errors or other exceptions
+      //   }
+      // }
+      // In the first page (vaccination profile page)
+// Update the DrugAdministered function
+async function DrugAdministered(SelectedDrugs) {
   try {
     const backendUrl = 'http://127.0.0.1:5000';
     const response = await fetch(`${backendUrl}/DrugAdministered`, {
@@ -458,6 +518,29 @@ function getFormattedDate(weeksToAdd = 0) {
     return null;
   }
 }
+
+// Update the payment button click handler
+document.getElementById("paymentBtn").addEventListener("click", function() {
+  const totalPrice = sessionStorage.getItem("totalPrice") || localStorage.getItem("totalPrice");
+  
+  if (!totalPrice) {
+    alert("Please select vaccines first to calculate the total price");
+    return;
+  }
+  
+  // Add the price as a URL parameter as backup
+  const mpesaPaymentUrl = `http://localhost:8080/KingaBora-Vaccination-System/Payments/payments.html?amount=${totalPrice}`;
+  window.location.href = mpesaPaymentUrl;
+});
+
+// Disable payment button by default until price is calculated
+document.addEventListener('DOMContentLoaded', function() {
+  const paymentBtn = document.getElementById("paymentBtn");
+  if (paymentBtn) {
+    paymentBtn.disabled = true;
+  }
+});
+      
       async function getParentDetails(localID) {                              //gets vaccine which has the its period to be administered specified
   try {
  
@@ -481,21 +564,16 @@ function getFormattedDate(weeksToAdd = 0) {
      
     } else {
       console.error('Error fetching parentdetails:', data.error || response.statusText);
-      // document.getElementById('vaccineList').textContent = `Error: ${data.error || 'Failed to fetch vaccines'}`;
+      // document.getElementById('vaccineList').textContent = Error: ${data.error || 'Failed to fetch vaccines'};
     }
   } catch (error) {
     console.error('Error:', error);
     document.getElementById('vaccineList').textContent = 'Error: ' + error.message;
   }
 }
-
-
-
-//run
 document.addEventListener('DOMContentLoaded', () => {
   VaccineReceipt();
   getFormattedDate();
-  console.log(scheduleTime);
 
   function storeSelectedDrugs() {
   selectedDrugs = []; // Clear the array before populating
@@ -522,12 +600,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
-
-  document.getElementById("paymentBtn").addEventListener("click", function() {
-    // Define the URL of the M-Pesa payment page
-    const mpesaPaymentUrl = "http://localhost:8080/KingaBora-Vaccination-System/Payments/payments.html"; // Replace with actual URL
-
-    // Redirect to the M-Pesa payment page
-    window.location.href = mpesaPaymentUrl;
-  });
 </script>

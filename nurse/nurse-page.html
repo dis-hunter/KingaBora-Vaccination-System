@@ -5,16 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Parent Registration Form</title>
     <link rel="stylesheet" href="header-footer.css">
+    <script defer src="header-footer.js"></script>
 </head>
+<style>
+  body{
+    font-family: 'Playpen Sans', sans-serif;
+  }
+  .row {
+  display: flex;
+  align-items: center;
+  margin: 10px;
+}
+
+
+.col-md-3 img { 
+  width: 100%;
+  max-width: 500px; 
+  height: 400px;
+  display: block;
+  margin-right: 20px;
+  border-radius: 10px; 
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+}
+
+.col-md-9{
+  margin-right: 40px;
+  padding-right: 20px;
+}
+  
+</style>
 <body>
-    <header>
-        <img src="project\logo.jpg" alt="Logo">
-        <div class="account-info">
-            <p>Account Name</p>
-            <img src="profile-picture.png" alt="Profile Picture" class="profile-picture">
-        </div>
-    </header>
-    
+  <special-header></special-header>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9"></div>
     <form id="registration-form">
         <h2>PARENT REGISTRATION</h2>
 
@@ -50,6 +74,13 @@
         <button type="submit">Submit</button>
     </form>
 
+    <div class="col-md-3">
+      <img src="images/parentspic1.jpeg" class="img-fluid" alt="Image"> 
+    </div>
+  </div>
+  </div>
+</div>
+    <special-footer></special-footer>
     <script>
         async function getEmailList(NextVisit) {
   try {

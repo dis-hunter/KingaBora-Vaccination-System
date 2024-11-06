@@ -7,18 +7,18 @@
     <link rel="stylesheet" href="header-footer.css">
     <script type="module" src="header-footer.js" defer></script>
 </head>
+<style>
+    main{
+  background: radial-gradient(circle, #e0f2f1, teal); /* Teal to light teal gradient */
+}
+</style>
 <body>
-    <header>
-        <img src="project\logo.jpg" alt="Logo">
-        <img src="" alt="Logo">
-        <div class="account-info">
-            <p>Account Name</p>
-            <img src="profile-picture.png" alt="Profile Picture" class="profile-picture">
-        </div>
-    </header>
+
+    <special-header></special-header>
+    <main>
 
     <form id="vaccine-session-form">
-        <h2>SESSION</h2>
+        <h2>VACCINATION SESSION</h2>
 
         <label for="date-time" class="label">DATE AND TIME</label>
         <input type="text" id="date-time" class="input-field" readonly>
@@ -40,6 +40,10 @@
 
         <button type="submit">Submit</button>
     </form>
+
+    </main>
+
+    <special-footer></special-footer>
 
     <script>
         // Function to set the current date and time
@@ -65,5 +69,8 @@
             setCurrentDateTime(); // Reset the date and time
         });
     </script>
+
 </body>
+
+
 </html>
