@@ -333,8 +333,8 @@
         if (data.parentDetails) {
             document.getElementById("parentName").textContent = data.parentDetails.parentName || "N/A";
             document.getElementById("parentNationalID").textContent = data.parentDetails.parentNationalID || "N/A";
-            document.getElementById("phoneNumber").textContent = data.parentDetails.parentPhoneNumber || "N/A";
-            document.getElementById("email").textContent = data.parentDetails.parentEmailAddress || "N/A";
+            document.getElementById("parentPhoneNumber").textContent = data.parentDetails.parentPhoneNumber || "N/A";
+            document.getElementById("parentEmailAddress").textContent = data.parentDetails.parentEmailAddress || "N/A";
 
             // Now fetch child details using the parent's national ID
             await getChildren(data.parentDetails.parentNationalID);
@@ -350,6 +350,7 @@
     let parentEmailAddress = parentjson.parentEmailAddress;
     let parentPhoneNumber = parentjson.parentPhoneNumber;
     parentNationalID = parentjson.parentNationalID;
+    console.log(parentNationalID);
     
     // Update visible elements
     document.getElementById("parentName").innerHTML = parentName;

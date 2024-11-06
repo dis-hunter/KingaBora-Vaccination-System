@@ -185,7 +185,7 @@ table{
 </body>
 </html>
 <script>
-  let period,ChildName,Child_local_ID,DateofVaccination,NextVisit,NurseName,Nurse_local_ID,nextscheduletime,parentEmailAddress ;
+  let period,ChildName,Child_local_ID,DateofVaccination,NextVisit,NurseName,Nurse_local_ID, scheduleTime,nextscheduletime,parentEmailAddress ;
   let selectedDrugs = [];
  let period_passed;
   let vaccinesIssued=[];
@@ -220,17 +220,20 @@ console.log(newDate);
   // console.log('Selected value:', nextVisit); // Do something with the value
   document.getElementById("NextVisit").innerText = newDate;
 });
-  function getLocalIdFromUrl() {
+function getLocalIdFromUrl() {
   const urlParams = new URLSearchParams(window.location.search);
-  const localId = urlParams.get('localId'); // Change 'localId' to whatever the parameter name is
-  console.log(localId);
+  const localId = urlParams.get('localId');
   return localId;
 }
 
+ 
 
 
 async function VaccineReceipt() {     
   const localId = getLocalIdFromUrl();
+  console.log(localId);
+
+  
   try {
     const url = `http://127.0.0.1:5000/vaccinationupdate?localId=${encodeURIComponent(localId)}`;
     const response = await fetch(url, { method: 'GET' });
@@ -250,8 +253,11 @@ async function VaccineReceipt() {
       Nurse_local_ID=vaccinereceipt.Nurse_local_ID;
       // console.log(Nurse_local_ID);
       
-9      
-        period= vaccinereceipt.nextscheduletime;
+
+      
+  period = vaccinereceipt.nextscheduletime;
+
+    console.log(period);
         document.getElementById("TodaysVaccine").innerHTML="todays vaccines are for "+period
         
         console.log("what vaccine period its for:",period);
@@ -264,7 +270,7 @@ async function VaccineReceipt() {
     {
        period_passed=6;
     }
-    else if(period=="Birth")
+    else if(period=="At Birth")
     {
       period_passed=0;
     }
@@ -280,7 +286,7 @@ async function VaccineReceipt() {
     }
      nextscheduletime=period_passed +" Week";
       console.log(period);
-      getVaccines(period);
+      await getVaccines(period);
       console.log("demo",nextscheduletime);
       
       document.getElementById("childprofile").innerHTML=ChildName;
@@ -412,38 +418,46 @@ function getFormattedDate(weeksToAdd = 0) {
 
 
       async function DrugAdministered(SelectedDrugs) {
-        SelectedDrug=selectedDrugs;
-       
+  try {
+    const backendUrl = 'http://127.0.0.1:5000';
+    const response = await fetch(`${backendUrl}/DrugAdministered`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        SelectedDrug: SelectedDrugs
+      })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log("The prices are:", data);
       
-        try {
-          backendUrl='http://127.0.0.1:5000'
-          const response = await fetch(`${backendUrl}/DrugAdministered`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              SelectedDrug
-            })
-          });
+      // Store the total price in both sessionStorage and localStorage as backup
+      const totalPrice = data.total_price.toString();
+      sessionStorage.setItem("totalPrice", totalPrice);
+      localStorage.setItem("totalPrice", totalPrice);
       
-          if (response.ok) {
-            const data = await response.json();
-            console.log("the prices are", data);
-            document.getElementById("DrugAdministered").innerHTML=data.total_price;     //this prints out the cost on the 
-            // window.location.href = data.redirectUrl;  // Redirect to provided URL
-          } else {
-            const errorData = await response.json();
-            console.error("Error creating user:", errorData.error);
-            // Handle error message display or other actions
-          }
+      // Display the total price
+      document.getElementById("DrugAdministered").textContent = `Total Cost: KES ${totalPrice}`;
       
-        } catch (error) {
-          console.error("Error during request:", error);
-          // Handle network errors or other exceptions
-        }
+      // Enable the payment button only when we have a price
+      const paymentBtn = document.getElementById("paymentBtn");
+      if (paymentBtn) {
+        paymentBtn.disabled = false;
       }
       
+      return totalPrice;
+    } else {
+      throw new Error("Failed to calculate price");
+    }
+  } catch (error) {
+    console.error("Error during price calculation:", error);
+    document.getElementById("DrugAdministered").textContent = "Error calculating price. Please try again.";
+    return null;
+  }
+}
       async function getParentDetails(localID) {                              //gets vaccine which has the its period to be administered specified
   try {
  
@@ -474,9 +488,14 @@ function getFormattedDate(weeksToAdd = 0) {
     document.getElementById('vaccineList').textContent = 'Error: ' + error.message;
   }
 }
+
+
+
+//run
 document.addEventListener('DOMContentLoaded', () => {
   VaccineReceipt();
   getFormattedDate();
+  console.log(scheduleTime);
 
   function storeSelectedDrugs() {
   selectedDrugs = []; // Clear the array before populating
@@ -503,4 +522,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+  document.getElementById("paymentBtn").addEventListener("click", function() {
+    // Define the URL of the M-Pesa payment page
+    const mpesaPaymentUrl = "http://localhost:8080/KingaBora-Vaccination-System/Payments/payments.html"; // Replace with actual URL
+
+    // Redirect to the M-Pesa payment page
+    window.location.href = mpesaPaymentUrl;
+  });
 </script>

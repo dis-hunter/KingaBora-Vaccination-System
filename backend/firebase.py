@@ -511,30 +511,55 @@ def addChild():
     try:
         data = request.get_json()
         
+        nextscheduletime = "At Birth"
         # Create child data document
         child_data = {
-            'BirthCertificateID': data.get('birthCertificateID'),
-            'ChildName': data.get('childName'),
-            'DateOfBirth': data.get('dateOfBirth'),
-            'Gender': data.get('gender'),
-            'ParentName': data.get('parentName'),
-            'ParentNationalID': data.get('parentNationalID'),
-            'emailaddress': data.get('emailaddress'),
-            'Weight': data.get('weight'),
-            'Height': data.get('height')
+            'BirthCertificateID': data.get('BirthCertificateID'),
+            'ChildName': data.get('ChildName'),
+            'DateOfBirth': data.get('DOB'),
+            'Gender': data.get('Gender'),
+            'ParentName': data.get('ParentName'),
+            'ParentNationalID': data.get('ParentNationalID'),
+            'emailaddress': data.get('parentEmailAddress'),
+            # 'Weight': data.get('weight'),
+            # 'Height': data.get('height')
         }
 
-        # Add document to 'childData' collection
+        # Add document to 'childData' collection and get the document reference
         doc_ref = db.collection('childData').add(child_data)
         
+        doc_id = doc_ref[1].id  # Retrieve the document ID directly
+        vaccination_data={
+            'ChildGender': data.get('Gender'),
+            'childName': data.get('ChildName'),
+            'DateOfVaccination': data.get('DOB'),
+            'NextVisit': data.get('DOB'),
+            'nextscheduletime':"At Birth",            
+            'NurseName': "Faith",
+            'child_local_ID':doc_id,
+            'parentEmailAddress': data.get('parentEmailAddress'),
+            'vaccinesIssued': [],
+            # 'Weight': data.get('weight'),
+            # 'Height': data.get('height')
+            
+        }
+        doc_reference = db.collection('VaccinationHistory').add(vaccination_data)
+        doc_identity = doc_reference[1].id 
+
+        # Construct the redirect URL with the document ID and schedule time
+        redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/nurse/vaccinationpage.html?localId={doc_id}"
+        
         return jsonify({
-            "message": "Child added successfully",
-            "childId": doc_ref[1].id
+            "message": "Successfully created the user",
+            "localId": doc_id,
+            "redirectUrl": redirect_url
         }), 201
 
     except Exception as e:
         logging.error(f"Error adding child: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
+
 
 # Run the Flask application
 if __name__ == '__main__':
@@ -542,7 +567,6 @@ if __name__ == '__main__':
 
 # from today (kangskii)
 
-from datetime import datetime
 
 @app.route('/ChildVaccinationProgress', methods=['GET'])
 def ChildVaccinationProgress():
