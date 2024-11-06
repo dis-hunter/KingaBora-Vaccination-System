@@ -454,11 +454,7 @@ def getParentDetails():
     
  #this is the nurse profile
  # 
- #    
- 
- 
- 
- 
+ # 
  
 @app.route('/getEmailList', methods=['GET'])
 def getEmailList():
@@ -517,17 +513,6 @@ def getEmailList():
         logging.error(f"Error fetching parent details: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
- 
- 
- 
-
-    
-
- 
- 
- 
-
- 
 @app.route('/ViewActivities', methods=['GET'])
 def ViewActivities():
     try:
@@ -722,12 +707,6 @@ def updateParentProfile():
        logging.error(f"Error updating profile: {str(e)}")
        return jsonify({"error": str(e)}), 500   
     
-    # Run the Flask application
-
-
-
-
-
 @app.route('/ViewActivities2', methods=['GET'])
 def ViewActivities2():
     try:
