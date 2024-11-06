@@ -71,70 +71,18 @@
             }
         }
     </style>
-    <script>
-        window.addEventListener("DOMContentLoaded", () => {
-            const amountInput = document.getElementById("amount");
-            
-            // Try to get the price from multiple sources
-            let totalPrice = sessionStorage.getItem("totalPrice") || 
-                           localStorage.getItem("totalPrice") ||
-                           new URLSearchParams(window.location.search).get("amount");
-            
-            if (totalPrice) {
-                // Store the found price in both storages
-                sessionStorage.setItem("totalPrice", totalPrice);
-                localStorage.setItem("totalPrice", totalPrice);
-                
-                // Set the amount input value
-                amountInput.value = totalPrice;
-                amountInput.setAttribute('readonly', true); // Prevent manual editing
-            } else {
-                // Handle case where no price is found
-                const form = document.querySelector("form");
-                form.innerHTML = `
-                    <div style="color: red; margin: 20px;">
-                        <p>No payment amount found. Please return to the previous page and select vaccines first.</p>
-                        <button onclick="history.back()" style="padding: 10px 20px; margin-top: 10px;">Go Back</button>
-                    </div>
-                `;
-            }
-        });
-
-        // Form validation
-        document.querySelector("form").addEventListener("submit", function(e) {
-            const phoneInput = document.getElementById("phone");
-            const amountInput = document.getElementById("amount");
-            
-            // Basic phone number validation for Kenya
-            const phoneRegex = /^254[17][0-9]{8}$/;
-            if (!phoneRegex.test(phoneInput.value)) {
-                e.preventDefault();
-                alert("Please enter a valid Kenyan phone number starting with 254");
-                return;
-            }
-            
-            // Validate amount
-            if (!amountInput.value || isNaN(amountInput.value) || amountInput.value <= 0) {
-                e.preventDefault();
-                alert("Please ensure a valid amount is entered");
-                return;
-            }
-        });
-    </script>
 </head>
 <body>
     <form action="stkPush.php" method="POST">
+        <!-- Add the M-Pesa icon here -->
         <img src="images/Mpesa.jpeg" alt="M-Pesa Icon" class="icon">
         
         <label for="phone">Enter your Phone Number:</label>
-        <input type="text" id="phone" name="phone" required 
-               placeholder="e.g., 254712345678"
-               pattern="254[17][0-9]{8}"
-               title="Please enter a valid Kenyan phone number starting with 254">
+        <input type="text" id="phone" name="phone" required placeholder="e.g., 254712345678">
         
-        <label for="amount">Amount to Pay (KES):</label>
-        <input type="number" id="amount" name="amount" required 
-               placeholder="Amount in KES" min="1" readonly>
+        <label for="amount">Enter Amount:</label>
+        <input type="number" id="amount" name="amount" required placeholder="Amount in KES" min="1">
+        
         
         
         <input type="submit" value="Pay Now">
