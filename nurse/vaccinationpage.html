@@ -50,6 +50,7 @@ th:nth-child(1), td:nth-child(1) {
 }
 #update{
   background-color: #008080;
+  background-color: #008080;
   font-size: 16px;
   color: white;
   padding: 8px 4px;
@@ -106,6 +107,7 @@ table{
     <input type="text" name="child_name" placeholder="Parent/Guardian's Name">
   <label>Last Visit:</label>
     <input type="text" name="lstvisit" placeholder="Last Visit">
+  </div>
   </div>
     <div class="main">
         <div class="date">
@@ -262,7 +264,9 @@ async function VaccineReceipt() {
 9      
         period= vaccinereceipt.nextscheduletime;
         document.getElementById("TodaysVaccine").innerHTML="todays vaccines are for "+period
+        document.getElementById("TodaysVaccine").innerHTML="todays vaccines are for "+period
         
+        console.log("what vaccine period its for:",period);
         console.log("what vaccine period its for:",period);
  
 

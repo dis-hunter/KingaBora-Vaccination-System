@@ -326,15 +326,8 @@
         const response = await fetch(url);
         const data = await response.json();
 
-<<<<<<< HEAD
-        if (data.parentDetails) {
-            document.getElementById("parentName").textContent = data.parentDetails.parentName || "N/A";
-            document.getElementById("parentNationalID").textContent = data.parentDetails.parentNationalID || "N/A";
-            document.getElementById("parentPhoneNumber").textContent = data.parentDetails.parentPhoneNumber || "N/A";
-            document.getElementById("parentEmailAddress").textContent = data.parentDetails.parentEmailAddress || "N/A";
-=======
+
         console.log("Received data:", data); // Debug log
->>>>>>> 774d2434b729ba6f8ff2221276c84c7b0eb0a359
 
         if (response.ok && data.parentDetails) {
             // Update the DOM with parent details - matching exact field names from Firebase
