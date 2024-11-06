@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+<html>
 <head>
 <style>
 body {
@@ -8,8 +9,10 @@ body {
 .dosage {
   padding: 20px;
   border: 1px solid #ccc;
+  border: 1px solid #ccc;
   text-align: center; 
   margin: 20px auto; /* Center the div */
+  width: 50%; /* Adjust width as needed */
   width: 50%; /* Adjust width as needed */
 }
 .tbody{
@@ -27,6 +30,13 @@ h1, h2 {
   font-family: 'Playpen Sans', sans-serif;
   font-weight: 700; /* Apply the bold weight to headings */
   color: black;
+}
+.dosage{
+  background-color: #87CEEB;
+  width: 60%;
+}
+.tbody{
+  text-align: centre;
 }
 .dosage{
   background-color: #87CEEB;
@@ -86,10 +96,21 @@ table{
 .vaccine-column {
   text-align: left; /* Align checkboxes to the left */
 }
+/* .vaccine-checkbox {
+  margin-right: 7px;  */
+/* } */
+.drugs-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center; /* Center-aligns the items */
+}
+
 .vaccine-checkbox {
   margin-right: 7px; /* Add spacing between checkboxes and text */
 }
 </style>
+</head>
 </head>
 <body>
   <div class="topnav">
@@ -173,6 +194,7 @@ table{
     <div id="measurementsDiv">
       <div id="DrugAdministered"></div>
     <h2>Measurements</h2>
+    <h2>Measurements</h2>
     <label for="weight">Weight (kg):</label>
     <input type="number" id="weight" name="weight"><br><br>
     <label for="height">Height (cm):</label>
@@ -182,6 +204,17 @@ table{
   </div>
 </div>
 </div>
+<button type="button" id="paymentBtn">PAYMENT</button>
+
+<script>
+  document.getElementById("paymentBtn").addEventListener("click", function() {
+    // Define the URL of the M-Pesa payment page
+    const mpesaPaymentUrl = "http://localhost/KingaBora-Vaccination-System/Payments/payments.html"; // Replace with actual URL
+
+    // Redirect to the M-Pesa payment page
+    window.location.href = mpesaPaymentUrl;
+  });
+</script>
 <button type="button" id="paymentBtn">PAYMENT</button>
 
 <script>
@@ -424,6 +457,8 @@ function getFormattedDate(weeksToAdd = 0) {
       }
 
 
+//       async function DrugAdministered(SelectedDrugs) {
+//         SelectedDrug=selectedDrugs;
 //       async function DrugAdministered(SelectedDrugs) {
 //         SelectedDrug=selectedDrugs;
        
