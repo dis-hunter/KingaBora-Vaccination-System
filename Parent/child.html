@@ -24,6 +24,20 @@
         .child-info h2 {
             margin-bottom: 10px;
         }
+        .vaccination-history {
+            margin-top: 20px;
+        }
+        .vaccination-history ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .vaccination-history li {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
     </style>
 </head>
 <body>
@@ -35,13 +49,14 @@
             <h2 id="childName">Child Name</h2>
             <p id="childBirthCertificateID">Birth Certificate ID: </p>
             <p id="childDateOfBirth">Date of Birth: </p>
+            <p id="childGender">Gender: </p>
             <p id="childParentName">Parent Name: </p>
             <p id="childParentNationalID">Parent National ID: </p>
             <p id="childEmailAddress">Parent Email: </p>
             <p id="childHeight">Height: </p>
             <p id="childWeight">Weight: </p>
         </div>
-        <div class="child-info">
+        <div class="vaccination-history">
             <h2>Vaccination History</h2>
             <ul id="vaccinationHistoryList">
                 <!-- Vaccination history will be populated here -->
@@ -75,6 +90,7 @@
                     document.getElementById('childName').textContent = data.ChildName;
                     document.getElementById('childBirthCertificateID').textContent = `Birth Certificate ID: ${data.BirthCertificateID}`;
                     document.getElementById('childDateOfBirth').textContent = `Date of Birth: ${new Date(data.DateOfBirth).toLocaleString()}`;
+                    document.getElementById('childGender').textContent = `Gender: ${data.ChildGender}`;
                     document.getElementById('childParentName').textContent = `Parent Name: ${data.ParentName}`;
                     document.getElementById('childParentNationalID').textContent = `Parent National ID: ${data.ParentNationalID}`;
                     document.getElementById('childEmailAddress').textContent = `Parent Email: ${data.emailaddress}`;
@@ -89,25 +105,42 @@
         }
 
         async function fetchVaccinationHistory(localId) {
-            try {
-                const response = await fetch(`http://127.0.0.1:5000/vaccinationupdate?localId=${encodeURIComponent(localId)}`);
-                const data = await response.json();
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/vaccinationupdate?localId=${encodeURIComponent(localId)}`);
+        const data = await response.json();
 
-                if (response.ok) {
-                    const vaccinationHistoryList = document.getElementById('vaccinationHistoryList');
-                    vaccinationHistoryList.innerHTML = ''; // Clear existing list
-                    data.Vaccination.forEach(vaccine => {
-                        const li = document.createElement('li');
-                        li.textContent = `Vaccine: ${vaccine.vaccinesIssued}, Date: ${new Date (vaccine.DateofVaccination).toLocaleString()}`;
-                        vaccinationHistoryList.appendChild(li);
-                    });
-                } else {
-                    console.error("Error fetching vaccination history:", data.error);
-                }
-            } catch (error) {
-                console.error("Error fetching vaccination history:", error);
-            }
+        if (response.ok) {
+            const vaccinationHistoryList = document.getElementById('vaccinationHistoryList');
+            vaccinationHistoryList.innerHTML = ''; // Clear existing list
+
+            data.Vaccination.forEach(vaccine => {
+                const li = document.createElement('li');
+                
+                // Parse the dates
+                const dateOfVaccination = new Date(vaccine.DateofVaccination);
+                const nextVisitDate = new Date(vaccine.NextVisit);
+                const nextVaccinationDate = new Date(vaccine.NextVaccination);
+
+                // Format the dates
+                const formattedDateOfVaccination = isNaN(dateOfVaccination) ? "Invalid Date" : dateOfVaccination.toLocaleString();
+                const formattedNextVisit = isNaN(nextVisitDate) ? "Invalid Date" : nextVisitDate.toLocaleString();
+                const formattedNextVaccination = isNaN(nextVaccinationDate) ? "Invalid Date" : nextVaccinationDate.toLocaleString();
+
+                li.innerHTML = `
+                    <strong>Vaccine Name:</strong> ${vaccine.vaccinesIssued.join(', ')} <br>
+                    <strong>Date of Vaccination:</strong> ${formattedDateOfVaccination} <br>
+                    <strong>Next Vaccination:</strong> ${formattedNextVaccination} <br>
+                    <strong>Next Visit:</strong> ${formattedNextVisit} <br>
+                `;
+                vaccinationHistoryList.appendChild(li);
+            });
+        } else {
+            console.error("Error fetching vaccination history:", data.error);
         }
+    } catch (error) {
+        console.error("Error fetching vaccination history:", error);
+    }
+}
     </script>
 </body>
 </html>
