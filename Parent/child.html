@@ -6,6 +6,8 @@
     <title>Child Profile</title>
     <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
     <script defer src="child.js"></script> <!-- Link to your JavaScript file -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         body {
             font-family: sans-serif;
@@ -23,6 +25,14 @@
         }
         .child-info h2 {
             margin-bottom: 10px;
+        }
+        .chart-container {
+            width: 80%;
+            margin: 20px auto;
+        }
+        canvas {
+            max-height: 400px;
+            height: 400px;
         }
     </style>
 </head>
@@ -46,6 +56,14 @@
             <ul id="vaccinationHistoryList">
                 <!-- Vaccination history will be populated here -->
             </ul>
+        </div>
+        <div class="chart-container">
+            <h2>Weight Progress Over Time</h2>
+            <canvas id="weightChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <h2>Height Progress Over Time</h2>
+            <canvas id="heightChart"></canvas>
         </div>
     </main>
     <footer>
@@ -71,7 +89,6 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    // Populate the child details in the DOM
                     document.getElementById('childName').textContent = data.ChildName;
                     document.getElementById('childBirthCertificateID').textContent = `Birth Certificate ID: ${data.BirthCertificateID}`;
                     document.getElementById('childDateOfBirth').textContent = `Date of Birth: ${new Date(data.DateOfBirth).toLocaleString()}`;
@@ -96,11 +113,26 @@
                 if (response.ok) {
                     const vaccinationHistoryList = document.getElementById('vaccinationHistoryList');
                     vaccinationHistoryList.innerHTML = ''; // Clear existing list
+
+                    // Prepare data for charts
+                    const dates = [];
+                    const weights = [];
+                    const heights = [];
+
                     data.Vaccination.forEach(vaccine => {
+                        const date = new Date(vaccine.DateofVaccination);
+                        dates.push(date.toLocaleDateString());
+                        weights.push(vaccine.weight || 0); // Set default value if weight is missing
+                        heights.push(vaccine.height || 0); // Set default value if height is missing
+
                         const li = document.createElement('li');
-                        li.textContent = `Vaccine: ${vaccine.vaccinesIssued}, Date: ${new Date (vaccine.DateofVaccination).toLocaleString()}`;
+                        li.textContent = `Vaccine: ${vaccine.vaccinesIssued}, Date: ${date.toLocaleString()}`;
                         vaccinationHistoryList.appendChild(li);
                     });
+
+                    // Render charts with the fetched data
+                    renderChart('weightChart', dates, weights, 'Weight (kg)');
+                    renderChart('heightChart', dates, heights, 'Height (cm)');
                 } else {
                     console.error("Error fetching vaccination history:", data.error);
                 }
@@ -108,6 +140,59 @@
                 console.error("Error fetching vaccination history:", error);
             }
         }
+
+        async function fetchVaccinationHistory2(localId) {
+    try {
+        // Fetch vaccination progress data for the specified localId
+        const response = await fetch(`http://127.0.0.1:5000/ChildVaccinationProgress?localId=${encodeURIComponent(localId)}`);
+        const data = await response.json();
+
+        if (response.ok) {
+            // Display vaccination history list (if needed)
+            const vaccinationHistoryList = document.getElementById('vaccinationHistoryList');
+            vaccinationHistoryList.innerHTML = '';
+            data.data.dates.forEach((date, index) => {
+                const li = document.createElement('li');
+                li.textContent = `Date: ${date}, Weight: ${data.data.weights[index]} kg, Height: ${data.data.heights[index]} cm`;
+                vaccinationHistoryList.appendChild(li);
+            });
+
+            // Render weight and height charts
+            renderChart('weightChart', data.data.dates, data.data.weights, 'Weight (kg)');
+            renderChart('heightChart', data.data.dates, data.data.heights, 'Height (cm)');
+        } else {
+            console.error("Error fetching vaccination history:", data.error);
+        }
+    } catch (error) {
+        console.error("Error fetching vaccination history:", error);
+    }
+}
+
+function renderChart(chartId, labels, data, label) {
+    const ctx = document.getElementById(chartId).getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: label,
+                data: data,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 2,
+                fill: false,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: { title: { display: true, text: 'Date' } },
+                y: { title: { display: true, text: label } }
+            }
+        }
+    });
+}
+
     </script>
 </body>
 </html>

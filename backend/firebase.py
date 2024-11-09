@@ -81,6 +81,16 @@ def register():
         logging.error(f"Error creating user: {e}")
         return jsonify({"error": str(e)}), 400  # Return error message
     
+
+def parse_date2(date_str):
+    try:
+        # Strip off the timezone and parse the core part of the date
+        core_date_str = date_str.split(" GMT")[0]
+        return datetime.strptime(core_date_str, '%a %b %d %Y %H:%M:%S')
+    except ValueError as e:
+        print(f"Date parsing error for {date_str}: {e}")
+        return None
+    
 # Example route to handle POST requests
 @app.route('/email_authenticate', methods=['POST'])
 def email_authenticate():
@@ -230,7 +240,7 @@ def vaccinationupdate():
             # Sort documents, putting any with unparseable dates at the end
             try:
                 document_list.sort(
-                    key=lambda x: parse_date(x['DateofVaccination']) or datetime.min,
+                    key=lambda x: parse_date2(x['DateofVaccination']) or datetime.min,
                     reverse=True
                 )
             except Exception as sort_error:
@@ -665,7 +675,17 @@ if __name__ == '__main__':
 @app.route('/ChildVaccinationProgress', methods=['GET'])
 def ChildVaccinationProgress():
     try:
-        docs = db.collection('VaccinationHistory').stream()
+        # Get the localId from query parameters
+        child_local_id = request.args.get("localId")
+        if not child_local_id:
+            return jsonify({"error": "localId parameter is required"}), 400
+
+        # Query vaccination history based on localId
+        doc_ref = db.collection('VaccinationHistory')
+        query = doc_ref.where('child_local_ID', '==', child_local_id)
+        docs = query.stream()
+
+        # Prepare data for the specified child
         child_data = {}
 
         for doc in docs:
@@ -695,9 +715,9 @@ def ChildVaccinationProgress():
                     "height": height
                 })
 
-        # Sort each child's records by date
-        for child_name in child_data:
-            child_data[child_name].sort(key=lambda x: x["date"])
+        # Sort each child's records by date in ascending order
+        
+        child_data.sort(key=lambda x: x["date"])  # Sorting in ascending order
 
         # Convert dates back to strings for JSON response
         formatted_data = {}
@@ -719,6 +739,8 @@ def ChildVaccinationProgress():
     except Exception as e:
         logging.error(f"Error fetching child vaccination progression data: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
+
     
 @app.route('/updateParentProfile', methods=['PUT'])
 def updateParentProfile():
@@ -788,6 +810,7 @@ def get_drug_inventory():
     except Exception as e:
         logging.error(f"Error fetching DrugInventory: {e}")
         return jsonify({"error": "An error occurred while fetching DrugInventory"}), 500
+    
 @app.route('/drug_sales', methods=['GET'])
 def get_drug_sales():
     try:
@@ -840,14 +863,6 @@ def get_drug_sales():
         return jsonify({"error": "An error occurred while fetching drug sales data"}), 500
     
 
-def parse_date(date_str):
-    try:
-        # Strip off the timezone and parse the core part of the date
-        core_date_str = date_str.split(" GMT")[0]
-        return datetime.strptime(core_date_str, '%a %b %d %Y %H:%M:%S')
-    except ValueError as e:
-        print(f"Date parsing error for {date_str}: {e}")
-        return None
 
 
 # Endpoint to retrieve and count vaccines administered each day in the past week
@@ -869,7 +884,7 @@ def drug_sales2():
             data = entry.to_dict()
             date_str = data.get("DateOfAdministration")
             if date_str:
-                parsed_date = parse_date(date_str)
+                parsed_date = parse_date2(date_str)
                 if parsed_date and parsed_date >= start_date:
                     # Count doses by day
                     day_key = parsed_date.strftime('%Y-%m-%d')
@@ -909,7 +924,7 @@ def top_drugs_administered():
             date_str = data.get("DateOfAdministration")
             drug_name = data.get("DrugName")  # Assuming you have a field for the drug name
             if date_str and drug_name:
-                parsed_date = parse_date(date_str)
+                parsed_date = parse_date2(date_str)
                 if parsed_date >= start_date:
                     day_key = parsed_date.strftime('%Y-%m-%d')
                     daily_drug_counts[day_key][drug_name] += 1
