@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-<html>
 <head>
 <style>
 body {
@@ -9,10 +8,8 @@ body {
 .dosage {
   padding: 20px;
   border: 1px solid #ccc;
-  border: 1px solid #ccc;
   text-align: center; 
   margin: 20px auto; /* Center the div */
-  width: 50%; /* Adjust width as needed */
   width: 50%; /* Adjust width as needed */
 }
 .tbody{
@@ -111,14 +108,13 @@ table{
 }
 </style>
 </head>
-</head>
 <body>
-  <div class="topnav">
+  <!-- <div class="topnav">
     <div>
     <img src="../img/logo.png" id="logo" alt="Software Engineering Logo" width="170" height="120">
-    </div>
+    </div> -->
     <h2>Child Vaccination Profile</h2>
-    <form class="d-flex" role="search" onsubmit="searchBar(); return false;">
+    <!-- <form class="d-flex" role="search" onsubmit="searchBar(); return false;">
       <input class="form-control me-2" type="search" id="searchQuery" placeholder="Enter Parent Name" aria-label="Search">
       <button class="btn btn-outline-success" type="submit">Search</button>
   </form>
@@ -135,11 +131,11 @@ table{
           <?php echo "Date: " . date("d-m-Y"); ?>
         </div>
         <div class="dosage">
-        <h2>child Details</h2>
+        <h2>Child Details</h2>
+        <h4>Child Name:</h4>
         <div id="childprofile"></div>
-        <div id = "parentEmail"></div>
-        <h2>Todays vaccines</h2>
-        <div id="drugs"></div>
+        <h4>Parent Email:</h4><div id = "parentEmail"></div>
+        <h2>Today's Vaccines:</h2><div id="drugs"></div>
         <div id="TodaysVaccine"></div>
 
           <h2>Next Visit</h2>
@@ -157,43 +153,11 @@ table{
        
         </div>
 
-    <!-- <table>
-      <thead>
-        <tr>
-          <th>AGE</th>
-          <th>VACCINE(S)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php
-        // Replace this with your actual vaccine data (from database or array)
-        $vaccineData = array(
-          array("Birth", "BCG, Birth Polio, HepB"),
-          // array("Dosage 2", "OPV-1, Penta-1, PCV-1, Rota-1"),
-          // array("Dosage 3", "OPV-2, Penta-2, PCV-2, Rota-2"),
-          // ... add more dosages and vaccines
-        );
-
-        foreach ($vaccineData as $vaccine) {
-          echo "<tr>";
-          echo "<td>" . $vaccine[0] . "</td>";
-          echo "<td class='vaccine-column'>";
-          $vaccines = explode(",", $vaccine[1]);
-          foreach ($vaccines as $v) {
-            echo "<input type='checkbox' class='vaccine-checkbox' name='vaccine[]' value='" . trim($v) . "'> " . trim($v) . "<br>";
-          }
-          echo "</td>";
-          echo "</tr>";
-        }
-        ?>
-      </tbody>
-    </table> -->
     <div id="graph">
       
     </div>
     <div id="measurementsDiv">
       <div id="DrugAdministered"></div>
-    <h2>Measurements</h2>
     <h2>Measurements</h2>
     <label for="weight">Weight (kg):</label>
     <input type="number" id="weight" name="weight"><br><br>

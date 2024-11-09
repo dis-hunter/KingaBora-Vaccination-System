@@ -381,7 +381,7 @@
 async function getChildren(parentNationalID) {
     try {
         console.log("Fetching children for parent ID:", parentNationalID);
-        const url = `http://127.0.0.1:5000/childDetails?ParentNationalID=${encodeURIComponent(parentNationalID)}`;
+        const url = 'http://127.0.0.1:5000/childDetails?ParentNationalID=${encodeURIComponent(parentNationalID)}';
         console.log("Requesting URL:", url);
         
         const response = await fetch(url);
@@ -541,7 +541,7 @@ document.getElementById('editProfileForm').addEventListener('submit', async func
 
     try {
         const localId = new URLSearchParams(window.location.search).get('localId');
-        const response = await fetch(`http://127.0.0.1:5000/updateParentProfile?localId=${localId}`, {
+        const response = await fetch('http://127.0.0.1:5000/updateParentProfile?localId=${localId}', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
