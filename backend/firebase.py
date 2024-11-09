@@ -604,7 +604,6 @@ def addChild():
             
         }
         doc_reference = db.collection('VaccinationHistory').add(vaccination_data)
-        doc_identity = doc_reference[1].id 
 
         # Construct the redirect URL with the document ID and schedule time
         redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/nurse/vaccinationpage.html?localId={doc_id}"
