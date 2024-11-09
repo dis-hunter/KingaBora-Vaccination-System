@@ -565,6 +565,39 @@ def ChildDetails():
         logging.error(f"Error fetching child details: {str(e)}")
         return jsonify({"error": str(e)}), 500
     
+#fetchChildByLocalId    
+@app.route('/fetchChildByLocalId', methods=['GET'])
+def fetchChildByLocalId():
+    try:
+        local_id = request.args.get("localId")  # Get the localId from the query parameters
+        if not local_id:
+            return jsonify({"error": "No localId provided"}), 400
+
+        # Reference the child document using the localId
+        doc_ref = db.collection('childData').document(local_id)
+        doc = doc_ref.get()
+
+        if doc.exists:
+            data = doc.to_dict()
+            return jsonify({
+                "message": "Child found",
+                "BirthCertificateID": data.get('BirthCertificateID'),
+                "ChildName": data.get('ChildName'),
+                "DateOfBirth": data.get('DateOfBirth'),
+                "Gender": data.get('Gender'),
+                "ParentName": data.get('ParentName'),
+                "ParentNationalID": data.get('ParentNationalID'),
+                "emailaddress": data.get('emailaddress'),
+                "height": data.get('height'),
+                "weight": data.get('weight')
+            }), 200
+        else:
+            return jsonify({"error": "No child found for the given localId"}), 404
+
+    except Exception as e:
+        logging.error(f"Error fetching child details: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+    
     
 @app.route('/addChild', methods=['POST'])
 def addChild():

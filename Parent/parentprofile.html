@@ -396,7 +396,7 @@ async function getChildren(parentNationalID) {
             data.childNames.forEach(child => {
                 const li = document.createElement('li');
                 const a = document.createElement('a');
-                a.href = `child.html?childId=${encodeURIComponent(child.BirthCertificateID)}`;
+                a.href = `child.html?localId=${encodeURIComponent(child.id)}`; // Use child.id or the appropriate field
                 a.textContent = `${child.ChildName} (${child.BirthCertificateID})`;
                 li.appendChild(a);
                 childrenList.appendChild(li);

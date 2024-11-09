@@ -375,6 +375,9 @@ input, select {
     background-color: #004d40;
     color: white;
 }
+.marq-visible {
+    display: inline-block; /* Show when this class is added */
+}
 
 .tb1 tr:nth-child(even) {
     background-color: #f2f2f2;

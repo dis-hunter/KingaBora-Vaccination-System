@@ -21,12 +21,19 @@ body {
 }
 .topnav {
   overflow: hidden;
-  /* background-color: #008080; */
+  background-color: #008080;
 }
 h1, h2 {
   font-family: 'Playpen Sans', sans-serif;
   font-weight: 700; /* Apply the bold weight to headings */
   color: black;
+}
+.dosage{
+  background-color: #87CEEB;
+  width: 60%;
+}
+.tbody{
+  text-align: centre;
 }
 .dosage{
   background-color: #87CEEB;
@@ -49,7 +56,8 @@ th:nth-child(1), td:nth-child(1) {
   width: 40%; /* Increase width of vaccine column */
 }
 #update{
-  background-color: white;
+  background-color: #008080;
+  background-color: #008080;
   font-size: 16px;
   color: white;
   padding: 8px 4px;
@@ -96,9 +104,7 @@ table{
 }
 
 .vaccine-checkbox {
-    display: flex;
-    align-items: center;
-    font-size: 16px;
+  margin-right: 7px; /* Add spacing between checkboxes and text */
 }
 </style>
 </head>
@@ -118,7 +124,8 @@ table{
     <input type="text" name="child_name" placeholder="Parent/Guardian's Name">
   <label>Last Visit:</label>
     <input type="text" name="lstvisit" placeholder="Last Visit">
-  </div> -->
+  </div>
+  </div>
     <div class="main">
         <div class="date">
           <?php echo "Date: " . date("d-m-Y"); ?>
@@ -161,6 +168,17 @@ table{
   </div>
 </div>
 </div>
+<button type="button" id="paymentBtn">PAYMENT</button>
+
+<script>
+  document.getElementById("paymentBtn").addEventListener("click", function() {
+    // Define the URL of the M-Pesa payment page
+    const mpesaPaymentUrl = "http://localhost/KingaBora-Vaccination-System/Payments/payments.html"; // Replace with actual URL
+
+    // Redirect to the M-Pesa payment page
+    window.location.href = mpesaPaymentUrl;
+  });
+</script>
 <button type="button" id="paymentBtn">PAYMENT</button>
 
 <script>
@@ -242,9 +260,11 @@ async function VaccineReceipt() {
       
 9      
         period= vaccinereceipt.nextscheduletime;
-        document.getElementById("TodaysVaccine").innerHTML="Todays vaccines are for "+period
+        document.getElementById("TodaysVaccine").innerHTML="todays vaccines are for "+period
+        document.getElementById("TodaysVaccine").innerHTML="todays vaccines are for "+period
         
-        console.log("What vaccine period its for:",period);
+        console.log("what vaccine period its for:",period);
+        console.log("what vaccine period its for:",period);
  
 
 // Extract the '6' from the string and convert it to a number
@@ -403,11 +423,13 @@ function getFormattedDate(weeksToAdd = 0) {
 
 //       async function DrugAdministered(SelectedDrugs) {
 //         SelectedDrug=selectedDrugs;
+//       async function DrugAdministered(SelectedDrugs) {
+//         SelectedDrug=selectedDrugs;
        
       
 //         try {
 //           backendUrl='http://127.0.0.1:5000'
-//           const response = await fetch(`${backendUrl}/DrugAdministered`, {
+//           const response = await fetch(${backendUrl}/DrugAdministered, {
 //             method: 'POST',
 //             headers: {
 //               'Content-Type': 'application/json'
@@ -433,7 +455,7 @@ function getFormattedDate(weeksToAdd = 0) {
 //   console.log("The prices are:", data);
   
 //   // Display the total price in the element with ID "DrugAdministered"
-//   document.getElementById("DrugAdministered").textContent = `Total Cost: KES ${data.total_price}`;
+//   document.getElementById("DrugAdministered").textContent = Total Cost: KES ${data.total_price};
   
 //   // Store the total price in session storage
 //   sessionStorage.setItem("totalPrice", data.total_price);
@@ -447,7 +469,7 @@ function getFormattedDate(weeksToAdd = 0) {
 //   console.error("Error:", errorData.error);
   
 //   // Display an error message
-//   document.getElementById("errorMessage").textContent = `Error: ${errorData.error}`;
+//   document.getElementById("errorMessage").textContent = Error: ${errorData.error};
 // }
 //ai1
       
@@ -545,7 +567,7 @@ document.addEventListener('DOMContentLoaded', function() {
      
     } else {
       console.error('Error fetching parentdetails:', data.error || response.statusText);
-      // document.getElementById('vaccineList').textContent = `Error: ${data.error || 'Failed to fetch vaccines'}`;
+      // document.getElementById('vaccineList').textContent = Error: ${data.error || 'Failed to fetch vaccines'};
     }
   } catch (error) {
     console.error('Error:', error);
