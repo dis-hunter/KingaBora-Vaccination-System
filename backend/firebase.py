@@ -664,9 +664,7 @@ def addChild():
 
 
 
-# Run the Flask application
-if __name__ == '__main__':
-    app.run(debug=True, port=5000)  # Running on localhost:5000
+
 
 # from today (kangskii)
 
