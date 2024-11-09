@@ -551,7 +551,6 @@ def ViewActivities():
         logging.error(f"Error fetching child details: {str(e)}")
         return jsonify({"errors": str(e)}), 500
 
-
 #child data
 @app.route('/childDetails', methods=['GET'])
 def ChildDetails():
@@ -715,9 +714,9 @@ def ChildVaccinationProgress():
                     "height": height
                 })
 
-        # Sort each child's records by date in ascending order
-        
-        child_data.sort(key=lambda x: x["date"])  # Sorting in ascending order
+        # Sort each child's records by date
+        for child_name in child_data:
+            child_data[child_name].sort(key=lambda x: x["date"])
 
         # Convert dates back to strings for JSON response
         formatted_data = {}
@@ -861,11 +860,9 @@ def get_drug_sales():
     except Exception as e:
         logging.error(f"Error fetching drug sales data: {e}")
         return jsonify({"error": "An error occurred while fetching drug sales data"}), 500
-    
 
 
 
-# Endpoint to retrieve and count vaccines administered each day in the past week
 @app.route('/drug_sales2', methods=['GET'])
 def drug_sales2():
     try:
@@ -1101,6 +1098,7 @@ def add_vaccine_data():
     except Exception as e:
         print(f"Error: {str(e)}")  # Print the error to the console for debugging
         return jsonify({"success": False, "error": str(e)}), 500
+
 
 # Run the Flask application
 if __name__ == '__main__':
