@@ -116,6 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Initiate Reminders</title>
 </head>
 <body>
+    
     <h1>Initiate Vaccination Reminders</h1>
     <p>Current Date: <?php echo date('Y-m-d'); ?></p>
     <form method="POST">
