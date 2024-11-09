@@ -45,13 +45,14 @@
             <h2 id="childName">Child Name</h2>
             <p id="childBirthCertificateID">Birth Certificate ID: </p>
             <p id="childDateOfBirth">Date of Birth: </p>
+            <p id="childGender">Gender: </p>
             <p id="childParentName">Parent Name: </p>
             <p id="childParentNationalID">Parent National ID: </p>
             <p id="childEmailAddress">Parent Email: </p>
             <p id="childHeight">Height: </p>
             <p id="childWeight">Weight: </p>
         </div>
-        <div class="child-info">
+        <div class="vaccination-history">
             <h2>Vaccination History</h2>
             <ul id="vaccinationHistoryList">
                 <!-- Vaccination history will be populated here -->
@@ -92,6 +93,7 @@
                     document.getElementById('childName').textContent = data.ChildName;
                     document.getElementById('childBirthCertificateID').textContent = `Birth Certificate ID: ${data.BirthCertificateID}`;
                     document.getElementById('childDateOfBirth').textContent = `Date of Birth: ${new Date(data.DateOfBirth).toLocaleString()}`;
+                    document.getElementById('childGender').textContent = `Gender: ${data.ChildGender}`;
                     document.getElementById('childParentName').textContent = `Parent Name: ${data.ParentName}`;
                     document.getElementById('childParentNationalID').textContent = `Parent National ID: ${data.ParentNationalID}`;
                     document.getElementById('childEmailAddress').textContent = `Parent Email: ${data.emailaddress}`;
@@ -106,9 +108,9 @@
         }
 
         async function fetchVaccinationHistory(localId) {
-            try {
-                const response = await fetch(`http://127.0.0.1:5000/vaccinationupdate?localId=${encodeURIComponent(localId)}`);
-                const data = await response.json();
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/vaccinationupdate?localId=${encodeURIComponent(localId)}`);
+        const data = await response.json();
 
                 if (response.ok) {
                     const vaccinationHistoryList = document.getElementById('vaccinationHistoryList');
