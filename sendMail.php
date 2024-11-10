@@ -105,7 +105,11 @@
         document.getElementById('vaccineList').textContent = 'Error: ' + error.message;
       }
     }
-
+    
+    document.addEventListener('DOMContentLoaded', () => {
+  getEmailList();
+ 
+  });
     function scheduleEmailReminders() {
       // Get today's date, add 14 days, and format it
       const today = new Date();

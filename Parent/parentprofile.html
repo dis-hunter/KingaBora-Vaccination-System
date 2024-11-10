@@ -334,6 +334,7 @@
         const response = await fetch(url);
         const data = await response.json();
 
+
         console.log("Received data:", data); // Debug log
 
         if (response.ok && data.parentDetails) {
@@ -369,6 +370,7 @@
     let parentEmailAddress = parentjson.parentEmailAddress;
     let parentPhoneNumber = parentjson.parentPhoneNumber;
     parentNationalID = parentjson.parentNationalID;
+    console.log(parentNationalID);
     
     // Update visible elements
     document.getElementById("parentName").innerHTML = parentName;
@@ -402,7 +404,7 @@ async function getChildren(parentNationalID) {
             data.childNames.forEach(child => {
                 const li = document.createElement('li');
                 const a = document.createElement('a');
-                a.href = `child.html?childId=${encodeURIComponent(child.BirthCertificateID)}`;
+                a.href = `child.html?localId=${encodeURIComponent(child.id)}`; // Use child.id or the appropriate field
                 a.textContent = `${child.ChildName} (${child.BirthCertificateID})`;
                 li.appendChild(a);
                 childrenList.appendChild(li);

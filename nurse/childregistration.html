@@ -76,6 +76,9 @@
                             <label for="formCheck" class="form-check-label text-secondary"><small>Remember Me</small></label>
                         </div>
                     </div>
+                    <!-- does the At Birth issue/ -->
+                    <input type="hidden" id="nextscheduletime" name="birthStatus" value="At Birth">   
+
 
                     <div class="input-group mb-3">
                         <button class="btn btn-lg btn-primary w-100 fs-6" onclick="register()" >Register</button>
@@ -127,11 +130,12 @@
         const ParentName = document.getElementById('ParentName').value;
         const DOB = document.getElementById('DOB').value;
         const parentEmailAddress = document.getElementById('parentEmailAddress').value;
+        const nextscheduletime = document.getElementById('nextscheduletime').value;
 
 
         try {
             const backendUrl = 'http://127.0.0.1:5000';
-            const response = await fetch(`${backendUrl}/register`, {
+            const response = await fetch(`${backendUrl}/addChild`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -143,13 +147,14 @@
                     ParentNationalID,
                     ParentName,
                     DOB,
-                    parentEmailAddress
+                    parentEmailAddress,
+                    nextscheduletime
                 })
             });
 
             if (response.ok) {
                 const data = await response.json();
-                console.log("Successfully created user. Redirecting...");
+                console.log("Successfully created user. Redirecting...",data);
                 window.location.href = data.redirectUrl;
             } else {
                 const errorData = await response.json();
@@ -170,6 +175,7 @@
             const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
             nextVisitInput.value = selectedDate.toLocaleString('en-US', options); // Format and display the date
             console.log("Next Visit Date:", nextVisitInput.value);
+            return nextVisitInput;
         }
     }
 
