@@ -377,12 +377,6 @@ def storevaccinereceipt():
 def registerNurse():
     data = request.get_json()  # Get JSON data from the request
 
-# fullname,
-#               email,
-#               phonenumber,
-#               password,
-#               gender
-              
     # Extract data from the request
     fullname = data.get("fullname")
     email = data.get("email")
@@ -391,9 +385,8 @@ def registerNurse():
     gender = data.get("gender")
     nationalID = data.get("nationalID")
 
-
     # Validate required fields
-    if not email or not fullname or not password or not phonenumber or not gender or not  nationalID:
+    if not email or not fullname or not password or not phonenumber or not gender or not nationalID:
         logging.error("Missing required fields: email, username, password, nationalID, or contacts")
         return jsonify({"error": "Missing email, username, password, nationalID, or contacts"}), 400
 
@@ -405,7 +398,8 @@ def registerNurse():
             'nurseEmailAddress': email,
             'nursephonenumber': phonenumber,
             'nurseGender': gender,
-            'nurseNationalID': nationalID
+            'nurseNationalID': nationalID,
+            'isActive': True  # Add the 'isActive' field with value True
         }
 
         local_id = user['localId']
@@ -426,7 +420,8 @@ def registerNurse():
 
     except Exception as e:
         logging.error(f"Error creating user: {e}")
-        return jsonify({"error": str(e)}), 400  # Return error message   
+        return jsonify({"error": str(e)}), 400  # Return error message
+
     
 @app.route('/getParentDetails', methods=['GET'])
 def getParentDetails():
@@ -1042,40 +1037,55 @@ nurse_collection = db.collection('nurseData')
 @app.route('/manage_nurses', methods=['GET'])
 def get_nurses():
     try:
-        nurses = nurse_collection.stream()
+        # Query to get only active nurses
+        nurses = nurse_collection.where('isActive', '==', True).stream()
         nurse_list = []
+        
         for nurse in nurses:
             nurse_data = nurse.to_dict()
+            print(f"Nurse Data: {nurse_data}")  # Log the nurse data to check if 'isActive' exists
             nurse_info = {
                 "nurseNationalID": nurse_data.get("nurseNationalID", "N/A"),
                 "nurseName": nurse_data.get("nurseName", "N/A"),
                 "nursephonenumber": nurse_data.get("nursephonenumber", "N/A"),
                 "nurseGender": nurse_data.get("nurseGender", "N/A"),
-                "nurseEmailAddress": nurse_data.get("nurseEmailAddress", "N/A")
+                "nurseEmailAddress": nurse_data.get("nurseEmailAddress", "N/A"),
+                "isActive": nurse_data.get("isActive", True)  # Ensure the isActive field is returned
             }
             nurse_list.append(nurse_info)
+        
+        print(f"Nurse List: {nurse_list}")  # Log the list of active nurses
         
         return jsonify(nurse_list), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/manage_nurses/<nurseNationalID>', methods=['DELETE'])
-def delete_nurse(nurseNationalID):
+@app.route('/manage_nurses/<nurseNationalID>', methods=['PATCH'])
+def deactivate_nurse(nurseNationalID):
     try:
         # Query for the document with the specified National ID
         nurse_docs = nurse_collection.where('nurseNationalID', '==', nurseNationalID).stream()
         found = False
         for doc in nurse_docs:
-            nurse_collection.document(doc.id).delete()
+            # Update the isActive field to False (deactivate the nurse)
+            nurse_collection.document(doc.id).update({
+                'isActive': False  # Assuming 'isActive' is the field used for deactivation
+            })
             found = True
 
         if found:
-            return jsonify({"message": f"Nurse with ID {nurseNationalID} has been deleted"}), 200
+            # Return a JSON response including the redirect URL
+            redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/Admin/admin_dashboard.html#manageProfileSection"
+            return jsonify({
+                "message": f"Nurse with ID {nurseNationalID} has been deactivated",
+                "redirectUrl": redirect_url  # Provide the URL for redirection
+            }), 200
         else:
             return jsonify({"message": "Nurse not found"}), 404
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
     
 
 vaccines_ref = db.collection('DrugsAdministered')
