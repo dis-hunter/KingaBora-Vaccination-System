@@ -190,7 +190,7 @@ def GetUsersChart():
         # Get all documents in each collection and count them
         parent_docs = parent_ref.stream()
         child_docs = child_ref.stream()
-        nurse_docs = nurse_ref.stream()
+        nurse_docs = nurse_ref.where('isActive', '==', True).stream()
         admin_docs = admin_ref.stream()
 
         # Count documents in each collection
@@ -1075,7 +1075,7 @@ def deactivate_nurse(nurseNationalID):
 
         if found:
             # Return a JSON response including the redirect URL
-            redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/Admin/admin_dashboard.html#manageProfileSection"
+            redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/Admin/admin_dashboard.html"
             return jsonify({
                 "message": f"Nurse with ID {nurseNationalID} has been deactivated",
                 "redirectUrl": redirect_url  # Provide the URL for redirection
