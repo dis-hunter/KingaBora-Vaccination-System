@@ -456,62 +456,55 @@ def getParentDetails():
  # 
  # 
  
+
+
 @app.route('/getEmailList', methods=['GET'])
 def getEmailList():
     try:
-        # Get the 'NextVisit' query parameter
         NextVisit = request.args.get("NextVisit")
         
-        # Check if NextVisit is provided
-        if not NextVisit:
-            return jsonify({"error": "Missing 'NextVisit' parameter"}), 400
-
-        # Parse the provided NextVisit parameter into a datetime object (without timezone)
-        NextVisit_no_tz = NextVisit.rsplit(" GMT", 1)[0]
-        visit_datetime = datetime.strptime(NextVisit_no_tz, "%B %d, %Y at %I:%M:%S %p")
+        # Pre-process the date string to match the required format
+        # Removes "GMT" prefix for compatibility with `%z`
+        processed_date_str = NextVisit.removesuffix('GMT+3') 
         
-        # Manually add timezone (GMT+3) and convert to UTC
-        input_tz = pytz.FixedOffset(3 * 60)  # GMT+3 is 3 hours ahead of UTC
-        localized_datetime = input_tz.localize(visit_datetime)
-        utc_datetime = localized_datetime.astimezone(pytz.UTC)
+        # Convert the processed date string to a datetime object
+        target_date = datetime.strptime(processed_date_str, "%B %d, %Y at %I:%M:%S %p ")
 
-        # Query Firestore for all documents in 'VaccinationHistory'
-        doc_ref = db.collection('VaccinationHistory')
-        docs = doc_ref.stream()
+        # # Retrieve all documents in the collection
+        docs = db.collection('VaccinationHistory').stream()
 
-        # Prepare response data by filtering based on NextVisit
-        response_data = []
+        # Filter documents based on NextVisit date
+        result_docs = []
         for doc in docs:
-            doc_data = doc.to_dict()
-            
-            # Convert each document's NextVisit string to a datetime for comparison
-            doc_next_visit = doc_data.get("NextVisit")
-            if doc_next_visit:
-                doc_next_visit_no_tz = doc_next_visit.rsplit(" GMT", 1)[0]
-                doc_visit_datetime = datetime.strptime(doc_next_visit_no_tz, "%B %d, %Y at %I:%M:%S %p")
-                
-                # Localize and convert document datetime to UTC
-                doc_localized_datetime = input_tz.localize(doc_visit_datetime)
-                doc_utc_datetime = doc_localized_datetime.astimezone(pytz.UTC)
-                
-                # Compare document's UTC NextVisit with the provided UTC NextVisit
-                if doc_utc_datetime <= utc_datetime:
-                    response_data.append({
-                        "childName": doc_data.get("childName"),
-                        "DateofVaccination": doc_data.get("DateofVaccination"),
-                        "parentEmailAddress": doc_data.get("parentEmailAddress"),
-                        "NextVisit": doc_data.get("NextVisit"),
-                    })
-        
-        # Return results or 404 if none found
-        if response_data:
-            return jsonify({"message": "Parent details found", "data": response_data}), 200
-        else:
-            return jsonify({"error": "No documents found for the given 'NextVisit'"}), 404
+            data = doc.to_dict()
+            next_visit_str = data.get("NextVisit")
+            if next_visit_str:
+                # Pre-process and parse each NextVisit date
+                 processed_nextdate_str = next_visit_str.removesuffix('GMT+3')  
+                 next_visit_date = datetime.strptime(processed_nextdate_str, "%B %d, %Y at %I:%M:%S %p ")
+                 timezone_offset = pytz.timezone('Etc/GMT-3')
+
+# Get the current date and time with the specified timezone
+                 date = datetime.now(timezone_offset)
+
+# Format the date in the desired format
+                 formatted_date = date.strftime("%B %d, %Y at %I:%M:%S %p GMT%z")
+
+# Adjust the timezone format to match "+3" instead of "+0300"
+                 formatted_date = formatted_date[:-2] + formatted_date[-2:].lstrip("0")
+                 processed_today_str = formatted_date.removesuffix('GMT+03')
+                 today_visit_date = datetime.strptime(processed_today_str, "%B %d, %Y at %I:%M:%S %p ")
+
+        #         # Check if NextVisit is before the target date
+                 if today_visit_date < next_visit_date < target_date :
+                    result_docs.append(data)
+
+        return jsonify({"data":result_docs})
 
     except Exception as e:
-        logging.error(f"Error fetching parent details: {str(e)}")
+        logging.error(f"Error fetching email list: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/ViewActivities', methods=['GET'])
 def ViewActivities():
