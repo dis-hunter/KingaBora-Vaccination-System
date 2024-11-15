@@ -47,6 +47,7 @@
   </div>
 </div>
     <special-footer></special-footer>
+
     <script>
     async function fetchVaccinationDueList() {
   try {
@@ -78,48 +79,55 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchVaccinationDueList();
 });
 
-async function getEmailList(NextVisit) {
-  try {
-    console.log('Getting email and parent details for NextVisit:', NextVisit); // Debug logging
+
+
+
+
+
+
+
+// async function getEmailList(NextVisit) {
+//   try {
+//     console.log('Getting email and parent details for NextVisit:', NextVisit); // Debug logging
     
-    const url = `http://127.0.0.1:5000/getEmailList?NextVisit=${encodeURIComponent(NextVisit)}`;
-    console.log('Request URL:', url); // Debug logging
+//     const url = `http://127.0.0.1:5000/getEmailList?NextVisit=${encodeURIComponent(NextVisit)}`;
+//     console.log('Request URL:', url); // Debug logging
     
-    const response = await fetch(url, { method: 'GET' });
-    const data = await response.json();
+//     const response = await fetch(url, { method: 'GET' });
+//     const data = await response.json();
 
-    if (response.ok) {
-    const emailList = [];  // Initialize an empty array to store emails
+//     if (response.ok) {
+//     const emailList = [];  // Initialize an empty array to store emails
 
-    data.data.forEach((item) => {
-        if (item.parentEmailAddress) {  // Check if parentEmailAddress exists
-            emailList.push(item.parentEmailAddress);  // Add email to the list
-        }
-    });
+//     data.data.forEach((item) => {
+//         if (item.parentEmailAddress) {  // Check if parentEmailAddress exists
+//             emailList.push(item.parentEmailAddress);  // Add email to the list
+//         }
+//     });
 
-    console.log('Email list found:', emailList);  // Log the array of emails
-}
+//     console.log('Email list found:', emailList);  // Log the array of emails
+// }
 
 
       
-      // Assuming data.data is an array of results
-    //   data.data.forEach(item => {
-    //     console.log(`Child Name: ${item.childName}, Date of Vaccination: ${item.DateofVaccination}`);
+//       // Assuming data.data is an array of results
+//     //   data.data.forEach(item => {
+//     //     console.log(`Child Name: ${item.childName}, Date of Vaccination: ${item.DateofVaccination}`);
         
-    //     // Optionally update the DOM with the information
-    //     // For example, if you have elements to display them
-    //     // document.getElementById("parentEmail").innerHTML += item.emailaddress + '<br>';
-    //   });
+//     //     // Optionally update the DOM with the information
+//     //     // For example, if you have elements to display them
+//     //     // document.getElementById("parentEmail").innerHTML += item.emailaddress + '<br>';
+//     //   });
       
-    else {
-      console.error('Error fetching email list:', data.error || response.statusText);
-      document.getElementById('vaccineList').textContent = `Error: ${data.error || 'Failed to fetch vaccines'}`;
-    }
-  } catch (error) {
-    console.error('Error:', error);
-    document.getElementById('vaccineList').textContent = 'Error: ' + error.message;
-  }
-}
+//     else {
+//       console.error('Error fetching email list:', data.error || response.statusText);
+//       document.getElementById('vaccineList').textContent = `Error: ${data.error || 'Failed to fetch vaccines'}`;
+//     }
+//   } catch (error) {
+//     console.error('Error:', error);
+//     document.getElementById('vaccineList').textContent = 'Error: ' + error.message;
+//   }
+// }
 
     </script>
 </body>
