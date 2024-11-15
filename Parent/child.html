@@ -73,8 +73,21 @@
     </footer>
 
     <script>
+      function TokenFinder()
+      {
+
+        const token = localStorage.getItem('token');
+
+
+            if (!token) {
+                console.log("token not found. Redirecting to login...");
+                window.location.href = 'http://localhost:8080/KingaBora-Vaccination-System/authentication/login.html';
+                } 
+
+      }
       document.addEventListener("DOMContentLoaded", async () => {
         const urlParams = new URLSearchParams(window.location.search);
+        TokenFinder();
         const localId = urlParams.get("localId");
 
         if (localId) {

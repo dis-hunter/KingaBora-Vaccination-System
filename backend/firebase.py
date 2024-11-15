@@ -10,6 +10,8 @@ from config import Config
 from datetime import datetime, timedelta
 from collections import defaultdict
 import os
+import secrets
+import string
 import pytz
 import requests
 
@@ -88,7 +90,7 @@ def email_authenticate():
         data = request.get_json()
         email = data.get('email')
         password = data.get('password')
-
+        
         # Sign in the user with Firebase
         user = auth.sign_in_with_email_and_password(email, password)
         local_id = user['localId']
@@ -101,12 +103,14 @@ def email_authenticate():
         session['local_id'] = local_id
         
         # session['username'] = username
-
+        characters = string.ascii_letters + string.digits
+        # Generate a secure random token
+        token = ''.join(secrets.choice(characters) for _ in range(15))
         # Return JSON response with redirect URL
         # redirect_url = "http://localhost:8080/KingaBora-Vaccination-System/landingpage/altIndex.html"
         # return jsonify({"message": "Successfully logged in", "localId": local_id, "redirectUrl": redirect_url}), 201
         redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/Parent/PARENTPROFILE.html?localId={local_id}"
-        return jsonify({"message": "Successfully created the user", "localId": local_id, "redirectUrl": redirect_url}), 201
+        return jsonify({"message": "Successfully created the user", "token":token, "localId": local_id, "redirectUrl": redirect_url}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
@@ -309,15 +313,25 @@ def drugAnalytics():
             for doc in drug_query:
                 drug_data = doc.to_dict()
                 price = drug_data.get('DrugPrice', 0)
-                drug_data = {
-                   'Quantity': 1,
-                   'DrugName': drug_name,
-                   'DateOfAdministration': east_africa_time,
-                   'Price': price,
-                   }
-                doc_ref=db.collection('DrugAdministered').add(drug_data)
-                doc_id = doc_ref[1].id
-                druglocalid=doc_id
+                drugquantity=drug_data.get('DrugQuantity',0)
+                drugquantity=drugquantity-1
+                
+                if drugquantity > 0:
+                    new_quantity = drugquantity - 1
+                    
+                    # Update the DrugQuantity in Firestore
+                    doc.reference.update({"DrugQuantity": new_quantity})
+                    
+                    # Log the drug administration in DrugAdministered collection
+                    drug_admin_data = {
+                        'Quantity': 1,
+                        'DrugName': drug_name,
+                        'DateOfAdministration': east_africa_time,
+                        'Price': price,
+                    }
+                    doc_ref = db.collection('DrugAdministered').add(drug_admin_data)
+                    druglocalid = doc_ref[1].id
+
 
 
 

@@ -548,8 +548,21 @@ document.getElementById("paymentBtn").addEventListener("click", function() {
   window.location.href = mpesaPaymentUrl;
 });
 
+function TokenFinder()
+      {
+
+        const token = localStorage.getItem('token');
+
+
+            if (!token) {
+                console.log("token not found. Redirecting to login...");
+                window.location.href = 'http://localhost:8080/KingaBora-Vaccination-System/authentication/login.html';
+                } 
+
+      }
 // Disable payment button by default until price is calculated
 document.addEventListener('DOMContentLoaded', function() {
+  TokenFinder();
   const paymentBtn = document.getElementById("paymentBtn");
   if (paymentBtn) {
     paymentBtn.disabled = true;
