@@ -93,7 +93,18 @@
     const data = await response.json();
 
     if (response.ok) {
-      console.log('Email list found:', data.data);
+    const emailList = [];  // Initialize an empty array to store emails
+
+    data.data.forEach((item) => {
+        if (item.parentEmailAddress) {  // Check if parentEmailAddress exists
+            emailList.push(item.parentEmailAddress);  // Add email to the list
+        }
+    });
+
+    console.log('Email list found:', emailList);  // Log the array of emails
+}
+
+
       
       // Assuming data.data is an array of results
     //   data.data.forEach(item => {
@@ -104,7 +115,7 @@
     //     // document.getElementById("parentEmail").innerHTML += item.emailaddress + '<br>';
     //   });
       
-    } else {
+    else {
       console.error('Error fetching email list:', data.error || response.statusText);
       document.getElementById('vaccineList').textContent = `Error: ${data.error || 'Failed to fetch vaccines'}`;
     }
@@ -117,7 +128,7 @@
 
  // Call the function when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
-    getEmailList("November 27, 2024 at 02:06:40 PM GMT+3"); //this endpoint uses the november date to get the emails of users whose date is beyond this
+    getEmailList("December 18, 2024 at 09:11:32 PM GMT+3"); //this endpoint uses the november date to get the emails of users whose date is beyond this
     // make a function that gets todays date, adds 14 days or 7 days depending on your reminder algorithmn, then the new date will be passed into the function to get data that are close past due so that reminder is sent
     
     });

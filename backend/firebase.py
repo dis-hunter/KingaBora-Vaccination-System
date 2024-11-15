@@ -211,12 +211,7 @@ def vaccinationupdate():
     try:
         child_local_id = request.args.get("localId")
         
-        doc_ref = db.collection('VaccinationHistory')
-        query = doc_ref.where(filter=FieldFilter("child_local_ID", "==", child_local_id))
-        docs = query.stream()
-        document_list = []
-        
-        child_local_id = request.args.get("localId")  # Get the localId from the query parameters
+       
 
         doc_ref=db.collection('VaccinationHistory')
         query=doc_ref.where(filter=FieldFilter("child_local_ID","==",child_local_id))
@@ -230,8 +225,10 @@ def vaccinationupdate():
             # Sort documents, putting any with unparseable dates at the end
             try:
                 document_list.sort(
-                    key=lambda x: parse_date(x['DateofVaccination']) or datetime.min,
-                    reverse=True
+                   key=lambda x: datetime.strptime(
+                        x['DateOfVaccination'], "%B %d, %Y at %I:%M:%S %p GMT%z"
+                    ),
+                    reverse=True 
                 )
             except Exception as sort_error:
                 logging.error(f"Sorting error: {sort_error}")
@@ -288,24 +285,89 @@ def Vaccines():
         return jsonify({"error": str(e)}), 500
 
 ## drugs 1
-@app.route('/DrugAdministered', methods=['POST'])
-def DrugAdministered():
+@app.route('/drugAnalytics', methods=['POST'])
+def drugAnalytics():
     data = request.get_json()
     selected_drugs = data.get("SelectedDrug", [])
-    total_price = 0
+    druglocalid=""
 
     try:
         for drug_name in selected_drugs:
             # Query Firestore for each drug in the DrugInventory collection
             drug_query = db.collection('DrugInventory').where('DrugName', '==', drug_name).stream()
-            
+           
             # For each document that matches the drug name, get the price
+             
+            utc_now = datetime.utcnow()
+
+           # Format the date and time
+            formatted_date = utc_now.strftime("%a %b %d %Y %H:%M:%S GMT%z")
+
+           # Adjust the time zone to GMT+3
+            gmt_offset = "+0300"
+            east_africa_time = formatted_date.replace("GMT", f"GMT{gmt_offset} (East Africa Time)") 
             for doc in drug_query:
                 drug_data = doc.to_dict()
                 price = drug_data.get('DrugPrice', 0)
+                drug_data = {
+                   'Quantity': 1,
+                   'DrugName': drug_name,
+                   'DateOfAdministration': east_africa_time,
+                   'Price': price,
+                   }
+                doc_ref=db.collection('DrugAdministered').add(drug_data)
+                doc_id = doc_ref[1].id
+                druglocalid=doc_id
+
+
+
+                
+               
+
+        return jsonify({"message": "Prices retrieved successfully", "localid":druglocalid}), 200
+    
+    except Exception as firestore_error:
+        logging.error(f"Error retrieving drug prices from Firestore: {firestore_error}")
+        return jsonify({"error": "Error retrieving drug prices"}), 500
+    
+@app.route('/DrugAdministered', methods=['POST'])
+def DrugAdministered():
+    data = request.get_json()
+    selected_drugs = data.get("SelectedDrug", [])
+    total_price = 0
+    druglocalid=""
+
+    try:
+        for drug_name in selected_drugs:
+            # Query Firestore for each drug in the DrugInventory collection
+            drug_query = db.collection('DrugInventory').where('DrugName', '==', drug_name).stream()
+           
+            # For each document that matches the drug name, get the price
+             
+            utc_now = datetime.utcnow()
+
+           # Format the date and time
+            formatted_date = utc_now.strftime("%a %b %d %Y %H:%M:%S GMT%z")
+
+           # Adjust the time zone to GMT+3
+            gmt_offset = "+0300"
+            east_africa_time = formatted_date.replace("GMT", f"GMT{gmt_offset} (East Africa Time)") 
+            for doc in drug_query:
+                drug_data = doc.to_dict()
+                price = drug_data.get('DrugPrice', 0)
+                drug_data = {
+                   'Quantity': 1,
+                   'DrugName': drug_name,
+                   'DateOfAdministration': east_africa_time,
+                   'Price': price,
+                   }
+
+
+
+                
                 total_price += price
 
-        return jsonify({"message": "Prices retrieved successfully", "total_price": total_price}), 200
+        return jsonify({"message": "Prices retrieved successfully", "total_price": total_price, "localid":druglocalid}), 200
 
     except Exception as firestore_error:
         logging.error(f"Error retrieving drug prices from Firestore: {firestore_error}")
@@ -456,62 +518,56 @@ def getParentDetails():
  # 
  # 
  
+
+
 @app.route('/getEmailList', methods=['GET'])
 def getEmailList():
     try:
-        # Get the 'NextVisit' query parameter
         NextVisit = request.args.get("NextVisit")
         
-        # Check if NextVisit is provided
-        if not NextVisit:
-            return jsonify({"error": "Missing 'NextVisit' parameter"}), 400
-
-        # Parse the provided NextVisit parameter into a datetime object (without timezone)
-        NextVisit_no_tz = NextVisit.rsplit(" GMT", 1)[0]
-        visit_datetime = datetime.strptime(NextVisit_no_tz, "%B %d, %Y at %I:%M:%S %p")
+        # Pre-process the date string to match the required format
+        # Removes "GMT" prefix for compatibility with `%z`
+        processed_date_str = NextVisit.removesuffix('GMT+3') 
         
-        # Manually add timezone (GMT+3) and convert to UTC
-        input_tz = pytz.FixedOffset(3 * 60)  # GMT+3 is 3 hours ahead of UTC
-        localized_datetime = input_tz.localize(visit_datetime)
-        utc_datetime = localized_datetime.astimezone(pytz.UTC)
+        # Convert the processed date string to a datetime object
+        target_date = datetime.strptime(processed_date_str, "%B %d, %Y at %I:%M:%S %p ")
 
-        # Query Firestore for all documents in 'VaccinationHistory'
-        doc_ref = db.collection('VaccinationHistory')
-        docs = doc_ref.stream()
+        # # Retrieve all documents in the collection
+        docs = db.collection('VaccinationHistory').stream()
 
-        # Prepare response data by filtering based on NextVisit
-        response_data = []
+        # Filter documents based on NextVisit date
+        result_docs = []
         for doc in docs:
-            doc_data = doc.to_dict()
-            
-            # Convert each document's NextVisit string to a datetime for comparison
-            doc_next_visit = doc_data.get("NextVisit")
-            if doc_next_visit:
-                doc_next_visit_no_tz = doc_next_visit.rsplit(" GMT", 1)[0]
-                doc_visit_datetime = datetime.strptime(doc_next_visit_no_tz, "%B %d, %Y at %I:%M:%S %p")
-                
-                # Localize and convert document datetime to UTC
-                doc_localized_datetime = input_tz.localize(doc_visit_datetime)
-                doc_utc_datetime = doc_localized_datetime.astimezone(pytz.UTC)
-                
-                # Compare document's UTC NextVisit with the provided UTC NextVisit
-                if doc_utc_datetime <= utc_datetime:
-                    response_data.append({
-                        "childName": doc_data.get("childName"),
-                        "DateofVaccination": doc_data.get("DateofVaccination"),
-                        "parentEmailAddress": doc_data.get("parentEmailAddress"),
-                        "NextVisit": doc_data.get("NextVisit"),
-                    })
-        
-        # Return results or 404 if none found
-        if response_data:
-            return jsonify({"message": "Parent details found", "data": response_data}), 200
-        else:
-            return jsonify({"error": "No documents found for the given 'NextVisit'"}), 404
+            data = doc.to_dict()
+            next_visit_str = data.get("NextVisit")
+            if next_visit_str:
+                # Pre-process and parse each NextVisit date
+                 processed_nextdate_str = next_visit_str.removesuffix('GMT+3')  
+                 next_visit_date = datetime.strptime(processed_nextdate_str, "%B %d, %Y at %I:%M:%S %p ")
+                 timezone_offset = pytz.timezone('Etc/GMT-3')
+
+# Get the current date and time with the specified timezone
+                 date = datetime.now(timezone_offset)
+
+# Format the date in the desired format
+                 formatted_date = date.strftime("%B %d, %Y at %I:%M:%S %p GMT%z")
+
+# Adjust the timezone format to match "+3" instead of "+0300"
+
+                 formatted_date = formatted_date[:-2] + formatted_date[-2:].lstrip("0")
+                 processed_today_str = formatted_date.removesuffix('GMT+03')
+                 today_visit_date = datetime.strptime(processed_today_str, "%B %d, %Y at %I:%M:%S %p ")
+
+        #         # Check if NextVisit is before the target date
+                 if today_visit_date < next_visit_date < target_date :
+                    result_docs.append(data)
+
+        return jsonify({"data":result_docs})
 
     except Exception as e:
-        logging.error(f"Error fetching parent details: {str(e)}")
+        logging.error(f"Error fetching email list: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/ViewActivities', methods=['GET'])
 def ViewActivities():
@@ -637,7 +693,6 @@ def addChild():
             
         }
         doc_reference = db.collection('VaccinationHistory').add(vaccination_data)
-        doc_identity = doc_reference[1].id 
 
         # Construct the redirect URL with the document ID and schedule time
         redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/nurse/vaccinationpage.html?localId={doc_id}"
@@ -656,70 +711,12 @@ def addChild():
 
 
 # Run the Flask application
-if __name__ == '__main__':
-    app.run(debug=True, port=5000)  # Running on localhost:5000
+
 
 # from today (kangskii)
 
 
-@app.route('/ChildVaccinationProgress', methods=['GET'])
-def ChildVaccinationProgress():
-    try:
-        docs = db.collection('VaccinationHistory').stream()
-        child_data = {}
 
-        for doc in docs:
-            data = doc.to_dict()
-            child_name = data.get("childName")
-            vaccination_date = data.get("DateofVaccination")
-            weight = data.get("weight")
-            height = data.get("height")
-
-            # Ensure we have necessary data
-            if child_name and vaccination_date and weight is not None and height is not None:
-                # Parse the date
-                try:
-                    date_parsed = datetime.strptime(vaccination_date.rsplit(" GMT", 1)[0], "%B %d, %Y at %I:%M:%S %p")
-                except ValueError as e:
-                    logging.error(f"Date parsing error for {vaccination_date}: {e}")
-                    continue  # Skip if date is not in expected format
-
-                # Initialize child entry if it doesn't exist
-                if child_name not in child_data:
-                    child_data[child_name] = []
-
-                # Append the entry with parsed date
-                child_data[child_name].append({
-                    "date": date_parsed,
-                    "weight": weight,
-                    "height": height
-                })
-
-        # Sort each child's records by date
-        for child_name in child_data:
-            child_data[child_name].sort(key=lambda x: x["date"])
-
-        # Convert dates back to strings for JSON response
-        formatted_data = {}
-        for child_name, records in child_data.items():
-            formatted_data[child_name] = {
-                "dates": [record["date"].strftime("%B %d, %Y at %I:%M:%S %p") for record in records],
-                "weights": [record["weight"] for record in records],
-                "heights": [record["height"] for record in records]
-            }
-
-        # Log the sorted data to verify structure
-        logging.info("Child vaccination progression data prepared: %s", formatted_data)
-
-        return jsonify({
-            "message": "Child vaccination progression data fetched",
-            "data": formatted_data
-        }), 200
-
-    except Exception as e:
-        logging.error(f"Error fetching child vaccination progression data: {str(e)}")
-        return jsonify({"error": str(e)}), 500
-    
 @app.route('/updateParentProfile', methods=['PUT'])
 def updateParentProfile():
    try:
@@ -1087,6 +1084,17 @@ def add_vaccine_data():
         print(f"Error: {str(e)}")  # Print the error to the console for debugging
         return jsonify({"success": False, "error": str(e)}), 500
 
+
+
+
+def parse_date2(date_str):
+    try:
+        # Strip off the timezone and parse the core part of the date
+        core_date_str = date_str.split(" GMT")[0]
+        return datetime.strptime(core_date_str, '%a %b %d %Y %H:%M:%S')
+    except ValueError as e:
+        print(f"Date parsing error for {date_str}: {e}")
+        return None
 # Run the Flask application
 if __name__ == '__main__':
     app.run(debug=True, port=5000)  # Running on localhost:5000

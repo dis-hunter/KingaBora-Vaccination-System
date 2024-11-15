@@ -201,6 +201,8 @@ table{
     <input type="number" id="height" name="height">
     <br><br>
     <button type="button" id="update" onclick="saveVaccine()">UPDATE</button>
+
+    
   </div>
 </div>
 </div>
@@ -371,7 +373,7 @@ async function getVaccines(period) {
           drugsContainer.appendChild(checkboxDiv);
         }
       } else {
-        drugsContainer.textContent = 'No vaccines found for this period';
+        drugsContainer.textContent = 'No vaccines found f,/or this period';
       }
     } else {
       console.error('Error fetching vaccines:', data.error || response.statusText);
@@ -415,6 +417,7 @@ function getFormattedDate(weeksToAdd = 0) {
  async function saveVaccine() {
         let weight=document.getElementById("weight").value
         let height=document.getElementById("height").value
+        
 
       
         try {
@@ -453,69 +456,40 @@ function getFormattedDate(weeksToAdd = 0) {
         // console.log(Nurse_local_ID);
         console.log(nextscheduletime);
 
-        console.log(selectedDrugs);
+        console.log("drugs",selectedDrugs);
+        await drugAnalytics(selectedDrugs)
+
       }
 
+  
+      async function drugAnalytics(SelectedDrugs) {
+  try {
+    const backendUrl = 'http://127.0.0.1:5000';
+    const response = await fetch(`${backendUrl}/drugAnalytics`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        SelectedDrug: SelectedDrugs
+      })
+    });
 
-//       async function DrugAdministered(SelectedDrugs) {
-//         SelectedDrug=selectedDrugs;
-//       async function DrugAdministered(SelectedDrugs) {
-//         SelectedDrug=selectedDrugs;
-       
+    if (response.ok) {
+      const data = await response.json();
+      console.log("The prices are:", data);
       
-//         try {
-//           backendUrl='http://127.0.0.1:5000'
-//           const response = await fetch(${backendUrl}/DrugAdministered, {
-//             method: 'POST',
-//             headers: {
-//               'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify({
-//               SelectedDrug
-//             })
-//           });
-      
-//           // if (response.ok) {
-//           //   const data = await response.json();
-//           //   console.log("the prices are", data);
-//           //   document.getElementById("DrugAdministered").innerHTML=data.total_price;     //this prints out the cost on the 
-//           //   // window.location.href = data.redirectUrl;  // Redirect to provided URL
-//           // } else {
-//           //   const errorData = await response.json();
-//           //   console.error("Error creating user:", errorData.error);
-//           //   // Handle error message display or other actions
-//           // }
-// ai 1
-//           if (response.ok) {
-//   const data = await response.json();
-//   console.log("The prices are:", data);
+      // Store the total price in both sessionStorage and localStorage as backup
+     
+    } else {
+      throw new Error("Failed to calculate price");
+    }
+  } catch (error) {
+    console.error("Error during price calculation:", error);
+  }
+}
   
-//   // Display the total price in the element with ID "DrugAdministered"
-//   document.getElementById("DrugAdministered").textContent = Total Cost: KES ${data.total_price};
-  
-//   // Store the total price in session storage
-//   sessionStorage.setItem("totalPrice", data.total_price);
 
-//   // Redirect to the M-Pesa payment page if a redirect URL is provided
-//   if (data.redirectUrl) {
-//     window.location.href = data.redirectUrl;
-//   }
-// } else {
-//   const errorData = await response.json();
-//   console.error("Error:", errorData.error);
-  
-//   // Display an error message
-//   document.getElementById("errorMessage").textContent = Error: ${errorData.error};
-// }
-//ai1
-      
-      //   } catch (error) {
-      //     console.error("Error during request:", error);
-      //     // Handle network errors or other exceptions
-      //   }
-      // }
-      // In the first page (vaccination profile page)
-// Update the DrugAdministered function
 async function DrugAdministered(SelectedDrugs) {
   try {
     const backendUrl = 'http://127.0.0.1:5000';
@@ -535,6 +509,8 @@ async function DrugAdministered(SelectedDrugs) {
       
       // Store the total price in both sessionStorage and localStorage as backup
       const totalPrice = data.total_price.toString();
+      const totalID=data.localid;
+      console.log(totalID);
       sessionStorage.setItem("totalPrice", totalPrice);
       localStorage.setItem("totalPrice", totalPrice);
       
