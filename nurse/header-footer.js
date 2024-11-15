@@ -16,8 +16,8 @@ class SpecialHeader extends HTMLElement{
 
         <!-- Navigation Links -->
         <ul class="nav__links" id="nav-links">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">About</a></li>
+            <li><a href="../LandingPage/altIndex.html">Home</a></li>
+            <li><a href="../HeaderLinks/About.html">About</a></li>
             <li><a href="#">Contact</a></li>
             <li><a href="#">Services</a></li>
         </ul>
