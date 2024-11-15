@@ -12,14 +12,14 @@ class SpecialHeader extends HTMLElement{
        
         </head>
          <nav>
-        <img src="../Header-Footer/images/KingaBoraLogo.jpg" alt="Logo">
+        <img src="../nurse/images/KingaBoraLogo.jpg" alt="Logo">
 
         <!-- Navigation Links -->
         <ul class="nav__links" id="nav-links">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Contact</a></li>
-            <li><a href="#">Services</a></li>
+            <li><a href="../LandingPage/altIndex.html">Home</a></li>
+            <li><a href="../HeaderLinks/About.html">About</a></li>
+            <li><a href="../HeaderLinks/Contacts.html">Contact</a></li>
+            <li><a href="../HeaderLinks/Service.html">Services</a></li>
         </ul>
 
         <!-- Sign Up and Log In Buttons -->
@@ -48,7 +48,7 @@ class SpecialFooter extends HTMLElement{
        
          <footer>
         <div class="news-letter">
-            <img src="../Header-Footer/images/KingaBoraLogo.jpg">
+            <img src="../nurse/images/KingaBoraLogo.jpg">
             <br>
             <p>Join Our newsletter to stay up to date <br> by subscribing you agree to our <a href="">PrivacyPolicy</a> and <br> provide consent to receive updates from KingaBora</p>
             <input type="email" placeholder="Enter your email">
