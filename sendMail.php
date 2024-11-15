@@ -1,79 +1,79 @@
 <?php
-// session_start();
-// require 'C:\xampp\htdocs\PHPMailer\src\PHPMailer.php';
-// require 'C:\xampp\htdocs\PHPMailer\src\SMTP.php';
-// require 'C:\xampp\htdocs\PHPMailer\src\Exception.php';
-// // require 'C:\xampp\htdocs\PHPMailer\src\OAuth.php';
-// require 'vendor\autoload.php';
 
-// require 'vendor/autoload.php';
+require 'C:/xampp/htdocs/PHPMailer/src/PHPMailer.php';
+require 'C:/xampp/htdocs/PHPMailer/src/SMTP.php';
+require 'C:/xampp/htdocs/PHPMailer/src/Exception.php';
 
-// use PHPMailer\PHPMailer\PHPMailer;
-// use PHPMailer\PHPMailer\SMTP;
-// use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
-// class sendMail
-// {
-//     public function sendVaccinationReminder($parentEmail, $childName, $childAge, $vaccineName) {
-//         // Calculate the difference in weeks between today and the child's age
-//         $today = new DateTime();
-//         $childBirthDate = $today->sub(new DateInterval('P' . $childAge . 'Y'));
-//         $interval = $today->diff($childBirthDate);
-//         $weeksOld = floor($interval->days / 7);
+class SendMail {
+    private $mailer;
 
-//         // Define the reminder intervals (1 week before the due date) and messages
-//         $reminders = [
-//             5  => "Reminder: {$childName}'s vaccination {6-weeks} is due in 1 week.",
-//             9  => "Reminder: {$childName}'s vaccination {10-weeks} is due in 1 week.",
-//             13 => "Reminder: {$childName}'s vaccination {14-weeks} is due in 1 week.",
-//             23 => "Reminder: {$childName}'s vaccination {6-months} is due in 1 week.",
-//             27 => "Reminder: {$childName}'s vaccination {7-months} is due in 1 week.",
-//             35 => "Reminder: {$childName}'s vaccination {9-months} is due in 1 week.",
-//             39 => "Reminder: {$childName}'s vaccination {10-months} is due in 1 week.",
-//             51 => "Reminder: {$childName}'s vaccination {1-year} is due in 1 week.",
-//             63 => "Reminder: {$childName}'s vaccination {15-months} is due in 1 week.",
-//             103=> "Reminder: {$childName}'s vaccination {2-years} is due in 1 week."
-//         ];
+    public function __construct() {
+        $this->mailer = new PHPMailer(true);
+        $this->mailer->isSMTP();
+        $this->mailer->Host = 'smtp.gmail.com';
+        $this->mailer->SMTPAuth = true;
+        $this->mailer->Username = 'eoringe372@gmail.com';
+        $this->mailer->Password = 'wdjk opaf jhdx wjjr';
+        $this->mailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $this->mailer->Port = 587;
+        $this->mailer->setFrom('eoringe372@gmail.com', 'KINGA BORA');
+        $this->mailer->isHTML(true);
+    }
 
-//         // Check if a reminder is due at this age (1 week before)
-//         if (isset($reminders[$weeksOld])) {
-//             $subject = "Vaccination Reminder for {$childName}";
-//             $body = $reminders[$weeksOld];
+    public function sendMail($recipientEmail, $childName, $nextVisitDate) {
+        try {
+            $subject = "Reminder: {$childName}'s Vaccination Appointment in One Week";
+            $body = "
+                <p>This is a friendly reminder that your child, {$childName}, is scheduled to receive their next vaccination in one week.</p>
+                <p><strong>Scheduled Date:</strong> {$nextVisitDate}</p>
+                <p>Warm regards,<br>Kinga Bora Team</p>";
+            
+            $this->mailer->addAddress($recipientEmail);
+            $this->mailer->Subject = $subject;
+            $this->mailer->Body = $body;
 
-//             $mail = new PHPMailer(true);
-//             try {
-//                 $mail->isSMTP();
-//                 $mail->Host = 'smtp.gmail.com';
-//                 $mail->SMTPAuth = true;
-//                 $mail->Username = 'tobikoleriari69@gmail.com';
-//                 $mail->Password = 'zswt oxnd foao vwab'; // Replace with your actual password or use a more secure method
-//                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-//                 $mail->Port = 587;
+            if ($this->mailer->send()) {
+                echo "Reminder sent to {$recipientEmail} for {$childName} on {$nextVisitDate}<br>";
+            } else {
+                echo "Failed to send email to {$recipientEmail}<br>";
+            }
+            $this->mailer->clearAddresses(); // clear for next iteration
+            
+        } catch (Exception $e) {
+            echo "Error: " . $e->getMessage();
+        }
+    }
+}
 
-//                 $mail->setFrom('tobikoleriari69@gmail.com', 'Tobiko Leriari');
-//                 $mail->addAddress($parentEmail);
-//                 $mail->isHTML(true);
-//                 $mail->Subject = $subject;
-//                 $mail->Body = $body;
+// Step 1: Define $nextVisitDate (14 days from today)
+$nextVisitDate = date('F d, Y \a\t h:i:s A', strtotime('+14 days')); // Example: "November 29, 2024 at 12:00:00 PM"
 
-//                 if ($mail->send()) {
-//                     echo 'Mail sent to ' . $parentEmail . ' successfully';
-//                 } else {
-//                     echo 'Mail not sent';
-//                 }
-//             } catch (Exception $e) {
-//                 echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
-//             }
-//         }
-//     }
-// }
+// Step 2: Fetch email data from Flask endpoint
+$url = "http://127.0.0.1:5000/getEmailList?NextVisit=" . urlencode($nextVisitDate);
+$emailData = json_decode(file_get_contents($url), true);
 
-// // Example usage:
-// $sendMail = new sendMail();
-// $sendMail->sendVaccinationReminder('parent@example.com', 'John Doe', '1', 'MMR'); 
-
+if (!empty($emailData) && isset($emailData['data'])) {
+    $sendMail = new SendMail();
+    foreach ($emailData['data'] as $record) {
+        $sendMail->sendMail(
+            $record['parentEmailAddress'],
+            $record['childName'],
+            $record['NextVisit']
+        );
+    }
+} else {
+    echo "Error: No email data provided or invalid response.";
+}
 ?>
-<!DOCTYPE html>
+
+
+
+
+
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -87,46 +87,48 @@
 
   <script>
     async function getEmailList(nextVisitDate) {
-      try {
+    try {
         const url = `http://127.0.0.1:5000/getEmailList?NextVisit=${encodeURIComponent(nextVisitDate)}`;
         const response = await fetch(url, { method: 'GET' });
         const data = await response.json();
 
         if (response.ok) {
-          console.log('Email list found:', data.data);
-          // Handle/display data as needed
-          document.getElementById('vaccineList').innerHTML = JSON.stringify(data.data);
+            console.log('Email list found:', data.data);
+            // Send this data to PHP for dynamic email generation
+            sendDynamicEmails(data.data);
         } else {
-          console.error('Error fetching email list:', data.error || response.statusText);
-          document.getElementById('vaccineList').textContent = `Error: ${data.error || 'Failed to fetch emails'}`;
+            console.error('Error fetching email list:', data.error || response.statusText);
+            document.getElementById('vaccineList').textContent = `Error: ${data.error || 'Failed to fetch emails'}`;
         }
-      } catch (error) {
+    } catch (error) {
         console.error('Error:', error);
         document.getElementById('vaccineList').textContent = 'Error: ' + error.message;
-      }
     }
+}
 
-    function scheduleEmailReminders() {
-      // Get today's date, add 14 days, and format it
-      const today = new Date();
-      today.setDate(today.getDate() + 14);
+function scheduleEmailReminders() {
+    const today = new Date();
+    today.setDate(today.getDate() + 14);
+    const options = {
+        year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit',
+        second: '2-digit', hour12: true, timeZone: 'Africa/Nairobi', timeZoneName: 'short'
+    };
+    const formattedDate = today.toLocaleString('en-US', options);
+    console.log('Formatted Date:', formattedDate);
+    getEmailList(formattedDate);
+}
 
-      const options = {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true,
-        timeZone: 'Africa/Nairobi',
-        timeZoneName: 'short'
-      };
+function sendDynamicEmails(emailData) {
+    fetch('sendEmails.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ emailData })
+    })
+    .then(response => response.json())
+    .then(result => console.log('Emails sent:', result))
+    .catch(error => console.error('Error sending emails:', error));
+}
 
-      const formattedDate = today.toLocaleString('en-US', options);
-      console.log('Formatted Date:', formattedDate);
-      getEmailList(formattedDate);
-    }
   </script>
 </body>
-</html>
+</html> -->

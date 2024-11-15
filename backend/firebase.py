@@ -395,9 +395,55 @@ def getParentDetails():
     
  #this is the nurse profile
  # 
- #    
- 
- 
+
+
+@app.route('/getVaccinationDueList', methods=['GET'])
+def getVaccinationDueList():
+    try:
+        # Get today's date, tomorrow's, and the day after tomorrow's dates in the correct format
+        tz = pytz.FixedOffset(3 * 60)  # GMT+3
+        today = datetime.now(tz).date()  # Today
+        tomorrow = today + timedelta(days=1)  # Tomorrow
+        day_after_tomorrow = today + timedelta(days=2)  # Day after tomorrow
+        
+        # Query Firestore for all documents in 'VaccinationHistory'
+        doc_ref = db.collection('VaccinationHistory')
+        docs = doc_ref.stream()
+
+        # Prepare response data
+        response_data = []
+        for doc in docs:
+            doc_data = doc.to_dict()
+            next_visit_str = doc_data.get("NextVisit")  # Get the NextVisit string
+            
+            if next_visit_str:
+                # Remove the "GMT+3" part and convert to datetime (ignoring time)
+                next_visit_no_tz = next_visit_str.rsplit(" GMT", 1)[0]
+                next_visit_datetime = datetime.strptime(next_visit_no_tz, "%B %d, %Y at %I:%M:%S %p")
+                
+                # Convert the NextVisit datetime to the same timezone (GMT+3) to make the comparison
+                localized_next_visit = tz.localize(next_visit_datetime).date()
+
+                # Check if the NextVisit date is today, tomorrow, or the day after tomorrow
+                if localized_next_visit in [today, tomorrow, day_after_tomorrow]:
+                    response_data.append({
+                        "childName": doc_data.get("childName"),
+                        "DateofVaccination": doc_data.get("DateofVaccination"),
+                        "parentEmailAddress": doc_data.get("parentEmailAddress"),
+                        "NextVisit": next_visit_str,
+                    })
+
+        # Return results if any found
+        if response_data:
+            return jsonify({"message": "Vaccination details found", "data": response_data}), 200
+        else:
+            return jsonify({"error": "No vaccination details match the specified dates"}), 404
+
+    except Exception as e:
+        logging.error(f"Error fetching vaccination details: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+
  
  
  
@@ -441,9 +487,9 @@ def getEmailList():
                 
                 # Compare document's UTC NextVisit with the provided UTC NextVisit
                 if doc_utc_datetime <= utc_datetime:
+                    # Only add the email address, child name, and NextVisit to the response
                     response_data.append({
                         "childName": doc_data.get("childName"),
-                        "DateofVaccination": doc_data.get("DateofVaccination"),
                         "parentEmailAddress": doc_data.get("parentEmailAddress"),
                         "NextVisit": doc_data.get("NextVisit"),
                     })
