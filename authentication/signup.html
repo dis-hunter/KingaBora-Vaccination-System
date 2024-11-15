@@ -5,127 +5,165 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kinga Bora Vaccination System</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style.css">
-    <script defer src="../nurse/header-footer.js"></script>
-    
-    
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-    <special-header></special-header>
     <main>
-    <!--------------------------------------Main Container------------------------------------->
-    <div class="container d-flex justify-content-center align-items-center min-vh-100">
-        <!----------------------------------Login Container--------------------------------------->
-        <div class="row border rounded-5 p-3 bg-white shadow box-area">
-            <!-----------------------------------Left Box------------------------------------------->
-            <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box" style="background: #008080;">
-                <div class="featured-image mb-3">
-                    <img src="../LandingPage/Images/login.jpg" class="img-fluid" style="width: 330px;" alt="Login Image">
+        <!-- Main Container -->
+        <div class="container d-flex justify-content-center align-items-center min-vh-100">
+            <!-- Sign-Up Form -->
+            <div class="row border rounded-5 p-3 bg-white shadow box-area">
+                <!-- Left Box -->
+                <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box" style="background: #008080;">
+                    <div class="featured-image mb-3">
+                        <img src="../LandingPage/Images/login.jpg" class="img-fluid" style="width: 330px;" alt="Login Image">
+                    </div>
+                    <p class="text-white fs-2 mb-3" style="font-family:'Roboto', sans-serif; font-weight: 600;">KINGA BORA</p>
+                    <small class="text-white text-center mb-3" style="width: 17rem; font-family:'Roboto', sans-serif;">For every shot, we have got you covered.</small>
                 </div>
-                <p class="text-white fs-2 mb-3" style="font-family:'Roboto', sans-serif; font-weight: 600;">KINGA BORA</p>
-                <small class="text-white text-wrap text-center mb-3" style="width: 17rem; font-family:'Roboto', sans-serif;">For every shot, we have got you covered.</small>
-            </div>
 
-            <!--------------------------------------Right Box--------------------------------------->
-            <div class="col-md-6 right-box">
-                <div class="row align-items-center">
-                    <div class="header-text mb-4">
-                        <h2>Hello</h2>
-                        <p>Welcome.</p>
-                    </div>
-
-                    <div class="input-group mb-3">
-                        <label for="email" class="input-group-text">Email</label>
-                        <input type="email" class="form-control form-control-lg bg-light fs-6" id="email" placeholder="Email address">
-                    </div>
-
-                    <div class="input-group mb-3">
-                        <label for="username" class="input-group-text">Username</label>
-                        <input type="text" class="form-control form-control-lg bg-light fs-6" id="username" placeholder="Username">
-                    </div>
-                    <div class="input-group mb-3">
-                        <label for="contacts" class="input-group-text">contacts</label>
-                        <input type="text" class="form-control form-control-lg bg-light fs-6" id="contacts" placeholder="contacts">
-                    </div>
-                    <div class="input-group mb-3">
-                        <label for="nationalID" class="input-group-text">National ID </label>
-                        <input type="text" class="form-control form-control-lg bg-light fs-6" id="nationalID" placeholder="nationalID">
-                    </div>
-
-                    <div class="input-group mb-1">
-                        <label for="password" class="input-group-text">Password</label>
-                        <input type="password" class="form-control form-control-lg bg-light fs-6" id="password" placeholder="Password">
-                    </div>
-
-                    <div class="input-group mb-5 d-flex justify-content-between">
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="formCheck">
-                            <label for="formCheck" class="form-check-label text-secondary"><small>Remember Me</small></label>
+                <!-- Right Box -->
+                <div class="col-md-6 right-box">
+                    <div class="row align-items-center">
+                        <div class="header-text mb-4">
+                            <h2>Hello</h2>
+                            <p>Welcome.</p>
                         </div>
-                    </div>
 
-                    <div class="input-group mb-3">
-                        <button class="btn btn-lg btn-primary w-100 fs-6" onclick="login()">Signup</button>
-                    </div>
+                        <!-- Email Field -->
+                        <div class="input-group mb-3">
+                            <label for="email" class="input-group-text">Email</label>
+                            <input type="email" class="form-control form-control-lg bg-light fs-6" id="email" placeholder="Email address">
+                        </div>
 
-                    <div class="input-group mb-3">
-                        <button class="btn btn-lg btn-light w-100 fs-6">
-                            <img src="../nurse/images/googleicon.png" style="width: 40px;" class="me-2" alt="Google Logo">
-                            <small>Sign In with Google</small>
-                        </button>
-                    </div>
+                        <!-- Username Field -->
+                        <div class="input-group mb-3">
+                            <label for="username" class="input-group-text">Username</label>
+                            <input type="text" class="form-control form-control-lg bg-light fs-6" id="username" placeholder="Username">
+                        </div>
 
-                    <div class="row">
-                        <small>Don't have an account? <a href="#">Sign Up</a></small>
+                        <!-- Contacts Field -->
+                        <div class="input-group mb-3">
+                            <label for="contacts" class="input-group-text">Contacts</label>
+                            <input type="text" class="form-control form-control-lg bg-light fs-6" id="contacts" placeholder="Contacts">
+                        </div>
+
+                        <!-- National ID Field -->
+                        <div class="input-group mb-3">
+                            <label for="nationalID" class="input-group-text">National ID</label>
+                            <input type="text" class="form-control form-control-lg bg-light fs-6" id="nationalID" placeholder="National ID">
+                        </div>
+
+                        <!-- Password Field (Hidden for Google Sign-Up) -->
+                        <div id="password-group" class="input-group mb-1">
+                            <label for="password" class="input-group-text">Password</label>
+                            <input type="password" class="form-control form-control-lg bg-light fs-6" id="password" placeholder="Password">
+                        </div>
+
+                        <!-- Remember Me -->
+                        <div class="input-group mb-1 d-flex justify-content-between">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="formCheck">
+                                <label for="formCheck" class="form-check-label text-secondary"><small>Remember Me</small></label>
+                            </div>
+                        </div>
+
+                        <!-- Sign Up Button -->
+                        <div class="input-group mb-3">
+                            <button class="btn btn-lg btn-primary w-100 fs-6" onclick="submitForm()">Signup</button>
+                        </div>
+
+                        <!-- Google Sign-Up Button -->
+                        <div class="input-group mb-3">
+                            <button class="btn btn-lg btn-light w-100 fs-6" id="google-signup-btn">
+                                <img src="../nurse/images/googleicon.png" style="width: 40px;" class="me-2" alt="Google Logo">
+                                <small>Sign Up with Google</small>
+                            </button>
+                        </div>
+
+                        <!-- Redirect to Login -->
+                        <div class="row">
+                            <small>Already have an account? <a href="login.html">Login</a></small>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     </main>
-    <special-footer></special-footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-      async function login() {
-        
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;   
-  const nationalID = document.getElementById('nationalID').value;
-  const username = document.getElementById('username').value;
-  const contacts = document.getElementById('contacts').value;
+        // Google Sign-In Callback
+        function handleGoogleSignIn(response) {
+            const credential = response.credential;
 
-  try {
-    backendUrl='http://127.0.0.1:5000'
-    const response = await fetch(`${backendUrl}/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
+            // Decode the ID token payload
+            const user = JSON.parse(atob(credential.split('.')[1]));
+
+            // Pre-fill form fields
+            document.getElementById('email').value = user.email;
+            document.getElementById('username').value = user.name || user.given_name || '';
+
+            // Make email field read-only for Google Sign-Up
+            document.getElementById('email').setAttribute('readonly', 'readonly');
+
+            // Hide password field for Google Sign-Up
+            document.getElementById('password-group').style.display = 'none';
+        }
+
+        // Google Sign-In Initialization
+        window.onload = function() {
+            google.accounts.id.initialize({
+                client_id: "331805564495-mae39bq7uvntov6gkgfkfepvdc893jlg.apps.googleusercontent.com",
+                callback: handleGoogleSignIn
+            });
+            google.accounts.id.renderButton(
+                document.getElementById('google-signup-btn'),
+                { theme: "outline", size: "large", shape: "pill" }
+            );
+        }
+
+        // Form Submission
+        async function submitForm() {
+    const email = document.getElementById('email').value;
+    const username = document.getElementById('username').value;
+    const contacts = document.getElementById('contacts').value;
+    const nationalID = document.getElementById('nationalID').value;
+    const password = document.getElementById('password').value;
+
+    const isGoogleSignup = document.getElementById('email').hasAttribute('readonly');  // Check if it's Google sign-up
+
+    const payload = {
         email,
-        password,
         username,
+        contacts,
         nationalID,
-        contacts
-      })
-    });
+        password: isGoogleSignup ? null : password,  // Only send password if it's manual sign-up
+        isGoogleSignup,
+    };
 
-    if (response.ok) {
-      const data = await response.json();
-      console.log("Successfully created user. Redirecting...");
-      window.location.href = data.redirectUrl;  // Redirect to provided URL
-    } else {
-      const errorData = await response.json();
-      console.error("Error creating user:", errorData.error);
-      // Handle error message display or other actions
+    // Send the data to the backend
+    try {
+        const backendUrl = 'http://127.0.0.1:5000';
+        const response = await fetch(`${backendUrl}/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            console.log("User registered successfully!");
+            window.location.href = data.redirectUrl;
+        } else {
+            console.error("Registration error:", data.error);
+        }
+    } catch (error) {
+        console.error("Request error:", error);
     }
-
-  } catch (error) {
-    console.error("Error during request:", error);
-    // Handle network errors or other exceptions
-  }
 }
+
     </script>
 </body>
 </html>
