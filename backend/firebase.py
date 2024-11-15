@@ -454,10 +454,58 @@ def getParentDetails():
     
  #this is the nurse profile
  # 
- # 
+
+
+@app.route('/getVaccinationDueList', methods=['GET'])
+def getVaccinationDueList():
+    try:
+        # Get today's date, tomorrow's, and the day after tomorrow's dates in the correct format
+        tz = pytz.FixedOffset(3 * 60)  # GMT+3
+        today = datetime.now(tz).date()  # Today
+        tomorrow = today + timedelta(days=1)  # Tomorrow
+        day_after_tomorrow = today + timedelta(days=2)  # Day after tomorrow
+        
+        # Query Firestore for all documents in 'VaccinationHistory'
+        doc_ref = db.collection('VaccinationHistory')
+        docs = doc_ref.stream()
+
+        # Prepare response data
+        response_data = []
+        for doc in docs:
+            doc_data = doc.to_dict()
+            next_visit_str = doc_data.get("NextVisit")  # Get the NextVisit string
+            
+            if next_visit_str:
+                # Remove the "GMT+3" part and convert to datetime (ignoring time)
+                next_visit_no_tz = next_visit_str.rsplit(" GMT", 1)[0]
+                next_visit_datetime = datetime.strptime(next_visit_no_tz, "%B %d, %Y at %I:%M:%S %p")
+                
+                # Convert the NextVisit datetime to the same timezone (GMT+3) to make the comparison
+                localized_next_visit = tz.localize(next_visit_datetime).date()
+
+                # Check if the NextVisit date is today, tomorrow, or the day after tomorrow
+                if localized_next_visit in [today, tomorrow, day_after_tomorrow]:
+                    response_data.append({
+                        "childName": doc_data.get("childName"),
+                        "DateofVaccination": doc_data.get("DateofVaccination"),
+                        "parentEmailAddress": doc_data.get("parentEmailAddress"),
+                        "NextVisit": next_visit_str,
+                    })
+
+        # Return results if any found
+        if response_data:
+            return jsonify({"message": "Vaccination details found", "data": response_data}), 200
+        else:
+            return jsonify({"error": "No vaccination details match the specified dates"}), 404
+
+    except Exception as e:
+        logging.error(f"Error fetching vaccination details: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+
  
-
-
+ 
+ 
 @app.route('/getEmailList', methods=['GET'])
 def getEmailList():
     try:
@@ -476,30 +524,32 @@ def getEmailList():
         # Filter documents based on NextVisit date
         result_docs = []
         for doc in docs:
-            data = doc.to_dict()
-            next_visit_str = data.get("NextVisit")
-            if next_visit_str:
-                # Pre-process and parse each NextVisit date
-                 processed_nextdate_str = next_visit_str.removesuffix('GMT+3')  
-                 next_visit_date = datetime.strptime(processed_nextdate_str, "%B %d, %Y at %I:%M:%S %p ")
-                 timezone_offset = pytz.timezone('Etc/GMT-3')
-
-# Get the current date and time with the specified timezone
-                 date = datetime.now(timezone_offset)
-
-# Format the date in the desired format
-                 formatted_date = date.strftime("%B %d, %Y at %I:%M:%S %p GMT%z")
-
-# Adjust the timezone format to match "+3" instead of "+0300"
-                 formatted_date = formatted_date[:-2] + formatted_date[-2:].lstrip("0")
-                 processed_today_str = formatted_date.removesuffix('GMT+03')
-                 today_visit_date = datetime.strptime(processed_today_str, "%B %d, %Y at %I:%M:%S %p ")
-
-        #         # Check if NextVisit is before the target date
-                 if today_visit_date < next_visit_date < target_date :
-                    result_docs.append(data)
-
-        return jsonify({"data":result_docs})
+            doc_data = doc.to_dict()
+            
+            # Convert each document's NextVisit string to a datetime for comparison
+            doc_next_visit = doc_data.get("NextVisit")
+            if doc_next_visit:
+                doc_next_visit_no_tz = doc_next_visit.rsplit(" GMT", 1)[0]
+                doc_visit_datetime = datetime.strptime(doc_next_visit_no_tz, "%B %d, %Y at %I:%M:%S %p")
+                
+                # Localize and convert document datetime to UTC
+                doc_localized_datetime = input_tz.localize(doc_visit_datetime)
+                doc_utc_datetime = doc_localized_datetime.astimezone(pytz.UTC)
+                
+                # Compare document's UTC NextVisit with the provided UTC NextVisit
+                if doc_utc_datetime <= utc_datetime:
+                    # Only add the email address, child name, and NextVisit to the response
+                    response_data.append({
+                        "childName": doc_data.get("childName"),
+                        "parentEmailAddress": doc_data.get("parentEmailAddress"),
+                        "NextVisit": doc_data.get("NextVisit"),
+                    })
+        
+        # Return results or 404 if none found
+        if response_data:
+            return jsonify({"message": "Parent details found", "data": response_data}), 200
+        else:
+            return jsonify({"error": "No documents found for the given 'NextVisit'"}), 404
 
     except Exception as e:
         logging.error(f"Error fetching email list: {str(e)}")
@@ -600,40 +650,34 @@ def addChild():
         nextscheduletime = "At Birth"
         # Create child data document
         child_data = {
-            'BirthCertificateID': data.get('BirthCertificateID'),
-            'ChildName': data.get('ChildName'),
-            'DateOfBirth': data.get('DOB'),
-            'Gender': data.get('Gender'),
-            'ParentName': data.get('ParentName'),
-            'ParentNationalID': data.get('ParentNationalID'),
-            'emailaddress': data.get('parentEmailAddress'),
-            # 'Weight': data.get('weight'),
-            # 'Height': data.get('height')
+            'BirthCertificateID': data.get('birthCertificateID'),
+            'ChildName': data.get('childName'),
+            'DateOfBirth': formatted_date,  # Use the formatted date
+            'Gender': data.get('gender'),
+            'Weight': float(data.get('weight')),
+            'Height': float(data.get('height')),
+            'ParentName': data.get('parentName'),
+            'ParentNationalID': data.get('parentNationalID'),
+            'emailaddress': data.get('emailaddress')
         }
 
-        # Add document to 'childData' collection and get the document reference
+        # Validate required fields
+        required_fields = ['BirthCertificateID', 'ChildName', 'ParentNationalID']
+        for field in required_fields:
+            if not child_data.get(field):
+                return jsonify({"error": f"Missing required field: {field}"}), 400
+
+        # Check if a child with this Birth Certificate ID already exists
+        existing_children = db.collection('childData').where('BirthCertificateID', '==', child_data['BirthCertificateID']).get()
+        if len(list(existing_children)) > 0:
+            return jsonify({"error": "A child with this Birth Certificate ID already exists"}), 400
+
+        # Add to Firestore with auto-generated ID
         doc_ref = db.collection('childData').add(child_data)
         
-        doc_id = doc_ref[1].id  # Retrieve the document ID directly
-        vaccination_data={
-            'ChildGender': data.get('Gender'),
-            'childName': data.get('ChildName'),
-            'DateOfVaccination': data.get('DOB'),
-            'NextVisit': data.get('DOB'),
-            'nextscheduletime':"At Birth",            
-            'NurseName': "Faith",
-            'child_local_ID':doc_id,
-            'parentEmailAddress': data.get('parentEmailAddress'),
-            'vaccinesIssued': [],
-            # 'Weight': data.get('weight'),
-            # 'Height': data.get('height')
-            
-        }
-        doc_reference = db.collection('VaccinationHistory').add(vaccination_data)
+        # Get the auto-generated document ID
+        doc_id = doc_ref[1].id
 
-        # Construct the redirect URL with the document ID and schedule time
-        redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/nurse/vaccinationpage.html?localId={doc_id}"
-        
         return jsonify({
             "message": "Successfully created the user",
             "localId": doc_id,
@@ -646,15 +690,68 @@ def addChild():
         return jsonify({"error": str(e)}), 500
 
 
-
-# Run the Flask application
-if __name__ == '__main__':
-    app.run(debug=True, port=5000)  # Running on localhost:5000
-
 # from today (kangskii)
 
+from datetime import datetime
 
+@app.route('/ChildVaccinationProgress', methods=['GET'])
+def ChildVaccinationProgress():
+    try:
+        docs = db.collection('VaccinationHistory').stream()
+        child_data = {}
 
+        for doc in docs:
+            data = doc.to_dict()
+            child_name = data.get("childName")
+            vaccination_date = data.get("DateofVaccination")
+            weight = data.get("weight")
+            height = data.get("height")
+
+            # Ensure we have necessary data
+            if child_name and vaccination_date and weight is not None and height is not None:
+                # Parse the date
+                try:
+                    date_parsed = datetime.strptime(vaccination_date.rsplit(" GMT", 1)[0], "%B %d, %Y at %I:%M:%S %p")
+                except ValueError as e:
+                    logging.error(f"Date parsing error for {vaccination_date}: {e}")
+                    continue  # Skip if date is not in expected format
+
+                # Initialize child entry if it doesn't exist
+                if child_name not in child_data:
+                    child_data[child_name] = []
+
+                # Append the entry with parsed date
+                child_data[child_name].append({
+                    "date": date_parsed,
+                    "weight": weight,
+                    "height": height
+                })
+
+        # Sort each child's records by date
+        for child_name in child_data:
+            child_data[child_name].sort(key=lambda x: x["date"])
+
+        # Convert dates back to strings for JSON response
+        formatted_data = {}
+        for child_name, records in child_data.items():
+            formatted_data[child_name] = {
+                "dates": [record["date"].strftime("%B %d, %Y at %I:%M:%S %p") for record in records],
+                "weights": [record["weight"] for record in records],
+                "heights": [record["height"] for record in records]
+            }
+
+        # Log the sorted data to verify structure
+        logging.info("Child vaccination progression data prepared: %s", formatted_data)
+
+        return jsonify({
+            "message": "Child vaccination progression data fetched",
+            "data": formatted_data
+        }), 200
+
+    except Exception as e:
+        logging.error(f"Error fetching child vaccination progression data: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+    
 @app.route('/updateParentProfile', methods=['PUT'])
 def updateParentProfile():
    try:
