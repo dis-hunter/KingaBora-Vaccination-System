@@ -19,7 +19,7 @@ class SpecialHeader extends HTMLElement{
             <li><a href="../LandingPage/altIndex.html">Home</a></li>
             <li><a href="../HeaderLinks/About.html">About</a></li>
             <li><a href="../HeaderLinks/Contacts.html">Contact</a></li>
-            <li><a href="#">Services</a></li>
+            <li><a href="../HeaderLinks/Service.html">Services</a></li>
         </ul>
 
         <!-- Sign Up and Log In Buttons -->
