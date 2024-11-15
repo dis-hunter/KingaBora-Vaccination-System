@@ -3,13 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Vaccination Tracker</title>
+    <script src="../nurse/header-footer.js"></script>
+    
     <title>Child Profile</title>
     <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
     <script defer src="child.js"></script> <!-- Link to your JavaScript file -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <style>
         body {
+        
+        
             font-family: sans-serif;
             margin: 0;
             padding: 20px;
@@ -91,7 +95,7 @@
                 if (response.ok) {
                     document.getElementById('childName').textContent = data.ChildName;
                     document.getElementById('childBirthCertificateID').textContent = `Birth Certificate ID: ${data.BirthCertificateID}`;
-                    document.getElementById('childDateOfBirth').textContent = `Date of Birth: ${new Date(data.DateOfBirth).toLocaleString()}`;
+                    document.getElementById('childDateOfBirth').textContent = `Date of Birth: ${data.DateOfBirth}`;
                     document.getElementById('childParentName').textContent = `Parent Name: ${data.ParentName}`;
                     document.getElementById('childParentNationalID').textContent = `Parent National ID: ${data.ParentNationalID}`;
                     document.getElementById('childEmailAddress').textContent = `Parent Email: ${data.emailaddress}`;
