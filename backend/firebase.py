@@ -211,11 +211,7 @@ def vaccinationupdate():
     try:
         child_local_id = request.args.get("localId")
         
-        doc_ref = db.collection('VaccinationHistory')
-        query = doc_ref.where(filter=FieldFilter("child_local_ID", "==", child_local_id))
-        docs = query.stream()
-        document_list = []
-        
+       
         child_local_id = request.args.get("localId")  # Get the localId from the query parameters
 
         doc_ref=db.collection('VaccinationHistory')
