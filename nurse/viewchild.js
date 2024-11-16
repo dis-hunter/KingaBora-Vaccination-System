@@ -123,6 +123,7 @@ function viewChild(childId) {
             document.getElementById("child_table_limited").textContent = "Error: " + error.message;
         }
     }
+  
 
     // Function to handle 'View Child' button click
     function viewChild(childId) {
@@ -131,5 +132,10 @@ function viewChild(childId) {
     }
     
     // Call the function when the DOM is fully loaded
-        getChildData();  // Fetch and display the child data
-        getChildDataLimited();
+          // Fetch and display the child data
+        //getChildDataLimited();
+
+        document.addEventListener("DOMContentLoaded", () => {
+            getChildDataLimited();
+            getChildData();
+        });
