@@ -625,11 +625,11 @@ def getEmailList():
                     result_docs.append(data)
 
         return jsonify({"data":result_docs})
-            doc_data = doc.to_dict()
+        doc_data = doc.to_dict()
             
             # Convert each document's NextVisit string to a datetime for comparison
-            doc_next_visit = doc_data.get("NextVisit")
-            if doc_next_visit:
+        doc_next_visit = doc_data.get("NextVisit")
+        if doc_next_visit:
                 doc_next_visit_no_tz = doc_next_visit.rsplit(" GMT", 1)[0]
                 doc_visit_datetime = datetime.strptime(doc_next_visit_no_tz, "%B %d, %Y at %I:%M:%S %p")
                 
