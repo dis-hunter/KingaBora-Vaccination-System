@@ -553,6 +553,7 @@ def getEmailList():
         return jsonify({"error": str(e)}), 500
 
 
+
 @app.route('/getEmailList2', methods=['GET'])
 def getEmailList2():
     try:

@@ -92,6 +92,14 @@ button:hover {
     cursor: pointer;
 }
 
+
+.col {
+    height: 300px; /* Set a fixed height for all items */
+    display: flex;
+    flex-direction: column;
+}
+
+
 #editProfileButton:hover {
     background-color: #005f75;
 }

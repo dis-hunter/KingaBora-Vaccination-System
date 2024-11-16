@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About us</title>
+    <link rel="stylesheet" href=" ">
+    <script defer src="../Header-Footer/header-footer.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .carousel{
+            margin: 5% 30%;
+           
+        }
+        .carousel-caption h5,p{
+            color: black;
+
+        }
+        
+        .first{
+            text-align: center;
+        }
+        .second{
+            border-radius:  20px;
+            background-color: white;
+            margin-right: 10px;
+            margin-bottom: 30px;
+        }
+        .big-one{
+            background-color: teal;
+        }
+        .big-one h3{
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+
+        }
+
+    </style>
+</head>
+<body>
+    <special-header></special-header>
+    <main>
+        <div class="col first">
+            <h2>Our Services</h2>
+            <p>Our platform offers a range of services to help you manage your vaccination needs.</p>
+
+            </div>
+        <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+              <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+              <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+              <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            </div>
+            <div class="carousel-inner">
+              <div class="carousel-item active">
+                <img src="images/booking.jpeg" class="d-block w-100" alt="...">
+                <div class="carousel-caption d-none d-md-block">
+                  <h5>Vaccination Scheduling and Reminders</h5>
+                  <p>Personalized vaccination schedules based on age and automated email notifications</p>
+                </div>
+              </div>
+              <div class="carousel-item">
+                <img src="images/records.jpeg" class="d-block w-100" alt="...">
+                <div class="carousel-caption d-none d-md-block">
+                  <h5>Vaccination Records Management</h5>
+                  <p>Secure digital storage and easy access to vaccination history anytime, anywhere.</p>
+                </div>
+              </div>
+              <div class="carousel-item">
+                <img src="images/educate.jpeg" class="d-block w-100" alt="...">
+                <div class="carousel-caption d-none d-md-block">
+                  <h5>Vaccination Information and Education</h5>
+                  <p>Educational resources on vaccine-preventable diseases.</p>
+                </div>
+              </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+
+        <div class="big-one">
+            <h3>Learn something new about Vaccinations!</h3>
+            <div class="container">
+                <div class="row">
+                  <div class="col second">
+                    <p>Did you know that the world's first vaccine was created over 200 years ago?
+
+                    In 1796, Edward Jenner developed the smallpox vaccine, which is considered one of the greatest medical breakthroughs in history.
+                    
+                     This vaccine ultimately led to the eradication of smallpox, a disease that had plagued humanity for centuries.</p>
+                  </div>
+                  <div class="col second">
+                   <p>Vaccines don't just protect you; they protect those around you too! This is called "herd immunity."
+
+                    When a high percentage of a population is vaccinated against a contagious disease, it makes it harder for the disease to spread, even to those who can't be vaccinated. This helps protect vulnerable people like babies, the elderly, and those with weakened immune systems.</p>
+                  </div>
+                  <div class="col second">
+                    <p>Some vaccines have been used for a surprisingly long time!  While the first vaccine was created in 1796, the concept of immunization has been around for much longer.  Ancient civilizations in China and India practiced a form of inoculation called "variolation" as early as the 10th century. They would expose healthy individuals to a small amount of smallpox material to build immunity.
+
+                        It's amazing how the basic idea of triggering the body's defenses has evolved into the sophisticated vaccines we have today!</p>
+                  </div>
+                </div>
+              </div>
+        </div>
+       
+
+          
+
+    </main>
+    <special-footer></special-footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+</body>

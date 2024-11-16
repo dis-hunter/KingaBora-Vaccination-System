@@ -4,20 +4,26 @@
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profile Page</title>
-  <link rel="stylesheet" href="../Header-Footer/Stylesheets/style.css">
-  <script defer src="header-footer.js"></script>
+  
+  <script defer src="../nurse/header-footer.js"></script>
+  
 <style>
   body {
     font-family: sans-serif;
     margin: 0;
     padding: 20px;
   }
+  main{
+    background-image: url("images/parentspic2.jpeg");
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
 
   .profile-header {
     display: flex;
     align-items: center;
     padding: 20px;
-    background-color: #40e0d0;
+    background-color: #008080;
     border-radius: 8px;
     margin: 4%;
   }
@@ -29,7 +35,7 @@
   .profile-actions button {
     margin-left: 10px; 
     padding: 8px 12px;
-    background-color: #008080;
+    background-color: #40e0d0;
     color: white;
     border: none;
     border-radius: 4px;
@@ -52,7 +58,7 @@
   }
 
   .updates {
-    margin-top: 20px;
+    margin-top: 13%
   }
 
   .update {
@@ -173,6 +179,9 @@
     .form-group select {
       font-size: 16px; 
     }
+    #editProfileModal {
+  transition: opacity 0.3s ease-in-out; /* Add a transition for opacity */
+}
   }
 </style>
 </head>
@@ -216,11 +225,11 @@
       </form>
   </div>
 </div>
-  
+
     <section class="children">
       <h1>Children</h1>
       <button onclick="openAddChildForm()" class="add-child-btn">Add Child</button>
-      <a id="childname" href="#">Child Name (Document ID)</a>
+      <a id="childname" href="#" style="color: black; text-decoration:none;">Child Name (Document ID)</a>
       <ul>
         <!-- Children list will be populated here -->
       </ul>
@@ -228,8 +237,8 @@
 
     <section class="updates">
       <div class="update">
-        <h2>Messages</h2>
-        <p>Receive latest results and reminders on vaccinations to come!</p>
+       <a href="#" style="text-decoration: none; color: black;"> <h2>Messages</h2>
+        <p>Receive latest results and reminders on vaccinations to come!</p></a>
       </div>
     </section>
   </main>
@@ -293,13 +302,14 @@
                      placeholder="Enter height in centimeters">
           </div>
           
-          <button type="submit">Add Child</button>
+          <button >ad Child</button>
       </form>
   </div>
 </div>
 
 
   <special-footer></special-footer>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
   <script>
     let parentNationalID;
@@ -307,9 +317,7 @@
       event.preventDefault();
       getChildren();
     });
-
-   
-
+    
     async function ParentDetails() {
     try {
         const urlParams = new URLSearchParams(window.location.search);
@@ -480,6 +488,20 @@ document.addEventListener('DOMContentLoaded', () => {
 const urlParams = new URLSearchParams(window.location.search);
 const localId = urlParams.get('localId');
 
+// Check if localId exists in localStorage
+const token = localStorage.getItem('token');
+
+
+if (!token) {
+    // Redirect to the login page if localId is not set
+    console.log("token not found. Redirecting to login...");
+    window.location.href = 'http://localhost:8080/KingaBora-Vaccination-System/authentication/login.html';
+} else {
+    console.log("localId found:", localId, token );
+    
+    // Proceed with your application logic
+}
+
 // Call ParentDetails when the page loads
 if (localId) {
     console.log("Found localId in URL:", localId);
@@ -487,6 +509,7 @@ if (localId) {
 } else {
     console.error("No localId found in URL");
 }
+
 });
 
 document.getElementById('dateOfBirth').addEventListener('change', displayFormattedDate);

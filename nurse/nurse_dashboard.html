@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nurse Profile</title>
-    <script defer src="Different_header_footer/header_footer.js"></script>
+    <script defer src="header-footer.js"></script>
+    <link rel="stylesheet" href="header-footer.css">
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="dashboard.css">
@@ -31,7 +33,7 @@
                 </a>
                 <span class="d-block" style="font-size: 14px;">Nurse</span>
                 <ul class="dropdown-menu text-small shadow">
-                    <li><a class="dropdown-item" href="#" id="viewProfileButton">Profile</a></li>
+                    <li><a class="dropdown-item" href="#nurseProfileCard" id="viewProfileButton">Profile</a></li>
                     <li><a class="dropdown-item" href="#" id="settingsButton">Settings</a></li>
                     
                     <li><hr class="dropdown-divider"></li>
@@ -41,32 +43,12 @@
     </div>
 </header>
 
-<!-- Nurse Profile Card (Hidden Initially) -->
-<div id="nurseProfileCard" class="profile-card col-md-4" style="float: right;">
-    <h3>Nurse Profile</h3>
-    <p><strong>Name:</strong> <span id="nurseName"></span></p>
-    <p><strong>National ID:</strong> <span id="nurseNationalID"></span></p>
-    <p><strong>Phone Number:</strong> <span id="nursePhoneNumber"></span></p>
-    <p><strong>Email:</strong> <span id="nurseEmail"></span></p>
-    <button id="editProfileButton">Edit Profile</button>
-    <!-- Edit Form (Hidden Initially) -->
-    <div id="editProfileForm" style="display: none;">
-        <h4>Edit Profile</h4>
-        <form id="profileForm">
-            <label for="editName">Name</label>
-            <input type="text" id="editName" name="name" required>
-            <label for="editPhone">Phone Number</label>
-            <input type="tel" id="editPhone" name="phone" required>
-            <label for="editEmail">Email</label>
-            <input type="email" id="editEmail" name="email" required>
-            <button type="submit">Save Changes</button>
-            <button type="button" id="cancelEditButton">Cancel</button>
-        </form>
-    </div>
-</div>
 
 
-<main>
+
+
+<main id="main">
+
 
     <div class="row justify-content-center">
 
@@ -79,7 +61,7 @@
               <img src="images/cutebaby2.avif" alt="Register Nurse" class="card-img-top" style="height: 200px; object-fit: cover;">
               <div class="card-body">
                 <p class="card-text">Click the button below to vaccinate a child</p>
-                <a href="vaccinationpage.html" target="_blank" class="btn mt-2" style="background-color: teal; color: white; width: 100%;">Vaccinate child</a>
+                <a href="searchchildren.html" target="_blank" class="btn mt-2" style="background-color: teal; color: white; width: 100%;">Vaccinate child</a>
               </div>
             </div>
           </div>
@@ -120,7 +102,7 @@
               <img src="images/another.jpg" alt="Register child" class="card-img-top" style="height: 200px; object-fit: cover;">
               <div class="card-body">
                 <p class="card-text">Click the button below to register a child</p>
-                <a href="nurse-session.html" target="_blank" class="btn mt-2" style="background-color: teal; color: white; width: 100%;">Register child</a>
+                <a href="childregistration.html" target="_blank" class="btn mt-2" style="background-color: teal; color: white; width: 100%;">Register child</a>
               </div>
             </div>
           </div>
@@ -161,11 +143,13 @@
 </main>
 
 
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const profileLink = document.querySelector('#viewProfileButton');
         const settingsButton = document.querySelector('#settingsButton');
         const nurseProfileCard = document.getElementById('nurseProfileCard');
+        const mainContent = document.getElementById('main');
         const nurseName = document.getElementById('nurseName');
         const nurseNationalID = document.getElementById('nurseNationalID');
         const nursePhoneNumber = document.getElementById('nursePhoneNumber');
@@ -174,23 +158,22 @@
         const editProfileForm = document.getElementById('editProfileForm');
         const cancelEditButton = document.getElementById('cancelEditButton');
         const profileForm = document.getElementById('profileForm');
-        const body = document.body;
 
         // Toggle theme (Settings)
         settingsButton.addEventListener('click', function () {
-    const theme = prompt("Choose a theme: white, cream, or dark");
+            const theme = prompt("Choose a theme: white, cream, or dark");
 
-    // Change theme based on user input
-    if (theme === "white") {
-        document.body.className = "white-theme";
-    } else if (theme === "cream") {
-        document.body.className = "cream-theme";
-    } else if (theme === "dark") {
-        document.body.className = "dark-theme";
-    } else {
-        alert("Invalid theme! Please choose 'white', 'cream', or 'dark'.");
-    }
-});
+            // Change theme based on user input
+            if (theme === "white") {
+                document.body.className = "white-theme";
+            } else if (theme === "cream") {
+                document.body.className = "cream-theme";
+            } else if (theme === "dark") {
+                document.body.className = "dark-theme";
+            } else {
+                alert("Invalid theme! Please choose 'white', 'cream', or 'dark'.");
+            }
+        });
 
         // Profile link click handler
         profileLink.addEventListener('click', function (event) {
@@ -215,6 +198,9 @@
                     nurseNationalID.textContent = nurseData.nurseNationalID;
                     nursePhoneNumber.textContent = nurseData.nursePhoneNumber;
                     nurseEmail.textContent = nurseData.nurseEmail;
+
+                    // Hide main content and show nurse profile
+                    mainContent.style.display = 'none';
                     nurseProfileCard.style.display = 'block';
                 } else {
                     alert('Error fetching profile data');
@@ -258,7 +244,7 @@
                 if (response.ok) {
                     alert('Profile updated successfully');
                     nurseProfileCard.style.display = 'block';
-                    editProfileForm.style.display = 'block';
+                    editProfileForm.style.display = 'none';
                     fetchNurseProfile(localId); // Refresh profile data
                 } else {
                     alert('Failed to update profile');
@@ -267,8 +253,23 @@
                 console.error('Error updating profile:', error);
             }
         });
+
+        // Close the nurse profile modal
+        function closeProfileModal() {
+            nurseProfileCard.style.display = 'none';
+            mainContent.style.display = 'block';
+        }
+
+        // Add a listener for clicking outside the profile modal to close it
+        nurseProfileCard.addEventListener('click', function (e) {
+            if (e.target === nurseProfileCard) {
+                closeProfileModal();
+            }
+        });
     });
 </script>
+<special-footer></special-footer>
+
 
 </body>
 </html>
