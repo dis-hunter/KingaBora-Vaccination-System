@@ -134,8 +134,8 @@
                     });
 
                     // Render charts with the fetched data
-                    renderChart('weightChart', dates, weights, 'Weight (kg)');
-                    renderChart('heightChart', dates, heights, 'Height (cm)');
+                    renderChart2('weightChart', dates, weights, 'Weight (kg)');
+                    renderChart2('heightChart', dates, heights, 'Height (cm)');
                 } else {
                     console.error("Error fetching vaccination history:", data.error);
                 }
@@ -156,13 +156,13 @@
             vaccinationHistoryList.innerHTML = '';
             data.data.dates.forEach((date, index) => {
                 const li = document.createElement('li');
-                li.textContent = `Date: ${date}, Weight: ${data.data.weights[index]} kg, Height: ${data.data.heights[index]} cm`;
+                li.textContent = `Date: ${date}.order(ascending), Weight: ${data.data.weights[index]} kg, Height: ${data.data.heights[index]} cm`;
                 vaccinationHistoryList.appendChild(li);
             });
 
             // Render weight and height charts
-            renderChart('weightChart', data.data.dates, data.data.weights, 'Weight (kg)');
-            renderChart('heightChart', data.data.dates, data.data.heights, 'Height (cm)');
+            renderChart2('weightChart', data.data.dates, data.data.weights, 'Weight (kg)');
+            renderChart2('heightChart', data.data.dates, data.data.heights, 'Height (cm)');
         } else {
             console.error("Error fetching vaccination history:", data.error);
         }
@@ -171,7 +171,7 @@
     }
 }
 
-function renderChart(chartId, labels, data, label) {
+function renderChart2(chartId, labels, data, label) {
     const ctx = document.getElementById(chartId).getContext('2d');
     new Chart(ctx, {
         type: 'line',
