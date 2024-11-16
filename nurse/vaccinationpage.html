@@ -271,7 +271,8 @@ async function VaccineReceipt() {
 
     if (response.ok) {
       console.log('Vaccine found:', data);
-      const vaccinereceipt = data.Vaccination[0]; // Assuming there's only one child for simplicity
+      const vaccinereceipt = data.Vaccination[0];
+ // Assuming there's only one child for simplicity
       
       ChildName=vaccinereceipt.childName;                                      //child details
       Child_local_ID=vaccinereceipt.child_local_ID;
@@ -384,22 +385,24 @@ function getFormattedDate(weeksToAdd = 0) {
   now.setDate(now.getDate() + weeksToAdd * 7);
 
   // Format the date part
-  const dateOptions = {  year: 'numeric', month: 'short', day: 'numeric' };
-  const dateofVOptions = { weekday:'short', year: 'numeric', month: 'short', day: 'numeric' };
+  const dateOptions = { weekday:'short',year: 'numeric', month: 'short', day: 'numeric' };
+  const VDaydateOptions = { weekday:'short', year: 'numeric', month: 'short', day: 'numeric' };
 
   const formattedDate = now.toLocaleDateString('en-US', dateOptions);
-  const VformattedDate = now.toLocaleDateString('en-US', dateofVOptions);
-
-   const DateofVaccinationdDate = DateofVaccinationtime.toLocaleDateString('en-US', VformattedDate);
+   const DateofVaccinationdDate = DateofVaccinationtime.toLocaleDateString('en-US', VDaydateOptions);
 
   // Format the time part
-  const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' };
+  const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
   const formattedTime = DateofVaccinationtime.toLocaleTimeString('en-US', timeOptions);
   const DateofVaccinationdTime = DateofVaccinationtime.toLocaleTimeString('en-US', timeOptions);
-
   // Combine the formatted date and time
-  NextVisit = `${formattedDate} at ${formattedTime}`;
-  DateofVaccination = `${DateofVaccinationdDate} at ${DateofVaccinationdTime}`;
+  NextVisitDate = `${formattedDate}  ${formattedTime}`;
+  reminderDateString = `${DateofVaccinationdDate}  ${DateofVaccinationdTime}`;
+   DateofVaccination = reminderDateString.replace(', ', ' ') + ' GMT+0300 (East Africa Time)';
+   NextVisit = NextVisitDate.replace(', ', ' ') + ' GMT+0300 (East Africa Time)';
+
+  console.log("todays date format",DateofVaccination);
+
   
   return NextVisit;
 

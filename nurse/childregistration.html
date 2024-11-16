@@ -104,28 +104,34 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
     function displayFormattedDate() {
-        const dobInput = document.getElementById('DOB');
-        const formattedDobInput = document.getElementById('FormattedDOB');
-        const dob = new Date(dobInput.value);
-        
+    const dobInput = document.getElementById('DOB');
+    const formattedDobInput = document.getElementById('FormattedDOB');
+    const dob = new Date(dobInput.value);
 
-        if (!isNaN(dob)) {
-            const options = {
-                month: 'long',
-                day: 'numeric',
-                year: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric',
-                second: 'numeric',
-                hour12: true,
-                timeZoneName: 'short'
-            };
-           const  formatteddate=dob.toLocaleString('en-US', options);
-            formattedDobInput.value = dob.toLocaleString('en-US', options);
-            console.log(formatteddate);
-            return formatteddate;
-        }
+    if (!isNaN(dob)) { // Check if the date is valid
+        // Format the date part
+        const dateOptions = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+        const formattedDate = dob.toLocaleDateString('en-US', dateOptions);
+
+        // Format the time part
+        const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+        const formattedTime = dob.toLocaleTimeString('en-US', timeOptions);
+
+        // Combine the formatted date and time
+        const formattedDateTime = `${formattedDate} ${formattedTime} GMT+0300 (East Africa Time)`;
+
+        // Set the formatted value to the output field
+        formattedDobInput.value = formattedDateTime;
+
+        console.log(formattedDateTime);
+        return formattedDateTime;
+    } else {
+        console.error('Invalid Date');
+        formattedDobInput.value = "Invalid Date";
+        return "Invalid Date";
     }
+}
+
 
     async function register() {
         const DOB=displayFormattedDate();
