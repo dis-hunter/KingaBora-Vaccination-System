@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About us</title>
+    <link rel="stylesheet" href=" ">
+    <script defer src="../Header-Footer/header-footer.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Playpen Sans', sans-serif; 
+        }
+        .container-fluid {
+            background-color: teal;
+            padding-bottom: 10px;
+            padding-top: 10px;
+        }
+        
+        .container{
+            margin-top: 50px;
+            margin-bottom: 80px;
+        }
+        .flip{
+            display: inline-block; 
+            transform: rotate(-90deg); 
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end; 
+            height: 190px;
+            margin-right: 70px;
+            margin-top:30px;
+            font-size: 66px;
+            color: white;
+        } 
+        .about-us{
+            background-color: teal;
+        }   
+        .order-5 img {
+            width: 100%;   
+            height: 100%;  
+            object-fit: cover; 
+        }
+        .order-1 p{
+            text-align: center;
+        }
+        .btn-primary{
+            background-color: teal;
+            border: none;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-around;
+        }
+        .second-r{
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-around; 
+        }
+        .three {
+            position: relative;
+            width:600px; 
+            margin: auto;
+            margin-bottom:20px;
+        }
+
+        .three img {
+            width: 100%;
+            height: auto;
+        }
+
+        .overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.5); 
+            color: white;
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.5s ease-out; 
+        }
+
+        .three:hover .overlay {
+            max-height: 400px; /* Adjust height as needed */
+        }
+        .top-one{
+            display: flex;
+            align-items: center;
+            padding-bottom: 30px;
+            margin-bottom: 70px;
+          
+        }
+        .top-one img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 50%;
+            
+        }
+        .head-text{
+            font-size: 4em;
+            color: teal;
+            margin-left: 20px;
+            font-weight:bolder;
+        }
+        .btn-outline-primary{
+            background-color: teal;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .btn-outline-primary:hover{
+            background-color: black;
+            color: teal;
+        }
+        #startlink{
+            text-decoration: none;
+            color: white;
+        }
+      </style>
+</head>
+<body>
+    <special-header></special-header>
+
+    <main>
+      <div class="top-one">
+        <div class="col item">
+            <img src="images/DocChild.jpeg">
+        </div>
+        <div class="col item">
+        <h2 class="head-text">FOR EVERY SHOT WE'VE GOT YOU COVERED</h2>
+        <button type="button" class="btn btn-outline-primary"><a href="../authentication/signup.html" id="startlink">GET STARTED</a></button>
+        </div>
+    </div>
+
+      </div>
+        <div class="container" style="font-size: 1.5em;">
+            <div class="row">
+              <div class="col about-us">
+                <h2 class="flip">ABOUT US</h2>
+              </div>
+              <div class="col order-1">
+                <p>To protect the health of children and mothers, Kingabora has partnered with experts worldwide to create a system that puts vaccination first. This ensures a healthier future for generations to come.</p>
+
+              </div>
+              <div class="col order-5 ">
+                <img src="images/Team.jpeg" alt="Team">
+              </div>
+            </div>
+          </div>
+
+            <div class="container" >
+              <h1 class="text-center mb-4">Why join us?</h1>
+
+              <div class="button-container">
+                <a class="btn btn-primary" data-bs-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1"> <i class="bi bi-clock-history" style="font-size: 3em;"></i> Relax, we've got you covered</a>
+                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2"> <i class="bi bi-clipboard-data-fill" style="font-size: 3em;"></i>Track your vaccination journey.</button>
+                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample3" aria-expanded="false" aria-controls="multiCollapseExample3"><i class="bi bi-activity" style="font-size: 3em;" ></i>Give your child the best start in life.</button>
+                </div>
+                
+              
+              <div class="row second-r">
+                <div class="col">
+                  <div class="collapse multi-collapse" id="multiCollapseExample1">
+                    <div class="card card-body">
+                        <p>Receive helpful reminders that ensure you never miss a vaccination appointment.</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="collapse multi-collapse" id="multiCollapseExample2">
+                    <div class="card card-body">
+                        <p>Easily monitor your progress, download your records, and stay informed about upcoming appointments.</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col">
+                    <div class="collapse multi-collapse" id="multiCollapseExample3">
+                      <div class="card card-body">
+                        <p>Vaccinations are essential for building a strong foundation for lifelong health and well-being.</p>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+            </div>
+
+            <h1 class="text-center mb-4">OUR VISION TEMPLATE</h1>
+
+            <div class="container three">
+                <img src="images/DocsandNurses.jpeg" alt="Your Image">
+                <div class="overlay">
+                  <p>Safeguard your child's health with KingaBora. Our web application empowers parents to effortlessly manage vaccination schedules, receive timely reminders, and locate nearby vaccination centers. With personalized alerts and real-time updates, KingaBora ensures your child's vaccinations stay on track, giving you peace of mind and confidence in their well-being.</p>
+                </div>
+              </div>
+    <special-footer></special-footer>
+
+
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+    
+</body>
+
+
+
+</html>

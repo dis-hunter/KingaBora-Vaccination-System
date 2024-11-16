@@ -237,10 +237,8 @@
 
     <section class="updates">
       <div class="update">
-        <a href="../nurse/childregistration.html">mtoi</a>
-
-        <h2>Messages</h2>
-        <p>Receive latest results and reminders on vaccinations to come!</p>
+       <a href="#" style="text-decoration: none; color: black;"> <h2>Messages</h2>
+        <p>Receive latest results and reminders on vaccinations to come!</p></a>
       </div>
     </section>
   </main>
@@ -490,6 +488,20 @@ document.addEventListener('DOMContentLoaded', () => {
 const urlParams = new URLSearchParams(window.location.search);
 const localId = urlParams.get('localId');
 
+// Check if localId exists in localStorage
+const token = localStorage.getItem('token');
+
+
+if (!token) {
+    // Redirect to the login page if localId is not set
+    console.log("token not found. Redirecting to login...");
+    window.location.href = 'http://localhost:8080/KingaBora-Vaccination-System/authentication/login.html';
+} else {
+    console.log("localId found:", localId, token );
+    
+    // Proceed with your application logic
+}
+
 // Call ParentDetails when the page loads
 if (localId) {
     console.log("Found localId in URL:", localId);
@@ -497,6 +509,7 @@ if (localId) {
 } else {
     console.error("No localId found in URL");
 }
+
 });
 
 document.getElementById('dateOfBirth').addEventListener('change', displayFormattedDate);

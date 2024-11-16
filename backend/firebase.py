@@ -10,6 +10,8 @@ from config import Config
 from datetime import datetime, timedelta
 from collections import defaultdict
 import os
+import secrets
+import string
 import pytz
 import requests
 
@@ -88,7 +90,7 @@ def email_authenticate():
         data = request.get_json()
         email = data.get('email')
         password = data.get('password')
-
+        
         # Sign in the user with Firebase
         user = auth.sign_in_with_email_and_password(email, password)
         local_id = user['localId']
@@ -101,12 +103,14 @@ def email_authenticate():
         session['local_id'] = local_id
         
         # session['username'] = username
-
+        characters = string.ascii_letters + string.digits
+        # Generate a secure random token
+        token = ''.join(secrets.choice(characters) for _ in range(15))
         # Return JSON response with redirect URL
         # redirect_url = "http://localhost:8080/KingaBora-Vaccination-System/landingpage/altIndex.html"
         # return jsonify({"message": "Successfully logged in", "localId": local_id, "redirectUrl": redirect_url}), 201
         redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/Parent/PARENTPROFILE.html?localId={local_id}"
-        return jsonify({"message": "Successfully created the user", "localId": local_id, "redirectUrl": redirect_url}), 201
+        return jsonify({"message": "Successfully created the user", "token":token, "localId": local_id, "redirectUrl": redirect_url}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
@@ -211,12 +215,7 @@ def vaccinationupdate():
     try:
         child_local_id = request.args.get("localId")
         
-        doc_ref = db.collection('VaccinationHistory')
-        query = doc_ref.where(filter=FieldFilter("child_local_ID", "==", child_local_id))
-        docs = query.stream()
-        document_list = []
-        
-        child_local_id = request.args.get("localId")  # Get the localId from the query parameters
+       
 
         doc_ref=db.collection('VaccinationHistory')
         query=doc_ref.where(filter=FieldFilter("child_local_ID","==",child_local_id))
@@ -230,8 +229,10 @@ def vaccinationupdate():
             # Sort documents, putting any with unparseable dates at the end
             try:
                 document_list.sort(
-                    key=lambda x: parse_date(x['DateofVaccination']) or datetime.min,
-                    reverse=True
+                   key=lambda x: datetime.strptime(
+                        x['DateOfVaccination'], "%B %d, %Y at %I:%M:%S %p GMT%z"
+                    ),
+                    reverse=True 
                 )
             except Exception as sort_error:
                 logging.error(f"Sorting error: {sort_error}")
@@ -288,24 +289,99 @@ def Vaccines():
         return jsonify({"error": str(e)}), 500
 
 ## drugs 1
-@app.route('/DrugAdministered', methods=['POST'])
-def DrugAdministered():
+@app.route('/drugAnalytics', methods=['POST'])
+def drugAnalytics():
     data = request.get_json()
     selected_drugs = data.get("SelectedDrug", [])
-    total_price = 0
+    druglocalid=""
 
     try:
         for drug_name in selected_drugs:
             # Query Firestore for each drug in the DrugInventory collection
             drug_query = db.collection('DrugInventory').where('DrugName', '==', drug_name).stream()
-            
+           
             # For each document that matches the drug name, get the price
+             
+            utc_now = datetime.utcnow()
+
+           # Format the date and time
+            formatted_date = utc_now.strftime("%a %b %d %Y %H:%M:%S GMT%z")
+
+           # Adjust the time zone to GMT+3
+            gmt_offset = "+0300"
+            east_africa_time = formatted_date.replace("GMT", f"GMT{gmt_offset} (East Africa Time)") 
             for doc in drug_query:
                 drug_data = doc.to_dict()
                 price = drug_data.get('DrugPrice', 0)
+                drugquantity=drug_data.get('DrugQuantity',0)
+                drugquantity=drugquantity-1
+                
+                if drugquantity > 0:
+                    new_quantity = drugquantity - 1
+                    
+                    # Update the DrugQuantity in Firestore
+                    doc.reference.update({"DrugQuantity": new_quantity})
+                    
+                    # Log the drug administration in DrugAdministered collection
+                    drug_admin_data = {
+                        'Quantity': 1,
+                        'DrugName': drug_name,
+                        'DateOfAdministration': east_africa_time,
+                        'Price': price,
+                    }
+                    doc_ref = db.collection('DrugAdministered').add(drug_admin_data)
+                    druglocalid = doc_ref[1].id
+
+
+
+
+                
+               
+
+        return jsonify({"message": "Prices retrieved successfully", "localid":druglocalid}), 200
+    
+    except Exception as firestore_error:
+        logging.error(f"Error retrieving drug prices from Firestore: {firestore_error}")
+        return jsonify({"error": "Error retrieving drug prices"}), 500
+    
+@app.route('/DrugAdministered', methods=['POST'])
+def DrugAdministered():
+    data = request.get_json()
+    selected_drugs = data.get("SelectedDrug", [])
+    total_price = 0
+    druglocalid=""
+
+    try:
+        for drug_name in selected_drugs:
+            # Query Firestore for each drug in the DrugInventory collection
+            drug_query = db.collection('DrugInventory').where('DrugName', '==', drug_name).stream()
+           
+            # For each document that matches the drug name, get the price
+             
+            utc_now = datetime.utcnow()
+
+           # Format the date and time
+            formatted_date = utc_now.strftime("%a %b %d %Y %H:%M:%S GMT%z")
+
+           # Adjust the time zone to GMT+3
+            gmt_offset = "+0300"
+            east_africa_time = formatted_date.replace("GMT", f"GMT{gmt_offset} (East Africa Time)") 
+            for doc in drug_query:
+                drug_data = doc.to_dict()
+                price = drug_data.get('DrugPrice', 0)
+                drug_data = {
+                   'Quantity': 1,
+                   'DrugName': drug_name,
+                   'DateOfAdministration': east_africa_time,
+                   'Price': price,
+                   }
+
+
+
+                
                 total_price += price
 
-        return jsonify({"message": "Prices retrieved successfully", "total_price": total_price}), 200
+        return jsonify({"message": "Prices retrieved successfully", "total_price": total_price, "localid":druglocalid}), 200
 
     except Exception as firestore_error:
         logging.error(f"Error retrieving drug prices from Firestore: {firestore_error}")
@@ -524,6 +600,31 @@ def getEmailList():
         # Filter documents based on NextVisit date
         result_docs = []
         for doc in docs:
+            data = doc.to_dict()
+            next_visit_str = data.get("NextVisit")
+            if next_visit_str:
+                # Pre-process and parse each NextVisit date
+                 processed_nextdate_str = next_visit_str.removesuffix('GMT+3')  
+                 next_visit_date = datetime.strptime(processed_nextdate_str, "%B %d, %Y at %I:%M:%S %p ")
+                 timezone_offset = pytz.timezone('Etc/GMT-3')
+
+# Get the current date and time with the specified timezone
+                 date = datetime.now(timezone_offset)
+
+# Format the date in the desired format
+                 formatted_date = date.strftime("%B %d, %Y at %I:%M:%S %p GMT%z")
+
+# Adjust the timezone format to match "+3" instead of "+0300"
+
+                 formatted_date = formatted_date[:-2] + formatted_date[-2:].lstrip("0")
+                 processed_today_str = formatted_date.removesuffix('GMT+03')
+                 today_visit_date = datetime.strptime(processed_today_str, "%B %d, %Y at %I:%M:%S %p ")
+
+        #         # Check if NextVisit is before the target date
+                 if today_visit_date < next_visit_date < target_date :
+                    result_docs.append(data)
+
+        return jsonify({"data":result_docs})
             doc_data = doc.to_dict()
             
             # Convert each document's NextVisit string to a datetime for comparison
