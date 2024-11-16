@@ -37,6 +37,10 @@ CORS(app, resources={r"/*": {"origins": "http://localhost:8080"}})
 app.secret_key = 'your_secret_key'
 
 # create a user using firebase authenticate
+
+# Initialize Firestore DB (Ensure Firebase Admin SDK is initialized properly)
+db = firestore.client()
+
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()  # Get JSON data from the request
@@ -47,15 +51,25 @@ def register():
     password = data.get("password")
     nationalID = data.get("nationalID")
     contacts = data.get("contacts")
+    is_google_signup = data.get("isGoogleSignup", False)  # Check if it's Google signup
 
-    # Validate required fields
-    if not email or not username or not password or not nationalID or not contacts:
-        logging.error("Missing required fields: email, username, password, nationalID, or contacts")
-        return jsonify({"error": "Missing email, username, password, nationalID, or contacts"}), 400
+    # Validate required fields (skip password validation for Google signup)
+    if not email or not username or not nationalID or not contacts:
+        logging.error("Missing required fields: email, username, nationalID, or contacts")
+        return jsonify({"error": "Missing email, username, nationalID, or contacts"}), 400
+
+    if not is_google_signup and not password:
+        logging.error("Missing required password for manual signup")
+        return jsonify({"error": "Missing password"}), 400
 
     try:
-        # Create a new user in Firebase Authentication
-        user = auth.create_user_with_email_and_password(email, password)    #this does the creation of an account 
+        if is_google_signup:
+            # For Google sign-up, skip password and handle Google-specific logic
+            user = auth.create_user_with_email_and_password(email, 'temporaryPassword')  # Assigning a temporary password
+        else:
+            # For manual sign-up, create a user with provided password
+            user = auth.create_user_with_email_and_password(email, password)
+
         user_data = {
             'parentName': username,
             'parentEmailAddress': email,
@@ -82,6 +96,10 @@ def register():
     except Exception as e:
         logging.error(f"Error creating user: {e}")
         return jsonify({"error": str(e)}), 400  # Return error message
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
     
 # Example route to handle POST requests
 @app.route('/email_authenticate', methods=['POST'])
