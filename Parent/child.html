@@ -11,31 +11,109 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-      body {
-        font-family: sans-serif;
-        margin: 0;
-        padding: 20px;
-      }
-      .child-header {
-        padding: 20px;
-        background-color: #40e0d0;
-        border-radius: 8px;
-        margin: 4%;
-      }
-      .child-info {
-        margin-top: 20px;
-      }
-      .child-info h2 {
-        margin-bottom: 10px;
-      }
-      .chart-container {
-        width: 80%;
-        margin: 20px auto;
-      }
-      canvas {
-        max-height: 400px;
-        height: 400px;
-      }
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: #f9f9f9; /* Light background */
+}
+
+header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+h1 {
+  color: #333; /* Dark text for the main heading */
+  font-size: 2.5em;
+  font-weight: bold; /* Make the main heading bold */
+  text-transform: uppercase; /* Uppercase for emphasis */
+}
+
+.child-header {
+  padding: 20px;
+  background-color: #40e0d0; /* Light teal color */
+  border-radius: 8px;
+  margin: 20px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.child-header h2 {
+  margin: 0;
+  color: #fff; /* White text for the header */
+  font-size: 2em; /* Increase size for better visibility */
+  font-weight: 600; /* Semi-bold for emphasis */
+}
+
+.child-header p {
+  margin: 5px 0;
+  color: #fff; /* White text for child details */
+  font-size: 1.1em; /* Slightly larger for readability */
+}
+
+.child-info {
+  margin-top: 20px;
+}
+
+.child-info h2 {
+  margin-bottom: 10px;
+  color: #333; /* Dark text color for headings */
+  border-bottom: 2px solid #40e0d0; /* Underline for emphasis */
+  padding-bottom: 5px;
+  font-size: 1.8em; /* Larger size for section headings */
+  font-weight: bold; /* Bold for emphasis */
+  letter-spacing: 1px; /* Slightly increase space between letters */
+}
+
+.child-info p {
+  color: #555; /* Dark gray for paragraph text */
+  font-size: 1.1em; /* Slightly larger for readability */
+}
+
+.chart-container {
+  width: 80%;
+  margin: 20px auto;
+}
+
+canvas {
+  max-height: 400px;
+  height: 400px;
+}
+
+/* Table styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #dddddd;
+}
+
+th {
+  background-color: #40e0d0; /* Light teal for header */
+  color: white; /* White text for header */
+}
+
+tr:hover {
+  background-color: #f1f1f1; /* Light gray on hover */
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9; /* Light gray for even rows */
+}
+
+/* Footer styles */
+footer {
+  text-align: center;
+  margin-top: 20px;
+  color: #777;
+}
     </style>
   </head>
   <body>
@@ -55,9 +133,19 @@
       </div>
       <div class="child-info">
         <h2>Vaccination History</h2>
-        <ul id="vaccinationHistoryList">
-          <!-- Vaccination history will be populated here -->
-        </ul>
+        <table id="vaccinationHistoryTable">
+          <thead>
+            <tr>
+              <th>Vaccine Issued</th>
+              <th>Date of Vaccination</th>
+              <th>Weight (kg)</th>
+              <th>Height (cm)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Vaccination history will be populated here -->
+          </tbody>
+        </table>
       </div>
       <div class="chart-container">
         <h2>Weight Progress Over Time</h2>
@@ -140,49 +228,50 @@
         }
       }
 
-      async function fetchVaccinationHistory(localId) {
-        try {
-          const response = await fetch(
-            `http://127.0.0.1:5000/vaccinationupdate?localId=${encodeURIComponent(
-              localId
-            )}`
-          );
-          const data = await response.json();
+async function fetchVaccinationHistory(localId) {
+  try {
+    const response = await fetch(
+      `http://127.0.0.1:5000/vaccinationupdate?localId=${encodeURIComponent(localId)}`
+    );
+    const data = await response.json();
 
-          if (response.ok) {
-            const vaccinationHistoryList = document.getElementById(
-              "vaccinationHistoryList"
-            );
-            vaccinationHistoryList.innerHTML = ""; // Clear existing list
+    if (response.ok) {
+      const vaccinationHistoryTableBody = document.getElementById(
+        "vaccinationHistoryTable").querySelector("tbody");
+      vaccinationHistoryTableBody.innerHTML = ""; // Clear existing table rows
 
-            // Prepare data for charts
-            const dates = [];
-            const weights = [];
-            const heights = [];
+      // Prepare data for charts
+      const dates = [];
+      const weights = [];
+      const heights = [];
 
-            data.Vaccination.forEach((vaccine) => {
-              const date = new Date(vaccine.DateofVaccination);
-              dates.push(date.toLocaleDateString());
-              weights.push(vaccine.weight || 0); // Set default value if weight is missing
-              heights.push(vaccine.height || 0); // Set default value if height is missing
+      data.Vaccination.forEach((vaccine) => {
+        const date = new Date(vaccine.DateofVaccination);
+        dates.push(date.toLocaleDateString());
+        weights.push(vaccine.weight || 0); // Set default value if weight is missing
+        heights.push(vaccine.height || 0); // Set default value if height is missing
 
-              const li = document.createElement("li");
-              li.textContent = `Vaccine: ${
-                vaccine.vaccinesIssued
-              }, Date: ${date.toLocaleString()}`;
-              vaccinationHistoryList.appendChild(li);
-            });
+        // Create a new row for the table
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${vaccine.vaccinesIssued}</td>
+          <td>${date.toLocaleString()}</td>
+          <td>${vaccine.weight || 0}</td>
+          <td>${vaccine.height || 0}</td>
+        `;
+        vaccinationHistoryTableBody.appendChild(row);
+      });
 
-            // Render charts with the fetched data
-            renderChart("weightChart", dates, weights, "Weight (kg)");
-            renderChart("heightChart", dates, heights, "Height (cm)");
-          } else {
-            console.error("Error fetching vaccination history:", data.error);
-          }
-        } catch (error) {
-          console.error("Error fetching vaccination history:", error);
-        }
-      }
+      // Render charts with the fetched data
+      renderChart("weightChart", dates, weights, "Weight (kg)");
+      renderChart("heightChart", dates, heights, "Height (cm)");
+    } else {
+      console.error("Error fetching vaccination history:", data.error);
+    }
+  } catch (error) {
+    console.error("Error fetching vaccination history:", error);
+  }
+}
 
       async function fetchVaccinationHistory2(localId) {
         try {
