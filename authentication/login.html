@@ -52,10 +52,7 @@
 
                         <!-- Google Sign-In Button -->
                         <div class="input-group mb-3">
-                            <button class="btn btn-lg btn-light w-100 fs-6" id="google-signup-btn">
-                                <img src="../nurse/images/googleicon.png" style="width: 40px;" class="me-2" alt="Google Logo">
-                                <small>Sign Up with Google</small>
-                            </button>
+                            <div id="google-signup-btn" class="w-100"></div>
                         </div>
 
                         <!-- Redirect to Sign-Up -->
@@ -69,25 +66,28 @@
     </main>
 
     <script>
-       function handleGoogleSignIn(response) {
-    const credential = response.credential;
-    console.log("Google Sign-In token:", credential);  // Add this to debug the token
+        // Google Sign-In Handler
+        function handleGoogleSignIn(response) {
+            const credential = response.credential;
+            console.log("Google Sign-In token:", credential);
 
-    // Send the ID token to the backend for verification
-    axios.post('http://127.0.0.1:5000/google_authenticate', {
-        token: credential
-    })
-    .then(function (response) {
-        const { localId, redirectUrl } = response.data;
-        localStorage.setItem('localId', localId);
-        window.location.href = redirectUrl;
-    })
-    .catch(function (error) {
-        console.error("Google authentication failed:", error.response.data);
-    });
-}
+            // Send the ID token to the backend for verification
+            axios.post('http://127.0.0.1:5000/google_authenticate', {
+                token: credential
+            })
+            .then(function (response) {
+                const { localId, redirectUrl } = response.data;
+                console.log("Google Authentication Successful:", response.data);
+                localStorage.setItem('localId', localId);
+                window.location.href = redirectUrl; // Redirect on success
+            })
+            .catch(function (error) {
+                console.error("Google authentication failed:", error.response?.data || error.message);
+                alert("Google Sign-In failed. Please try again.");
+            });
+        }
 
-        // Google Sign-In Initialization
+        // Initialize Google Sign-In
         window.onload = function () {
             google.accounts.id.initialize({
                 client_id: "331805564495-mae39bq7uvntov6gkgfkfepvdc893jlg.apps.googleusercontent.com",
@@ -104,6 +104,11 @@
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
+            if (!email || !password) {
+                alert("Please enter both email and password.");
+                return;
+            }
+
             try {
                 const response = await axios.post('http://127.0.0.1:5000/email_authenticate', {
                     email: email,
@@ -116,14 +121,16 @@
 
                 if (response.status === 201) {
                     const { redirectUrl, localId } = response.data;
-                    console.log("Successfully logged in. Redirecting...");
+                    console.log("Manual Login Successful:", response.data);
                     localStorage.setItem('localId', localId);
                     window.location.href = redirectUrl;
                 } else {
-                    console.error("Error during login:", response.data.error);
+                    console.error("Login failed:", response.data.error);
+                    alert("Login failed. Please check your credentials.");
                 }
             } catch (error) {
-                console.error(error);
+                console.error("Error during login:", error.response?.data || error.message);
+                alert("An error occurred during login. Please try again later.");
             }
         }
     </script>

@@ -151,15 +151,33 @@ def google_authenticate():
         if not token:
             return jsonify({'error': 'Token is missing'}), 400
 
-        # Verify the token without passing client_id
+        # Verify the Google OAuth2 token
         idinfo = id_token.verify_oauth2_token(token, Request())
 
-        # Token is valid, proceed with your logic
+        # Extract user data
         user_id = idinfo['sub']
-        return jsonify({'localId': user_id, 'redirectUrl': '/dashboard'})
+        email = idinfo.get('email')
+        name = idinfo.get('name')
+
+        # Store or update user data in Firestore
+        user_data = {
+            'parentName': name,
+            'parentEmailAddress': email,
+        }
+        db.collection('parentData').document(user_id).set(user_data, merge=True)
+
+        # Redirect URL
+        redirect_url = f"http://localhost/KingaBora-Vaccination-System/Parent/PARENTPROFILE.html?localId={user_id}"
+
+        return jsonify({'localId': user_id, 'redirectUrl': redirect_url}), 200
 
     except ValueError as e:
-        return jsonify({'error': 'Invalid token'}), 400
+        logging.error(f"Google authentication error: {str(e)}")
+        return jsonify({'error': 'Invalid token', 'details': str(e)}), 400
+    except Exception as e:
+        logging.error(f"Server error: {str(e)}")
+        return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
+
 
 
 @app.after_request
