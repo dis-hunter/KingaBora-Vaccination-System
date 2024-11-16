@@ -167,7 +167,7 @@ def google_authenticate():
         db.collection('parentData').document(user_id).set(user_data, merge=True)
 
         # Redirect URL
-        redirect_url = f"http://localhost/KingaBora-Vaccination-System/Parent/PARENTPROFILE.html?localId={user_id}"
+        redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/Parent/PARENTPROFILE.html?localId={user_id}"
 
         return jsonify({'localId': user_id, 'redirectUrl': redirect_url}), 200
 

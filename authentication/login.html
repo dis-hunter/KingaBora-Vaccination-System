@@ -8,54 +8,78 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        .container {
+            max-width: 900px;
+        }
+
+        .box-area {
+            padding: 30px;
+        }
+
+        .left-box {
+            padding: 15px;
+        }
+
+        .featured-image img {
+            width: 260px;
+        }
+
+        .right-box {
+            padding: 20px;
+        }
+
+        .form-control {
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            font-size: 0.85rem;
+            padding: 8px 12px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+        }
+
+        p {
+            font-size: 0.9rem;
+        }
+    </style>
 </head>
 
 <body>
     <main>
-        <!-- Main Container -->
         <div class="container d-flex justify-content-center align-items-center min-vh-100">
-            <!-- Sign-Up Form -->
             <div class="row border rounded-5 p-3 bg-white shadow box-area">
-                <!-- Left Box -->
                 <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box" style="background: #008080;">
                     <div class="featured-image mb-3">
-                        <img src="../LandingPage/Images/login.jpg" class="img-fluid" style="width: 330px;" alt="Login Image">
+                        <img src="../LandingPage/Images/login.jpg" class="img-fluid" alt="Login Image">
                     </div>
                     <p class="text-white fs-2 mb-3" style="font-family:'Roboto', sans-serif; font-weight: 600;">KINGA BORA</p>
-                    <small class="text-white text-center mb-3" style="width: 17rem; font-family:'Roboto', sans-serif;">For every shot, we have got you covered.</small>
+                    <small class="text-white text-center mb-3" style="width: 15rem; font-family:'Roboto', sans-serif;">For every shot, we have got you covered.</small>
                 </div>
 
-                <!-- Right Box -->
                 <div class="col-md-6 right-box">
                     <div class="row align-items-center">
-                        <div class="header-text mb-4">
-                            <h2>Hello</h2>
-                            <p>Welcome.</p>
+                        <div class="header-text mb-3">
+                            <h2>Hello Again</h2>
+                            <p>It's great to have you back</p>
                         </div>
-
-                        <!-- Email Field -->
-                        <div class="input-group mb-3">
+                        <div class="input-group mb-2">
                             <label for="email" class="input-group-text">Email</label>
                             <input type="email" class="form-control form-control-lg bg-light fs-6" id="email" placeholder="Email address">
                         </div>
-
-                        <!-- Password Field (For Manual Login) -->
-                        <div id="password-group" class="input-group mb-3">
+                        <div id="password-group" class="input-group mb-2">
                             <label for="password" class="input-group-text">Password</label>
                             <input type="password" class="form-control form-control-lg bg-light fs-6" id="password" placeholder="Password">
                         </div>
-
-                        <!-- Login Button -->
-                        <div class="input-group mb-3">
+                        <div class="input-group mb-2">
                             <button class="btn btn-lg btn-primary w-100 fs-6" onclick="login()">Login</button>
                         </div>
-
-                        <!-- Google Sign-In Button -->
-                        <div class="input-group mb-3">
+                        <div class="input-group mb-2">
                             <div id="google-signup-btn" class="w-100"></div>
                         </div>
-
-                        <!-- Redirect to Sign-Up -->
                         <div class="row">
                             <small>Don't have an account? <a href="signup.html">Sign Up</a></small>
                         </div>
@@ -66,28 +90,24 @@
     </main>
 
     <script>
-        // Google Sign-In Handler
         function handleGoogleSignIn(response) {
             const credential = response.credential;
             console.log("Google Sign-In token:", credential);
 
-            // Send the ID token to the backend for verification
             axios.post('http://127.0.0.1:5000/google_authenticate', {
                 token: credential
             })
-            .then(function (response) {
-                const { localId, redirectUrl } = response.data;
-                console.log("Google Authentication Successful:", response.data);
-                localStorage.setItem('localId', localId);
-                window.location.href = redirectUrl; // Redirect on success
-            })
-            .catch(function (error) {
-                console.error("Google authentication failed:", error.response?.data || error.message);
-                alert("Google Sign-In failed. Please try again.");
-            });
+                .then(function (response) {
+                    const { localId, redirectUrl } = response.data;
+                    localStorage.setItem('localId', localId);
+                    window.location.href = redirectUrl;
+                })
+                .catch(function (error) {
+                    console.error("Google authentication failed:", error.response?.data || error.message);
+                    alert("Google Sign-In failed. Please try again.");
+                });
         }
 
-        // Initialize Google Sign-In
         window.onload = function () {
             google.accounts.id.initialize({
                 client_id: "331805564495-mae39bq7uvntov6gkgfkfepvdc893jlg.apps.googleusercontent.com",
@@ -99,7 +119,6 @@
             );
         }
 
-        // Manual Login Handler
         async function login() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -121,11 +140,9 @@
 
                 if (response.status === 201) {
                     const { redirectUrl, localId } = response.data;
-                    console.log("Manual Login Successful:", response.data);
                     localStorage.setItem('localId', localId);
                     window.location.href = redirectUrl;
                 } else {
-                    console.error("Login failed:", response.data.error);
                     alert("Login failed. Please check your credentials.");
                 }
             } catch (error) {
