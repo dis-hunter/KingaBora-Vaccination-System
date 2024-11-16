@@ -537,7 +537,7 @@ def getEmailList():
                 doc_utc_datetime = doc_localized_datetime.astimezone(pytz.UTC)
                 
                 # Compare document's UTC NextVisit with the provided UTC NextVisit
-                if doc_utc_datetime <= utc_datetime:
+                if doc_utc_datetime <= utc_datetime: # type: ignore
                     # Only add the email address, child name, and NextVisit to the response
                     response_data.append({
                         "childName": doc_data.get("childName"),
@@ -546,7 +546,7 @@ def getEmailList():
                     })
         
         # Return results or 404 if none found
-        if response_data:
+        if response_data: # type: ignore
             return jsonify({"message": "Parent details found", "data": response_data}), 200
         else:
             return jsonify({"error": "No documents found for the given 'NextVisit'"}), 404
@@ -1118,6 +1118,42 @@ def add_vaccine_data():
     except Exception as e:
         print(f"Error: {str(e)}")  # Print the error to the console for debugging
         return jsonify({"success": False, "error": str(e)}), 500
+@app.route('/store_transaction', methods=['POST'])
+def store_transaction():
+    try:
+        # Get the data from the request
+        data = request.get_json()
+
+        # Extract transaction details from the data
+        merchant_request_id = data.get("MerchantRequestID")
+        checkout_request_id = data.get("CheckoutRequestID")
+        result_code = data.get("ResultCode")
+        result_desc = data.get("ResultDesc")
+        amount = data.get("Amount")
+        mpesa_receipt_number = data.get("MpesaReceiptNumber")
+        user_phone_number = data.get("UserPhoneNumber")
+        timestamp = datetime.now().isoformat()
+
+        # Prepare the data to be stored in Firestore
+        transaction_data = {
+            "MerchantRequestID": merchant_request_id,
+            "CheckoutRequestID": checkout_request_id,
+            "ResultCode": result_code,
+            "ResultDesc": result_desc,
+            "Amount": amount,
+            "MpesaReceiptNumber": mpesa_receipt_number,
+            "UserPhoneNumber": user_phone_number,
+            "Timestamp": timestamp,
+        }
+
+        # Save the transaction to Firestore
+        db.collection('transactions').add(transaction_data)
+
+        return jsonify({"message": "Transaction recorded successfully"}), 200
+    except Exception as e:
+        logging.error(f"Error storing transaction: {e}")
+        return jsonify({"error": "Error storing transaction"}), 500
+
 
 
 

@@ -136,7 +136,54 @@
         <input type="number" id="amount" name="amount" required 
                placeholder="Amount in KES" min="1" readonly>
         
-        <input type="submit" value="Pay Now">
+        <input type="submit" onclick="initiateStkPush()" value="Pay Now">
+        
+    </form>
+
+    <script>
+        function validatePhone(phone) {
+            return /^254[0-9]{9}$/.test(phone);
+        }
+
+        function showStatus(message, isError = false) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.style.display = 'block';
+            statusDiv.className = isError ? 'error' : 'success';
+        }
+
+        function clearErrors() {
+            document.getElementById('phoneError').textContent = '';
+            document.getElementById('amountError').textContent = '';
+            document.getElementById('status').style.display = 'none';
+        }
+        // async function initiateStkPush() {
+        //     const phone = document.getElementById('phone').value;
+        //     const amount = document.getElementById('amount').value;
+
+        //     try {
+        //         backendUrl='http://127.0.0.1:5000'
+        //   const response = await fetch(`${backendUrl}/storevaccinereceipt`, {
+        //             method: 'POST',
+        //             body: formData,
+        //         });
+
+        //         if (response.ok) {
+        //             const result = await response.text(); // PHP might return plain text or JSON
+        //             console.log("STK Push Initiated:", result);
+        //             alert("STK Push request sent successfully! Check your phone for the MPESA prompt.");
+        //         } else {
+        //             console.error("Error initiating STK Push:", response.status);
+        //             alert("Failed to initiate STK Push. Please try again.");
+        //         }
+        //     } catch (error) {
+        //         console.error("Error during request:", error);
+        //         alert("An error occurred while sending the STK Push request.");
+        //     }
+        // }
+    
+        
+    </script>
     </form>
 </body>
 </html>

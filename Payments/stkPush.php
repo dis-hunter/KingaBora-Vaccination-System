@@ -7,6 +7,7 @@ $processrequestUrl = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processre
 
 // You need a live URL for callback
 $callbackUrl = "https://b56d-196-200-45-130.ngrok-free.app/DarajaApi/callback.php";
+// $callbackUrl = "http://127.0.0.1:5000/insertStkResponse"; 
 $passkey = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919";
 $BusinessShortCode = "174379";
 $Timestamp = date('YmdHis');
@@ -46,3 +47,4 @@ curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
 $curl_response = curl_exec($curl);
 echo $curl_response;
 ?>
+ 
