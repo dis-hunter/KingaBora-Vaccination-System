@@ -48,14 +48,11 @@
   </div>
 </div>
     <special-footer></special-footer>
+
     <script>
-        async function getEmailList(NextVisit) {
+    async function fetchVaccinationDueList() {
   try {
-    console.log('Getting email and parent details for NextVisit:', NextVisit); // Debug logging
-    
-    const url = `http://127.0.0.1:5000/getEmailList?NextVisit=${encodeURIComponent(NextVisit)}`;
-    console.log('Request URL:', url); // Debug logging
-    
+    const url = "http://127.0.0.1:5000/getVaccinationDueList"; // Updated URL without parameters
     const response = await fetch(url, { method: 'GET' });
     const data = await response.json();
 
@@ -88,12 +85,10 @@
     }
   } catch (error) {
     console.error('Error:', error);
-    document.getElementById('vaccineList').textContent = 'Error: ' + error.message;
   }
 }
 
-
- // Call the function when the DOM is fully loaded
+// Call the function when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
     getEmailList("December 18, 2024 at 09:11:32 PM GMT+3"); //this endpoint uses the november date to get the emails of users whose date is beyond this
     // make a function that gets todays date, adds 14 days or 7 days depending on your reminder algorithmn, then the new date will be passed into the function to get data that are close past due so that reminder is sent

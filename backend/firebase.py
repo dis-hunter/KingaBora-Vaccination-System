@@ -14,6 +14,10 @@ import secrets
 import string
 import pytz
 import requests
+from google.oauth2 import id_token
+from google.auth.transport import requests
+from google.auth.transport.requests import Request
+
 
 firebase_config = Config.firebaseConfig
 
@@ -29,14 +33,28 @@ cred = credentials.Certificate(service_key_path)
 firebase_admin.initialize_app(cred, {'projectId': 'kingaboravaccinationsystem'})
 db = firestore.client()
 # Initialize the Flask application
+# app = Flask(__name__)
+# cors = CORS(app)
+# # Ensure CORS is configured correctly
+# CORS(app, resources={r"/*": {"origins": "http://localhost:8080"}})
+# CORS(app, origins="http://localhost")
+
+
+
 app = Flask(__name__)
-cors = CORS(app)
-CORS(app, resources={r"/*": {"origins": "http://localhost:8080"}})
+CORS(app)  # Enable CORS for all routes
+
 
 # Set a secret key if using sessions or forms
 app.secret_key = 'your_secret_key'
 
 # create a user using firebase authenticate
+
+# Initialize Firestore DB (Ensure Firebase Admin SDK is initialized properly)
+db = firestore.client()
+
+
+
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()  # Get JSON data from the request
@@ -47,15 +65,25 @@ def register():
     password = data.get("password")
     nationalID = data.get("nationalID")
     contacts = data.get("contacts")
+    is_google_signup = data.get("isGoogleSignup", False)  # Check if it's Google signup
 
-    # Validate required fields
-    if not email or not username or not password or not nationalID or not contacts:
-        logging.error("Missing required fields: email, username, password, nationalID, or contacts")
-        return jsonify({"error": "Missing email, username, password, nationalID, or contacts"}), 400
+    # Validate required fields (skip password validation for Google signup)
+    if not email or not username or not nationalID or not contacts:
+        logging.error("Missing required fields: email, username, nationalID, or contacts")
+        return jsonify({"error": "Missing email, username, nationalID, or contacts"}), 400
+
+    if not is_google_signup and not password:
+        logging.error("Missing required password for manual signup")
+        return jsonify({"error": "Missing password"}), 400
 
     try:
-        # Create a new user in Firebase Authentication
-        user = auth.create_user_with_email_and_password(email, password)    #this does the creation of an account 
+        if is_google_signup:
+            # For Google sign-up, skip password and handle Google-specific logic
+            user = auth.create_user_with_email_and_password(email, 'temporaryPassword')  # Assigning a temporary password
+        else:
+            # For manual sign-up, create a user with provided password
+            user = auth.create_user_with_email_and_password(email, password)
+
         user_data = {
             'parentName': username,
             'parentEmailAddress': email,
@@ -82,6 +110,10 @@ def register():
     except Exception as e:
         logging.error(f"Error creating user: {e}")
         return jsonify({"error": str(e)}), 400  # Return error message
+
+
+
+
     
 # Example route to handle POST requests
 @app.route('/email_authenticate', methods=['POST'])
@@ -117,7 +149,56 @@ def email_authenticate():
 
 
 
-## parent det 1
+@app.route('/google_authenticate', methods=['POST'])
+def google_authenticate():
+    try:
+        token = request.json.get('token')
+        if not token:
+            return jsonify({'error': 'Token is missing'}), 400
+
+        # Verify the Google OAuth2 token
+        idinfo = id_token.verify_oauth2_token(token, Request())
+
+        # Extract user data
+        user_id = idinfo['sub']
+        email = idinfo.get('email')
+        name = idinfo.get('name')
+
+        # Store or update user data in Firestore
+        user_data = {
+            'parentName': name,
+            'parentEmailAddress': email,
+        }
+        db.collection('parentData').document(user_id).set(user_data, merge=True)
+
+        # Redirect URL
+        redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/Parent/PARENTPROFILE.html?localId={user_id}"
+
+        return jsonify({'localId': user_id, 'redirectUrl': redirect_url}), 200
+
+    except ValueError as e:
+        logging.error(f"Google authentication error: {str(e)}")
+        return jsonify({'error': 'Invalid token', 'details': str(e)}), 400
+    except Exception as e:
+        logging.error(f"Server error: {str(e)}")
+        return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
+
+
+
+@app.after_request
+def add_headers(response):
+    response.headers['Cross-Origin-Opener-Policy'] = 'same-origin'
+    response.headers['Cross-Origin-Embedder-Policy'] = 'require-corp'
+    return response
+
+@app.route('/google_authenticate', methods=['OPTIONS'])
+def google_authenticate_options():
+    response = app.make_response('')
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    return response
+
 @app.route('/parentDetails', methods=['GET'])
 def parentDetails():
     try:
@@ -530,10 +611,58 @@ def getParentDetails():
     
  #this is the nurse profile
  # 
- # 
+
+
+@app.route('/getVaccinationDueList', methods=['GET'])
+def getVaccinationDueList():
+    try:
+        # Get today's date, tomorrow's, and the day after tomorrow's dates in the correct format
+        tz = pytz.FixedOffset(3 * 60)  # GMT+3
+        today = datetime.now(tz).date()  # Today
+        tomorrow = today + timedelta(days=1)  # Tomorrow
+        day_after_tomorrow = today + timedelta(days=2)  # Day after tomorrow
+        
+        # Query Firestore for all documents in 'VaccinationHistory'
+        doc_ref = db.collection('VaccinationHistory')
+        docs = doc_ref.stream()
+
+        # Prepare response data
+        response_data = []
+        for doc in docs:
+            doc_data = doc.to_dict()
+            next_visit_str = doc_data.get("NextVisit")  # Get the NextVisit string
+            
+            if next_visit_str:
+                # Remove the "GMT+3" part and convert to datetime (ignoring time)
+                next_visit_no_tz = next_visit_str.rsplit(" GMT", 1)[0]
+                next_visit_datetime = datetime.strptime(next_visit_no_tz, "%B %d, %Y at %I:%M:%S %p")
+                
+                # Convert the NextVisit datetime to the same timezone (GMT+3) to make the comparison
+                localized_next_visit = tz.localize(next_visit_datetime).date()
+
+                # Check if the NextVisit date is today, tomorrow, or the day after tomorrow
+                if localized_next_visit in [today, tomorrow, day_after_tomorrow]:
+                    response_data.append({
+                        "childName": doc_data.get("childName"),
+                        "DateofVaccination": doc_data.get("DateofVaccination"),
+                        "parentEmailAddress": doc_data.get("parentEmailAddress"),
+                        "NextVisit": next_visit_str,
+                    })
+
+        # Return results if any found
+        if response_data:
+            return jsonify({"message": "Vaccination details found", "data": response_data}), 200
+        else:
+            return jsonify({"error": "No vaccination details match the specified dates"}), 404
+
+    except Exception as e:
+        logging.error(f"Error fetching vaccination details: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+
  
-
-
+ 
+ 
 @app.route('/getEmailList', methods=['GET'])
 def getEmailList():
     try:
