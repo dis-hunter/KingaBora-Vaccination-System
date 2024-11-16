@@ -384,13 +384,9 @@ function getFormattedDate(weeksToAdd = 0) {
   now.setDate(now.getDate() + weeksToAdd * 7);
 
   // Format the date part
-  const dateOptions = {  year: 'numeric', month: 'short', day: 'numeric' };
-  const dateofVOptions = { weekday:'short', year: 'numeric', month: 'short', day: 'numeric' };
-
+  const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
   const formattedDate = now.toLocaleDateString('en-US', dateOptions);
-  const VformattedDate = now.toLocaleDateString('en-US', dateofVOptions);
-
-   const DateofVaccinationdDate = DateofVaccinationtime.toLocaleDateString('en-US', VformattedDate);
+   const DateofVaccinationdDate = DateofVaccinationtime.toLocaleDateString('en-US', dateOptions);
 
   // Format the time part
   const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' };
