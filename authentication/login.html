@@ -1,76 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Kinga Bora Vaccination System</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style.css">
-   
-    <script defer src="../nurse/header-footer.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 
 <body>
-    <special-header></special-header>
     <main>
-    <!-- Main Container -->
-    <div class="container d-flex justify-content-center align-items-center min-vh-100">
-        <!-- Login Container -->
-        <div class="row border rounded-5 p-3 bg-white shadow box-area">
-            <!-- Left Box -->
-            <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box" style="background: #008080">
-                <div class="featured-image mb-3">
-                    <img src="../LandingPage/Images/login.jpg" class="img-fluid" style="width: 330px;">
+        <!-- Main Container -->
+        <div class="container d-flex justify-content-center align-items-center min-vh-100">
+            <!-- Sign-Up Form -->
+            <div class="row border rounded-5 p-3 bg-white shadow box-area">
+                <!-- Left Box -->
+                <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box" style="background: #008080;">
+                    <div class="featured-image mb-3">
+                        <img src="../LandingPage/Images/login.jpg" class="img-fluid" style="width: 330px;" alt="Login Image">
+                    </div>
+                    <p class="text-white fs-2 mb-3" style="font-family:'Roboto', sans-serif; font-weight: 600;">KINGA BORA</p>
+                    <small class="text-white text-center mb-3" style="width: 17rem; font-family:'Roboto', sans-serif;">For every shot, we have got you covered.</small>
                 </div>
-                <p class="text-white fs-2 mb-3" style="font-family:'Roboto', sans-serif; font-weight: 600;">KINGA BORA</p>
-                <small class="text-white text-wrap text-center mb-3" style="width: 17rem; font-family:'Roboto', sans-serif;">For every shot we have got you covered.</small>
-            </div>
-            <!-- Right Box -->
-            <div class="col-md-6 right-box">
-                <div class="row align-items-center">
-                    <div class="header-text mb-4">
-                        <h2>Hello, Again</h2>
-                        <p>We are happy to have you back.</p>
-                    </div>
-                    <!-- Email Input -->
-                    <div class="input-group mb-3">
-                        <input type="email" id="email" class="form-control form-control-lg bg-light fs-6" placeholder="Email address">
-                    </div>
-                    <!-- Password Input -->
-                    <div class="input-group mb-1">
-                        <input type="password" id="password" class="form-control form-control-lg bg-light fs-6" placeholder="Password">
-                    </div>
-                    <!-- Remember Me and Forgot Password -->
-                    <div class="input-group mb-5 d-flex justify-content-between">
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="formCheck">
-                            <label for="formCheck" class="form-check-label text-secondary"><small>Remember Me</small></label>
+
+                <!-- Right Box -->
+                <div class="col-md-6 right-box">
+                    <div class="row align-items-center">
+                        <div class="header-text mb-4">
+                            <h2>Hello</h2>
+                            <p>Welcome.</p>
                         </div>
-                        <div class="forgot">
-                            <small><a href="#">Forgot Password?</a></small>
+
+                        <!-- Email Field -->
+                        <div class="input-group mb-3">
+                            <label for="email" class="input-group-text">Email</label>
+                            <input type="email" class="form-control form-control-lg bg-light fs-6" id="email" placeholder="Email address">
                         </div>
-                    </div>
-                    <!-- Login Button -->
-                    <div class="input-group mb-3">
-                        <button class="btn btn-lg btn-primary w-100 fs-6" onclick="login()">Login</button>
-                    </div>
-                    <!-- Google Sign In Button -->
-                    <div class="input-group mb-3">
-                        <button class="btn btn-lg btn-light w-100 fs-6"><img src="../nurse/images/googleicon.png" style="width: 40px;" class="me-2"><small>Sign In with Google</small></button>
-                    </div>
-                    <!-- Sign Up Link -->
-                    <div class="row">
-                        <small>Don't have an account? <a href="signup.html">Sign Up</a></small>
+
+                        <!-- Password Field (For Manual Login) -->
+                        <div id="password-group" class="input-group mb-3">
+                            <label for="password" class="input-group-text">Password</label>
+                            <input type="password" class="form-control form-control-lg bg-light fs-6" id="password" placeholder="Password">
+                        </div>
+
+                        <!-- Login Button -->
+                        <div class="input-group mb-3">
+                            <button class="btn btn-lg btn-primary w-100 fs-6" onclick="login()">Login</button>
+                        </div>
+
+                        <!-- Google Sign-In Button -->
+                        <div class="input-group mb-3">
+                            <button class="btn btn-lg btn-light w-100 fs-6" id="google-signup-btn">
+                                <img src="../nurse/images/googleicon.png" style="width: 40px;" class="me-2" alt="Google Logo">
+                                <small>Sign Up with Google</small>
+                            </button>
+                        </div>
+
+                        <!-- Redirect to Sign-Up -->
+                        <div class="row">
+                            <small>Don't have an account? <a href="signup.html">Sign Up</a></small>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     </main>
-    <special-footer></special-footer>
-    
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     <script>
+       function handleGoogleSignIn(response) {
+    const credential = response.credential;
+    console.log("Google Sign-In token:", credential);  // Add this to debug the token
+
+    // Send the ID token to the backend for verification
+    axios.post('http://127.0.0.1:5000/google_authenticate', {
+        token: credential
+    })
+    .then(function (response) {
+        const { localId, redirectUrl } = response.data;
+        localStorage.setItem('localId', localId);
+        window.location.href = redirectUrl;
+    })
+    .catch(function (error) {
+        console.error("Google authentication failed:", error.response.data);
+    });
+}
+
+        // Google Sign-In Initialization
+        window.onload = function () {
+            google.accounts.id.initialize({
+                client_id: "331805564495-mae39bq7uvntov6gkgfkfepvdc893jlg.apps.googleusercontent.com",
+                callback: handleGoogleSignIn
+            });
+            google.accounts.id.renderButton(
+                document.getElementById('google-signup-btn'),
+                { theme: "outline", size: "large", shape: "pill" }
+            );
+        }
+
+        // Manual Login Handler
         async function login() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -81,18 +110,14 @@
                     password: password
                 }, {
                     headers: {
-
-                        method: 'POST',
-
-          
                         'Content-Type': 'application/json'
                     }
                 });
 
                 if (response.status === 201) {
-                    const { redirectUrl,localId } = response.data;
+                    const { redirectUrl, localId } = response.data;
                     console.log("Successfully logged in. Redirecting...");
-                    localStorage.setItem('localId',localId);
+                    localStorage.setItem('localId', localId);
                     window.location.href = redirectUrl;
                 } else {
                     console.error("Error during login:", response.data.error);
@@ -103,4 +128,5 @@
         }
     </script>
 </body>
+
 </html>

@@ -11,6 +11,10 @@ from datetime import datetime, timedelta
 import os
 import pytz
 import requests
+from google.oauth2 import id_token
+from google.auth.transport import requests
+from google.auth.transport.requests import Request
+
 
 firebase_config = Config.firebaseConfig
 
@@ -26,9 +30,17 @@ cred = credentials.Certificate(service_key_path)
 firebase_admin.initialize_app(cred, {'projectId': 'kingaboravaccinationsystem'})
 db = firestore.client()
 # Initialize the Flask application
+# app = Flask(__name__)
+# cors = CORS(app)
+# # Ensure CORS is configured correctly
+# CORS(app, resources={r"/*": {"origins": "http://localhost:8080"}})
+# CORS(app, origins="http://localhost")
+
+
+
 app = Flask(__name__)
-cors = CORS(app)
-CORS(app, resources={r"/*": {"origins": "http://localhost:8080"}})
+CORS(app)  # Enable CORS for all routes
+
 
 # Set a secret key if using sessions or forms
 app.secret_key = 'your_secret_key'
@@ -37,6 +49,8 @@ app.secret_key = 'your_secret_key'
 
 # Initialize Firestore DB (Ensure Firebase Admin SDK is initialized properly)
 db = firestore.client()
+
+
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -94,8 +108,8 @@ def register():
         logging.error(f"Error creating user: {e}")
         return jsonify({"error": str(e)}), 400  # Return error message
 
-if __name__ == '__main__':
-    app.run(debug=True)
+
+
 
     
 # Example route to handle POST requests
@@ -127,6 +141,40 @@ def email_authenticate():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
+
+
+
+@app.route('/google_authenticate', methods=['POST'])
+def google_authenticate():
+    try:
+        token = request.json.get('token')
+        if not token:
+            return jsonify({'error': 'Token is missing'}), 400
+
+        # Verify the token without passing client_id
+        idinfo = id_token.verify_oauth2_token(token, Request())
+
+        # Token is valid, proceed with your logic
+        user_id = idinfo['sub']
+        return jsonify({'localId': user_id, 'redirectUrl': '/dashboard'})
+
+    except ValueError as e:
+        return jsonify({'error': 'Invalid token'}), 400
+
+
+@app.after_request
+def add_headers(response):
+    response.headers['Cross-Origin-Opener-Policy'] = 'same-origin'
+    response.headers['Cross-Origin-Embedder-Policy'] = 'require-corp'
+    return response
+
+@app.route('/google_authenticate', methods=['OPTIONS'])
+def google_authenticate_options():
+    response = app.make_response('')
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    return response
 
 @app.route('/parentDetails', methods=['GET'])
 def parentDetails():
