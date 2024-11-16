@@ -122,29 +122,44 @@ def email_authenticate():
         data = request.get_json()
         email = data.get('email')
         password = data.get('password')
-        
+
         # Sign in the user with Firebase
         user = auth.sign_in_with_email_and_password(email, password)
         local_id = user['localId']
 
-        # Example: Fetch user data from Firestore (optional, you can expand based on your use case)
-        # user_data = firestore_db.collection('users').document(local_id).get()
-        # username = user_data.to_dict().get('username', 'User')
+        # Check which role the user has by searching in Firestore collections
+        firestore_db = db  # Assuming db is your Firestore client
+        redirect_url = None
+
+        # Check administrator collection
+        admin_doc = firestore_db.collection('administratorData').document(local_id).get()
+        if admin_doc.exists:
+            redirect_url = "http://localhost:8080/KingaBora-Vaccination-System/Admin/admin_dashboard.html"
+
+        # Check parent collection
+        if redirect_url is None:
+            parent_doc = firestore_db.collection('parentData').document(local_id).get()
+            if parent_doc.exists:
+                redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/Parent/PARENTPROFILE.html?localId={local_id}"
+
+        # Check nurse collection
+        if redirect_url is None:
+            nurse_doc = firestore_db.collection('nurseData').document(local_id).get()
+            if nurse_doc.exists:
+                redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/nurse/nurse_dashboard.html?localId={local_id}"
+
+        # If no role found, raise an error
+        if redirect_url is None:
+            return jsonify({"error": "User role not found in any collection"}), 404
 
         # Store user information in session (optional)
         session['local_id'] = local_id
-        
-        # session['username'] = username
-        characters = string.ascii_letters + string.digits
-        # Generate a secure random token
-        token = ''.join(secrets.choice(characters) for _ in range(15))
-        # Return JSON response with redirect URL
-        # redirect_url = "http://localhost:8080/KingaBora-Vaccination-System/landingpage/altIndex.html"
-        # return jsonify({"message": "Successfully logged in", "localId": local_id, "redirectUrl": redirect_url}), 201
-        redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/Parent/PARENTPROFILE.html?localId={local_id}"
-        return jsonify({"message": "Successfully created the user", "token":token, "localId": local_id, "redirectUrl": redirect_url}), 201
+
+        # Return JSON response with appropriate redirect URL
+        return jsonify({"message": "Successfully logged in", "localId": local_id, "redirectUrl": redirect_url}), 201
+
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        return jsonify({"error":str(e)}),400
 
 
 
