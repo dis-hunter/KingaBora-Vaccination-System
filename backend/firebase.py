@@ -523,7 +523,7 @@ def storevaccinereceipt():
         doc_id = doc_ref.id  # Get the generated document ID
 
         # Redirect URL after successful registration
-        redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/Parent/PARENTPROFILE.html?localId={doc_id}"
+        redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/nurse/nurse_dashboard.html"
 
         return jsonify({"message": "Successfully created the user", "localId": doc_id, "redirectUrl": redirect_url}), 201
 
