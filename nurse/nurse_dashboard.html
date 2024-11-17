@@ -33,7 +33,9 @@
                 </a>
                 <span class="d-block" style="font-size: 14px;">Nurse</span>
                 <ul class="dropdown-menu text-small shadow">
-                    <li><a class="dropdown-item" href="#nurseProfileCard" id="viewProfileButton">Profile</a></li>
+                    <li>
+                        <a class="dropdown-item" href="#" id="viewProfileButton">Profile</a>
+                    </li>
                     <li><a class="dropdown-item" href="#" id="settingsButton">Settings</a></li>
                     
                     <li><hr class="dropdown-divider"></li>
@@ -141,6 +143,25 @@
     
 
 </main>
+
+<script>
+    // Function to extract query parameters
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+
+    // Extract the localId
+    const localId = getQueryParam('localId');
+
+    // Update the profile link with the localId
+    const profileLink = document.getElementById('viewProfileButton');
+    if (profileLink && localId) {
+        profileLink.href = `view_profile.html?localId=${localId}`;
+    } else {
+        console.error("localId not found in the URL");
+    }
+</script>
 
 
 
