@@ -24,7 +24,7 @@ class SpecialHeader extends HTMLElement{
 
         <!-- Sign Up and Log In Buttons -->
         <div class="header-buttons" id="header-buttons">
-            <button  onclick="logout()">Log Out</button>
+            <button>Log Out</button>
 
         </div>
 
@@ -90,24 +90,6 @@ class SpecialFooter extends HTMLElement{
     </footer>
         `
     }
-}
-function logout()
-{
-    const token = localStorage.getItem('token');
-    console.log("token not found. Redirecting to login...");
-
-    if (token) {
-        localStorage.removeItem('token');
-
-        console.log("token not found. Redirecting to login...");
-        window.location.href = 'http://localhost:8080/KingaBora-Vaccination-System/authentication/login.html';
-        } 
-        else{
-            localStorage.removeItem('token');
-            window.location.href = 'http://localhost:8080/KingaBora-Vaccination-System/authentication/login.html';
-
-        }
-
 }
 customElements.define('special-header', SpecialHeader);
 customElements.define('special-footer', SpecialFooter);
