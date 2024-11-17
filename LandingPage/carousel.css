@@ -71,6 +71,14 @@ body {
   }
   
 
+  .round-image {
+    width: 140px; /* Adjust size as needed */
+    height: 140px;
+    border-radius: 50%; /* Makes the image circular */
+    object-fit: cover; /* Ensures the image fits within the circular frame */
+    object-position: 50% 10%; /* Adjusts the image position: 50% horizontally, 40% vertically */
+}
+
 
   
   
