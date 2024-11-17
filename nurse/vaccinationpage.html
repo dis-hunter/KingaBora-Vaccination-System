@@ -412,6 +412,7 @@ function getFormattedDate(weeksToAdd = 0) {
         let weight=document.getElementById("weight").value
         let height=document.getElementById("height").value
         
+        
 
       
         try {
@@ -429,10 +430,12 @@ function getFormattedDate(weeksToAdd = 0) {
           if (response.ok) {
             const data = await response.json();
             console.log("Successfully created user. Redirecting...");
+            console.log(data.redirectUrl);
             // window.location.href = data.redirectUrl;  // Redirect to provided URL
           } else {
             const errorData = await response.json();
             console.error("Error creating user:", errorData.error);
+
             // Handle error message display or other actions
           }
       
@@ -440,6 +443,7 @@ function getFormattedDate(weeksToAdd = 0) {
           console.error("Error during request:", error);
           // Handle network errors or other exceptions
         }
+
         console.log(period,ChildName,Child_local_ID,DateofVaccination,NextVisit,NurseName,Nurse_local_ID,nextscheduletime);
 
         console.log(period);
@@ -452,6 +456,8 @@ function getFormattedDate(weeksToAdd = 0) {
 
         console.log("drugs",selectedDrugs);
         await drugAnalytics(selectedDrugs)
+        window.location.href = "http://localhost:8080/KingaBora-Vaccination-System/nurse/nurse_dashboard.html";  // Redirect to provided URL
+
 
       }
 
