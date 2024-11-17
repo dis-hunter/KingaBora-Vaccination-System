@@ -118,5 +118,5 @@ async function getEmailList2(NextVisit) {
 }
 
 // Example usage with the corrected NextVisit format
-getEmailList("Wed Nov 20, 2024 ");
-getEmailList2("Wed Nov 20, 2024 ");
+//getEmailList("Wed Nov 20, 2024 ");
+//getEmailList2("Wed Nov 20, 2024 ");
