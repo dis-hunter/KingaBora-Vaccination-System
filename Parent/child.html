@@ -298,13 +298,13 @@ async function fetchVaccinationHistory(localId) {
             // Render weight and height charts
             renderChart(
               "weightChart",
-              data.data.dates.reverse(),
+              data.data.dates,
               data.data.weights,
               "Weight (kg)"
             );
             renderChart(
               "heightChart",
-              data.data.dates.reverse(),
+              data.data.dates,
               data.data.heights,
               "Height (cm)"
             );

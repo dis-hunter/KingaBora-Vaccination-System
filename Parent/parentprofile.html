@@ -1,231 +1,262 @@
 <!DOCTYPE html>
 <html>
 <head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profile Page</title>
   
   <script defer src="../nurse/header-footer.js"></script>
   
-<style>
-  body {
-    font-family: sans-serif;
-    margin: 0;
-    padding: 20px;
-  }
-  main{
-    background-image: url("images/parentspic2.jpeg");
-    background-repeat: no-repeat;
-    background-size: cover;
-  }
-
-  .profile-header {
-    display: flex;
-    align-items: center;
-    padding: 20px;
-    background-color: #008080;
-    border-radius: 8px;
-    margin: 4%;
-  }
-
-  .profile-info {
-    flex-grow: 1;
-  }
-
-  .profile-actions button {
-    margin-left: 10px; 
-    padding: 8px 12px;
-    background-color: #40e0d0;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-
- 
-  .children ul {
-    list-style: none;
-    padding-left:10px;
-    display: flex;
-    flex-wrap: wrap;
-  }
-
-  .children li {
-    margin: 5px;
-    padding: 8px 12px;
-    background-color: #f5f5f5;
-    border-radius: 4px;
-  }
-
-  .updates {
-    margin-top: 13%
-  }
-
-  .update {
-    background-color: #fff;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-
-  .update p {
-    margin-bottom: 5px;
-  }
-
-  .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.4);
-    display: none;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .modal-content {
-    background-color: #fefefe;
-    position: relative;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 90%;
-    max-width: 500px;
-    border-radius: 8px;
-    max-height: 80vh;
-    overflow-y: auto;
-    margin: auto;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-
-  .close {
-    position: absolute;
-    right: 20px;
-    top: 10px;
-    color: #aaa;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-
-  .close:hover {
-    color: black;
-  }
-
-  .form-group {
-    margin-bottom: 15px;
-  }
-
-  .form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-
-  .form-group input,
-  .form-group select {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box;
-  }
-
-  .add-child-btn {
-    background-color: #008080;
-    color: white;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-bottom: 10px;
-  }
-
-  #addChildForm button[type="submit"] {
-    background-color: #008080;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    width: 100%;
-    margin-top: 15px;
-  }
-
-  #addChildForm button[type="submit"]:hover {
-    background-color: #006666;
-  }
-
-  .modal-content h2 {
-    margin-top: 0;
-    margin-bottom: 20px;
-    padding-right: 30px;
-  }
-
-  @media (max-width: 600px) {
-    .modal-content {
-      width: 95%;
-      margin: 10px;
-      padding: 15px;
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f9f9f9; /* Light background */
     }
-    
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    h1, h2 {
+      color: #333;
+      font-size: 2em;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin: 20px 0;
+    }
+
+    .topnav {
+      background-color: #008080; 
+      padding: 10px 0;
+      text-align: center;
+    }
+
+    .topnav h2 {
+      color: white;
+      font-size: 2em;
+      margin: 0;
+    }
+
+    main {
+      /* background-image: url("images/parentspic2.jpeg"); */
+      background-repeat: no-repeat;
+      background-size: cover;
+      padding: 20px;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      padding: 20px;
+      background-color: #008080;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .profile-info {
+      flex-grow: 1;
+      color: white;
+    }
+
+    .profile-actions button {
+      margin-left: 10px;
+      padding: 8px 12px;
+      background-color: #40e0d0;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .children ul {
+      list-style: none;
+      padding-left: 10px;
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .children li {
+      margin: 5px;
+      padding: 8px 12px;
+      background-color: #f5f5f5;
+      border-radius: 4px;
+    }
+
+    .updates {
+      margin-top: 20px;
+    }
+
+    .update {
+      background-color: #fff;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.4);
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      position: relative;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 8px;
+      max-height: 80vh;
+      overflow-y: auto;
+      margin: auto;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .close {
+      position: absolute;
+      right: 20px;
+      top: 10px;
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: black;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
     .form-group input,
     .form-group select {
-      font-size: 16px; 
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
     }
-    #editProfileModal {
-  transition: opacity 0.3s ease-in-out; /* Add a transition for opacity */
-}
-  }
-</style>
+
+    .add-child-btn {
+      background-color: #008080;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    #addChildForm button[type="submit"] {
+      background-color: #008080;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 15px;
+    }
+
+    #addChildForm button[type="submit"]:hover {
+      background-color: #006666;
+    }
+    
+
+    .modal-content h2 {
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    .profile-header .profile-actions button:hover {
+      background-color: #36b3a0;
+    }
+
+    @media (max-width: 600px) {
+      .modal-content {
+        width: 95%;
+        margin: 10px;
+        padding: 15px;
+      }
+      
+      .form-group input,
+      .form-group select {
+        font-size: 16px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <special-header></special-header>
-    <main>
+  <header>
+    <!-- <special-header></special-header> -->
+    <div class="topnav">
+      <h2>Profile Page</h2>
+    </div>
+  </header>
+  <main>
     <div class="profile-header">
       <div class="profile-info">
-        <h1 id="parentName"></h1>    
-        <p id="parentEmailAddress"></p>
-        <p id="parentPhoneNumber">Parent</p>
-        <p id="parentNationalID">Parent</p>
+        <h1 id="parentName">Parent Name</h1>
+        email<p id="parentEmailAddress">parent@example.com</p>
+        <p id="parentPhoneNumber">Phone Number</p>
+        <p id="parentNationalID">National ID</p>
       </div>
       <div class="profile-actions">
         <button id="editProfileButton">Edit Profile</button>
+      </div>
     </div>
-    </div>
+    
     <!-- Edit Profile Modal -->
-<div id="editProfileModal" class="modal">
-  <div class="modal-content">
-      <span class="close" onclick="closeEditProfileModal()">&times;</span>
-      <h2>Edit Profile</h2>
-      <form id="editProfileForm">
+    <div id="editProfileModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeEditProfileModal()">&times;</span>
+        <h2>Edit Profile</h2>
+        <form id="editProfileForm">
           <div class="form-group">
-              <label for="editParentName">Name:</label>
-              <input type="text" id="editParentName" required>
+            <label for="editParentName">Name:</label>
+            <input type="text" id="editParentName" required>
           </div>
           <div class="form-group">
-              <label for="editParentEmailAddress">Email:</label>
-              <input type="email" id="editParentEmailAddress" required>
+            <label for="editParentEmailAddress">Email:</label>
+            <input type="email" id="editParentEmailAddress" required>
           </div>
           <div class="form-group">
-              <label for="editParentPhoneNumber">Phone Number:</label>
-              <input type="text" id="editParentPhoneNumber" required>
+            <label for="editParentPhoneNumber">Phone Number:</label>
+            <input type="text" id="editParentPhoneNumber" required>
           </div>
           <div class="form-group">
-              <label for="editParentNationalID">National ID:</label>
-              <input type="text" id="editParentNationalID" required>
+            <label for="editParentNationalID">National ID:</label>
+            <input type="text" id="editParentNationalID" required>
           </div>
           <button type="submit">Update Profile</button>
-      </form>
-  </div>
-</div>
-
+        </form>
+      </div>
+    </div>
+    
     <section class="children">
       <h1>Children</h1>
       <button onclick="openAddChildForm()" class="add-child-btn">Add Child</button>
@@ -237,77 +268,55 @@
 
     <section class="updates">
       <div class="update">
-       <a href="#" style="text-decoration: none; color: black;"> <h2>Messages</h2>
-        <p>Receive latest results and reminders on vaccinations to come!</p></a>
+        <a href="#" style="text-decoration: none; color: black;">
+          <h2>Messages</h2>
+          <p>Receive latest results and reminders on vaccinations to come!</p>
+        </a>
       </div>
     </section>
   </main>
 
-  <!--child form-->
-<div id="addChildModal" class="modal">
-  <div class="modal-content">
+  <!-- Child form modal -->
+  <div id="addChildModal" class="modal">
+    <div class="modal-content">
       <span class="close">&times;</span>
+      <h2>Add New Child</h2>
       <form id="addChildForm">
-          <!-- Hidden fields for parent information -->
-          <input type="hidden" id="parentNameHidden">
-          <input type="hidden" id="parentNationalIDHidden">
-          <input type="hidden" id="parentEmailHidden">
-          
-          <div class="form-group">
-              <label for="birthCertificateID">Birth Certificate ID:</label>
-              <input type="text" id="birthCertificateID" required>
-          </div>
-          
-          <div class="form-group">
-              <label for="childName">Child Name:</label>
-              <input type="text" id="childName" required>
-          </div>
-          
-          <div class="form-group">
-              <label for="dateOfBirth">Date of Birth:</label>
-              <input type="date" id="dateOfBirth" required>
-          </div>
-          <div class="form-group">
-            <label for="formattedDateOfBirth">Formatted Date of Birth:</label>
-            <input type="text" id="formattedDateOfBirth" readonly>
+        <input type="hidden" id="parentNameHidden">
+        <input type="hidden" id="parentNationalIDHidden">
+        <input type="hidden" id="parentEmailHidden">
+        
+        <div class="form-group">
+          <label for="birthCertificateID">Birth Certificate ID:</label>
+          <input type="text" id="birthCertificateID" required>
         </div>
-          
-          <div class="form-group">
-              <label for="gender">Gender:</label>
-              <select id="gender" required>
-                  <option value="">Select Gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-              </select>
-          </div>
-
-          <div class="form-group">
-              <label for="weight">Weight (kg):</label>
-              <input type="number" 
-                     id="weight" 
-                     step="0.1" 
-                     min="0" 
-                     required 
-                     placeholder="Enter weight in kilograms">
-          </div>
-
-          <div class="form-group">
-              <label for="height">Height (cm):</label>
-              <input type="number" 
-                     id="height" 
-                     step="0.1" 
-                     min="0" 
-                     required 
-                     placeholder="Enter height in centimeters">
-          </div>
-          
-          <button >ad Child</button>
+        
+        <div class="form-group">
+          <label for="childName">Child Name:</label>
+          <input type="text" id="childName" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="dateOfBirth">Date of Birth:</label>
+          <input type="date" id="dateOfBirth" required>
+        </div>
+        <div class="form-group">
+          <label for="gender">Gender:</label>
+          <select id="gender" required>
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </div>
+        <button type="submit">Add Child</button>
       </form>
+    </div>
   </div>
-</div>
 
 
-  <special-footer></special-footer>
+
+
+  <!-- <special-footer></special-footer> -->
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
   <script>
