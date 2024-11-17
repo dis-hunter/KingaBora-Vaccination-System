@@ -1,0 +1,275 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nurse Profile</title>
+    <script defer src="header-footer.js"></script>
+    <link rel="stylesheet" href="header-footer.css">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="show_vaccinations.js"></script>
+    <script src="viewchild.js"></script>
+</head>
+<body class="white-theme" >
+
+<header class="py-3 border-bottom" style="background-color: white;">
+    <div class="container-fluid d-grid align-items-center" style="grid-template-columns: 1fr 2fr;">
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+            <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none custom-align-left">
+                <img src="images/KingaBoraLogo.jpg" width="100" height="100" alt="Your Icon" />
+            </a>
+        </div>
+        <div class="d-flex align-items-center justify-content-end w-100">
+            <form class="w-100 me-3" role="search">
+                <input type="search" class="form-control" placeholder="Search..." aria-label="Search" style="width: 700px; height: 38px;">
+            </form>
+            <div class="flex-shrink-0 dropdown">
+                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="images/nurse_profile.png" alt="" width="32" height="32" class="rounded-circle me-2">
+                </a>
+                <span class="d-block" style="font-size: 14px;">Nurse</span>
+                <ul class="dropdown-menu text-small shadow">
+                    <li><a class="dropdown-item" href="#nurseProfileCard" id="viewProfileButton">Profile</a></li>
+                    <li><a class="dropdown-item" href="#" id="settingsButton">Settings</a></li>
+                    
+                    <li><hr class="dropdown-divider"></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+
+<main id="main">
+
+
+    <div class="row justify-content-center">
+
+        <br>
+        <div class="col-md-4 mb-4" style="margin-top: 20px; height: 100%;">
+            <div class="card-body p-3 shadow-sm border-2">
+                <div class="card-header text-center">
+                    <h5 class="m-0"><b>Vaccinate child</b></h5>
+                </div>
+              <img src="images/cutebaby2.avif" alt="Register Nurse" class="card-img-top" style="height: 200px; object-fit: cover;">
+              <div class="card-body">
+                <p class="card-text">Click the button below to vaccinate a child</p>
+                <a href="searchchildren.html" target="_blank" class="btn mt-2" style="background-color: teal; color: white; width: 100%;">Vaccinate child</a>
+              </div>
+            </div>
+          </div>
+
+        <div class="col-md-8 mb-4">
+            <div class="card-header text-center">
+                <h5 class="m-0"><b>View reminders</b></h5>
+            </div>
+            <div class="card-body p-3">
+                <table class="table table-striped table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Children Names</th>
+                            <th>Parent's email</th>
+                            <th>Next Visit</th>
+                            <th>Last vaccination date</th>
+                            <th>Vaccines previously Issued</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vaccination_table2">
+                        <!-- Rows will be populated here -->
+                    </tbody>
+                </table>
+                <a href="view_reminders.html" class="btn  mt-2" style="background-color: teal; color: white; width: 100%;">View reminders</a>
+            </div>
+        </div>
+    </div>
+    
+
+   
+    <div class="row justify-content-center">
+
+        <div class="col-md-4 mb-4" style="margin-top: 20px; height: 100%;">
+            <div class="card-body p-3 shadow-sm border-2">
+                <div class="card-header text-center">
+                    <h5 class="m-0"><b>Register a child </b></h5>
+                </div>
+              <img src="images/another.jpg" alt="Register child" class="card-img-top" style="height: 200px; object-fit: cover;">
+              <div class="card-body">
+                <p class="card-text">Click the button below to register a child</p>
+                <a href="childregistration.html" target="_blank" class="btn mt-2" style="background-color: teal; color: white; width: 100%;">Register child</a>
+              </div>
+            </div>
+          </div>
+        <div class="col-md-8 mb-4">
+            <div class="card-body p-3">
+                <h4>Children data</h4>
+                <table class="table table-striped table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Birth Certificate ID</th>
+                            <th>Child Name</th>
+                            <th>Date of Birth</th>
+                            <th>Parent Name</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="child_table_limited">
+                        <!-- Rows will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+            <a href="view_children.html" class="btn  mt-2" style="background-color: teal; color: white; width: 100%;">View children</a> 
+        </div>
+
+    
+    </div>
+    
+
+
+    
+    
+    
+    
+    <!-- Link to the external JavaScript file -->
+   
+    
+
+</main>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const profileLink = document.querySelector('#viewProfileButton');
+        const settingsButton = document.querySelector('#settingsButton');
+        const nurseProfileCard = document.getElementById('nurseProfileCard');
+        const mainContent = document.getElementById('main');
+        const nurseName = document.getElementById('nurseName');
+        const nurseNationalID = document.getElementById('nurseNationalID');
+        const nursePhoneNumber = document.getElementById('nursePhoneNumber');
+        const nurseEmail = document.getElementById('nurseEmail');
+        const editProfileButton = document.getElementById('editProfileButton');
+        const editProfileForm = document.getElementById('editProfileForm');
+        const cancelEditButton = document.getElementById('cancelEditButton');
+        const profileForm = document.getElementById('profileForm');
+
+        // Toggle theme (Settings)
+        settingsButton.addEventListener('click', function () {
+            const theme = prompt("Choose a theme: white, cream, or dark");
+
+            // Change theme based on user input
+            if (theme === "white") {
+                document.body.className = "white-theme";
+            } else if (theme === "cream") {
+                document.body.className = "cream-theme";
+            } else if (theme === "dark") {
+                document.body.className = "dark-theme";
+            } else {
+                alert("Invalid theme! Please choose 'white', 'cream', or 'dark'.");
+            }
+        });
+
+        // Profile link click handler
+        profileLink.addEventListener('click', function (event) {
+            event.preventDefault();
+            const localId = new URLSearchParams(window.location.search).get('localId');
+            if (localId) {
+                fetchNurseProfile(localId);
+            } else {
+                console.error("No localId found in URL");
+            }
+        });
+
+        // Fetch nurse profile data
+        async function fetchNurseProfile(localId) {
+            try {
+                const url = `http://127.0.0.1:5000/getNurseProfileByLocalId?localId=${encodeURIComponent(localId)}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                if (response.ok) {
+                    const nurseData = data.data[0];
+                    nurseName.textContent = nurseData.nurseName;
+                    nurseNationalID.textContent = nurseData.nurseNationalID;
+                    nursePhoneNumber.textContent = nurseData.nursePhoneNumber;
+                    nurseEmail.textContent = nurseData.nurseEmail;
+
+                    // Hide main content and show nurse profile
+                    mainContent.style.display = 'none';
+                    nurseProfileCard.style.display = 'block';
+                } else {
+                    alert('Error fetching profile data');
+                }
+            } catch (error) {
+                console.error('Error fetching nurse profile:', error);
+                alert('Could not load nurse profile.');
+            }
+        }
+
+        // Edit profile button click handler
+        editProfileButton.addEventListener('click', function () {
+            editProfileForm.style.display = 'block';
+            document.getElementById('editName').value = nurseName.textContent;
+            document.getElementById('editPhone').value = nursePhoneNumber.textContent;
+            document.getElementById('editEmail').value = nurseEmail.textContent;
+            nurseProfileCard.style.display = 'none';
+        });
+
+        // Cancel edit button
+        cancelEditButton.addEventListener('click', function () {
+            editProfileForm.style.display = 'none';
+            nurseProfileCard.style.display = 'block';
+        });
+
+        // Submit edited profile
+        profileForm.addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const updatedData = {
+                name: document.getElementById('editName').value,
+                phone: document.getElementById('editPhone').value,
+                email: document.getElementById('editEmail').value
+            };
+            try {
+                const localId = new URLSearchParams(window.location.search).get('localId');
+                const response = await fetch(`http://127.0.0.1:5000/updateNurseProfile?localId=${localId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updatedData)
+                });
+                if (response.ok) {
+                    alert('Profile updated successfully');
+                    nurseProfileCard.style.display = 'block';
+                    editProfileForm.style.display = 'none';
+                    fetchNurseProfile(localId); // Refresh profile data
+                } else {
+                    alert('Failed to update profile');
+                }
+            } catch (error) {
+                console.error('Error updating profile:', error);
+            }
+        });
+
+        // Close the nurse profile modal
+        function closeProfileModal() {
+            nurseProfileCard.style.display = 'none';
+            mainContent.style.display = 'block';
+        }
+
+        // Add a listener for clicking outside the profile modal to close it
+        nurseProfileCard.addEventListener('click', function (e) {
+            if (e.target === nurseProfileCard) {
+                closeProfileModal();
+            }
+        });
+    });
+</script>
+<special-footer></special-footer>
+
+
+</body>
+</html>
