@@ -694,6 +694,7 @@ def get_email_list():
         for doc in docs:
             data = doc.to_dict()
             next_visit_str = data.get("NextVisit")
+            vaccines_issued = data.get("vaccinesIssued", 0)
             
             if next_visit_str:
                 # Parse and clean the NextVisit date from the database (remove time and timezone)
@@ -707,7 +708,8 @@ def get_email_list():
                         result_docs.append({
                             "NextVisit": cleaned_next_visit_str,
                             "parentEmailAddress": data.get("parentEmailAddress"),
-                            "childName": data.get("childName")
+                            "childName": data.get("childName"),
+                            "vaccinesIssued": vaccines_issued 
                         })
                 except ValueError as e:
                     logging.error(f"Error parsing NextVisit date: {e}")

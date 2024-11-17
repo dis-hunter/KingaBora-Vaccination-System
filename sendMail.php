@@ -106,6 +106,7 @@
         <th>Parent Email</th>
         <th>Child Name</th>
         <th>Next Visit</th>
+        <th>Vaccines Issued</th>  <!-- New column -->
       </tr>
     </thead>
     <tbody>
@@ -114,56 +115,58 @@
   </table>
 
   <script>
-    async function getEmailList() {
-      try {
-        // Get today's date and add 7 days
-        const today = new Date();
-        today.setDate(today.getDate() + 7);  // Add 7 days to today's date
+   async function getEmailList() {
+  try {
+    // Get today's date and add 7 days
+    const today = new Date();
+    today.setDate(today.getDate() + 7);  // Add 7 days to today's date
 
-        // Format the date to "Nov 24, 2024" (with comma)
-        const formattedDate = today.toLocaleString('en-US', {
-          year: 'numeric',
-          month: 'short',
-          day: '2-digit'
-        });
+    // Format the date to "Nov 24, 2024" (with comma)
+    const formattedDate = today.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: '2-digit'
+    });
 
-        console.log("Formatted date (7 days from today):", formattedDate);
+    console.log("Formatted date (7 days from today):", formattedDate);
 
-        // Build the URL to call the Flask API with the formatted date
-        const url = `http://127.0.0.1:5000/getEmailList`;
+    // Build the URL to call the Flask API with the formatted date
+    const url = `http://127.0.0.1:5000/getEmailList`;
 
-        // Fetch the data from the Flask API
-        const response = await fetch(url, { method: 'GET' });
-        const data = await response.json();
+    // Fetch the data from the Flask API
+    const response = await fetch(url, { method: 'GET' });
+    const data = await response.json();
 
-        if (response.ok) {
-          console.log('Matching email list:', data.data);
+    if (response.ok) {
+      console.log('Matching email list:', data.data);
 
-          // Populate the table with the vaccination reminder data
-          const tableBody = document.querySelector('#vaccineList tbody');
-          tableBody.innerHTML = ''; // Clear previous data
+      // Populate the table with the vaccination reminder data
+      const tableBody = document.querySelector('#vaccineList tbody');
+      tableBody.innerHTML = ''; // Clear previous data
 
-          data.data.forEach(reminder => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-              <td>${reminder.parentEmailAddress}</td>
-              <td>${reminder.childName}</td>
-              <td>${reminder.NextVisit}</td>
-            `;
-            tableBody.appendChild(row);
-          });
+      data.data.forEach(reminder => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${reminder.parentEmailAddress}</td>
+          <td>${reminder.childName}</td>
+          <td>${reminder.NextVisit}</td>
+          <td>${reminder.vaccinesIssued}</td>  <!-- Display vaccinesIssued -->
+        `;
+        tableBody.appendChild(row);
+      });
 
-          // Call function to send reminder emails
-          sendReminders(data.data);
-        } else {
-          console.error('Error fetching email list:', data.error || response.statusText);
-          document.getElementById('vaccineList').innerHTML = `Error: ${data.error || 'Failed to fetch emails'}`;
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        document.getElementById('vaccineList').textContent = 'Error: ' + error.message;
-      }
+      // Call function to send reminder emails
+      sendReminders(data.data);
+    } else {
+      console.error('Error fetching email list:', data.error || response.statusText);
+      document.getElementById('vaccineList').innerHTML = `Error: ${data.error || 'Failed to fetch emails'}`;
     }
+  } catch (error) {
+    console.error('Error:', error);
+    document.getElementById('vaccineList').textContent = 'Error: ' + error.message;
+  }
+}
+
 
     // Function to send email reminders
     async function sendReminders(emailList) {
