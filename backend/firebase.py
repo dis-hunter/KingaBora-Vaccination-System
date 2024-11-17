@@ -659,53 +659,46 @@ def getVaccinationDueList():
         logging.error(f"Error fetching vaccination details: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
-
- 
- 
- 
 @app.route('/getEmailList', methods=['GET'])
-def getEmailList():
+def get_email_list():
     try:
-        NextVisit = request.args.get("NextVisit")
-        
-        # Pre-process the date string to match the required format
-        # Removes "GMT" prefix for compatibility with `%z`
-        processed_date_str = NextVisit.removesuffix('GMT+3') 
-        
-        # Convert the processed date string to a datetime object
-        target_date = datetime.strptime(processed_date_str, "%B %d, %Y at %I:%M:%S %p ")
+        # Set the timezone (Africa/Nairobi)
+        timezone = pytz.timezone('Africa/Nairobi')
 
-        # # Retrieve all documents in the collection
-        docs = db.collection('VaccinationHistory').stream()
+        # Get today's date and add 1 day for reminder
+        today = datetime.now(timezone).date()
+        reminder_date = today + timedelta(days=7)  # Add 1 day to today's date
 
-        # Filter documents based on NextVisit date
+        # Format the reminder date in "Nov 24, 2024" format (same format as in the database)
+        formatted_reminder_date = reminder_date.strftime("%b %d, %Y")
+
+        # Retrieve all documents in the VaccinationHistory collection
+        docs = db.collection('VaccinationHistory').stream() if db else []
+
         result_docs = []
         for doc in docs:
             data = doc.to_dict()
             next_visit_str = data.get("NextVisit")
+            
             if next_visit_str:
-                # Pre-process and parse each NextVisit date
-                 processed_nextdate_str = next_visit_str.removesuffix('GMT+3')  
-                 next_visit_date = datetime.strptime(processed_nextdate_str, "%B %d, %Y at %I:%M:%S %p ")
-                 timezone_offset = pytz.timezone('Etc/GMT-3')
+                # Parse and clean the NextVisit date from the database (remove time and timezone)
+                try:
+                    # Split the string by spaces and get the correct parts (Month, Day, Year)
+                    next_visit_parts = next_visit_str.split(' ')[1:4]  # [1:4] will give Month, Day, Year
+                    cleaned_next_visit_str = " ".join(next_visit_parts)  # Reassemble as "Nov 18, 2024"
+                    
+                    # Now compare the cleaned NextVisit with the reminder date
+                    if cleaned_next_visit_str == formatted_reminder_date:
+                        result_docs.append({
+                            "NextVisit": cleaned_next_visit_str,
+                            "parentEmailAddress": data.get("parentEmailAddress"),
+                            "childName": data.get("childName")
+                        })
+                except ValueError as e:
+                    logging.error(f"Error parsing NextVisit date: {e}")
 
-# Get the current date and time with the specified timezone
-                 date = datetime.now(timezone_offset)
-
-# Format the date in the desired format
-                 formatted_date = date.strftime("%B %d, %Y at %I:%M:%S %p GMT%z")
-
-# Adjust the timezone format to match "+3" instead of "+0300"
-
-                 formatted_date = formatted_date[:-2] + formatted_date[-2:].lstrip("0")
-                 processed_today_str = formatted_date.removesuffix('GMT+03')
-                 today_visit_date = datetime.strptime(processed_today_str, "%B %d, %Y at %I:%M:%S %p ")
-
-        #         # Check if NextVisit is before the target date
-                 if today_visit_date < next_visit_date < target_date :
-                    result_docs.append(data)
-
-        return jsonify({"data":result_docs})
+        # Return the records where the NextVisit date matches the reminder date
+        return jsonify({"data": result_docs})
 
     except Exception as e:
         logging.error(f"Error fetching email list: {str(e)}")
