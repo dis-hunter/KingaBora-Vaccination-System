@@ -122,29 +122,44 @@ def email_authenticate():
         data = request.get_json()
         email = data.get('email')
         password = data.get('password')
-        
+
         # Sign in the user with Firebase
         user = auth.sign_in_with_email_and_password(email, password)
         local_id = user['localId']
 
-        # Example: Fetch user data from Firestore (optional, you can expand based on your use case)
-        # user_data = firestore_db.collection('users').document(local_id).get()
-        # username = user_data.to_dict().get('username', 'User')
+        # Check which role the user has by searching in Firestore collections
+        firestore_db = db  # Assuming db is your Firestore client
+        redirect_url = None
+
+        # Check administrator collection
+        admin_doc = firestore_db.collection('administratorData').document(local_id).get()
+        if admin_doc.exists:
+            redirect_url = "http://localhost:8080/KingaBora-Vaccination-System/Admin/admin_dashboard.html"
+
+        # Check parent collection
+        if redirect_url is None:
+            parent_doc = firestore_db.collection('parentData').document(local_id).get()
+            if parent_doc.exists:
+                redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/Parent/PARENTPROFILE.html?localId={local_id}"
+
+        # Check nurse collection
+        if redirect_url is None:
+            nurse_doc = firestore_db.collection('nurseData').document(local_id).get()
+            if nurse_doc.exists:
+                redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/nurse/nurse_dashboard.html?localId={local_id}"
+
+        # If no role found, raise an error
+        if redirect_url is None:
+            return jsonify({"error": "User role not found in any collection"}), 404
 
         # Store user information in session (optional)
         session['local_id'] = local_id
-        
-        # session['username'] = username
-        characters = string.ascii_letters + string.digits
-        # Generate a secure random token
-        token = ''.join(secrets.choice(characters) for _ in range(15))
-        # Return JSON response with redirect URL
-        # redirect_url = "http://localhost:8080/KingaBora-Vaccination-System/landingpage/altIndex.html"
-        # return jsonify({"message": "Successfully logged in", "localId": local_id, "redirectUrl": redirect_url}), 201
-        redirect_url = f"http://localhost:8080/KingaBora-Vaccination-System/Parent/PARENTPROFILE.html?localId={local_id}"
-        return jsonify({"message": "Successfully created the user", "token":token, "localId": local_id, "redirectUrl": redirect_url}), 201
+
+        # Return JSON response with appropriate redirect URL
+        return jsonify({"message": "Successfully logged in", "localId": local_id, "redirectUrl": redirect_url}), 201
+
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        return jsonify({"error":str(e)}),400
 
 
 
@@ -659,59 +674,51 @@ def getVaccinationDueList():
         logging.error(f"Error fetching vaccination details: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
-
- 
- 
- 
 @app.route('/getEmailList', methods=['GET'])
-def getEmailList():
+def get_email_list():
     try:
-        NextVisit = request.args.get("NextVisit")
-        
-        # Pre-process the date string to match the required format
-        # Removes "GMT" prefix for compatibility with `%z`
-        processed_date_str = NextVisit.removesuffix('GMT+3') 
-        
-        # Convert the processed date string to a datetime object
-        target_date = datetime.strptime(processed_date_str, "%B %d, %Y at %I:%M:%S %p ")
+        # Set the timezone (Africa/Nairobi)
+        timezone = pytz.timezone('Africa/Nairobi')
 
-        # # Retrieve all documents in the collection
-        docs = db.collection('VaccinationHistory').stream()
+        # Get today's date and add 1 day for reminder
+        today = datetime.now(timezone).date()
+        reminder_date = today + timedelta(days=7)  # Add 1 day to today's date
 
-        # Filter documents based on NextVisit date
+        # Format the reminder date in "Nov 24, 2024" format (same format as in the database)
+        formatted_reminder_date = reminder_date.strftime("%b %d, %Y")
+
+        # Retrieve all documents in the VaccinationHistory collection
+        docs = db.collection('VaccinationHistory').stream() if db else []
+
         result_docs = []
         for doc in docs:
             data = doc.to_dict()
             next_visit_str = data.get("NextVisit")
+            
             if next_visit_str:
-                # Pre-process and parse each NextVisit date
-                 processed_nextdate_str = next_visit_str.removesuffix('GMT+3')  
-                 next_visit_date = datetime.strptime(processed_nextdate_str, "%B %d, %Y at %I:%M:%S %p ")
-                 timezone_offset = pytz.timezone('Etc/GMT-3')
+                # Parse and clean the NextVisit date from the database (remove time and timezone)
+                try:
+                    # Split the string by spaces and get the correct parts (Month, Day, Year)
+                    next_visit_parts = next_visit_str.split(' ')[1:4]  # [1:4] will give Month, Day, Year
+                    cleaned_next_visit_str = " ".join(next_visit_parts)  # Reassemble as "Nov 18, 2024"
+                    
+                    # Now compare the cleaned NextVisit with the reminder date
+                    if cleaned_next_visit_str == formatted_reminder_date:
+                        result_docs.append({
+                            "NextVisit": cleaned_next_visit_str,
+                            "parentEmailAddress": data.get("parentEmailAddress"),
+                            "childName": data.get("childName")
+                        })
+                except ValueError as e:
+                    logging.error(f"Error parsing NextVisit date: {e}")
 
-# Get the current date and time with the specified timezone
-                 date = datetime.now(timezone_offset)
-
-# Format the date in the desired format
-                 formatted_date = date.strftime("%B %d, %Y at %I:%M:%S %p GMT%z")
-
-# Adjust the timezone format to match "+3" instead of "+0300"
-
-                 formatted_date = formatted_date[:-2] + formatted_date[-2:].lstrip("0")
-                 processed_today_str = formatted_date.removesuffix('GMT+03')
-                 today_visit_date = datetime.strptime(processed_today_str, "%B %d, %Y at %I:%M:%S %p ")
-
-        #         # Check if NextVisit is before the target date
-                 if today_visit_date < next_visit_date < target_date :
-                    result_docs.append(data)
-
-        return jsonify({"data":result_docs})
+        # Return the records where the NextVisit date matches the reminder date
+        return jsonify({"data": result_docs})
 
     except Exception as e:
-        logging.error(f"Error fetching email list: {str(e)}")
+        logging.error(f"Error fetching child data: {str(e)}")
         return jsonify({"error": str(e)}), 500
-
-
+    
 @app.route('/ViewActivities', methods=['GET'])
 def ViewActivities():
     try:
@@ -739,8 +746,108 @@ def ViewActivities():
     except Exception as e:
         logging.error(f"Error fetching child details: {str(e)}")
         return jsonify({"errors": str(e)}), 500
+        
+        
+@app.route('/getNurseProfileByLocalId', methods=['GET'])
+def get_nurse_profile_by_local_id():
+    local_id = request.args.get('localId')  # Retrieve localId from query parameters
 
+    if not local_id:
+        return jsonify({"error": "Missing localId parameter"}), 400
 
+    try:
+        # Query the database to get the nurse's profile by localId
+        # Assuming you're using Firestore or a similar NoSQL database where each document has a localId
+        nurse_collection = db.collection('nurseData')  # Replace with your actual collection
+        nurse_document = nurse_collection.document(local_id).get()
+
+        if nurse_document.exists:
+            nurse_data = nurse_document.to_dict()  # Convert the document to a dictionary
+            return jsonify({
+                "data": [{
+                    "nurseName": nurse_data.get("nurseName", "N/A"),
+                    "nurseNationalID": nurse_data.get("nurseNationalID", "N/A"),
+                    "nursePhoneNumber": nurse_data.get("nursephonenumber", "N/A"),
+                    "nurseGender": nurse_data.get("nurseGender", "N/A"),
+                    "nurseEmail": nurse_data.get("nurseEmailAddress", "N/A")
+                }]}), 200
+        else:
+            return jsonify({"error": "No nurse found for the provided localId"}), 404
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/getEmailList2', methods=['GET'])
+def getEmailList2():
+    try:
+        # Get the 'NextVisit' query parameter
+        NextVisit = request.args.get("NextVisit")
+        
+        # Check if NextVisit is provided
+        if not NextVisit:
+            return jsonify({"error": "Missing 'NextVisit' parameter"}), 400
+
+        # Parse the provided NextVisit parameter into a datetime object (without timezone)
+        NextVisit_no_tz = NextVisit.rsplit(" GMT", 1)[0]
+        visit_datetime = datetime.strptime(NextVisit_no_tz, "%B %d, %Y at %I:%M:%S %p")
+        
+        # Manually add timezone (GMT+3) and convert to UTC
+        input_tz = pytz.FixedOffset(3 * 60)  # GMT+3 is 3 hours ahead of UTC
+        localized_datetime = input_tz.localize(visit_datetime)
+        utc_datetime = localized_datetime.astimezone(pytz.UTC)
+
+        # Query Firestore for all documents in 'VaccinationHistory'
+        doc_ref = db.collection('VaccinationHistory')
+        docs = doc_ref.stream()
+
+        # Prepare response data by filtering based on NextVisit
+        response_data = []
+        for doc in docs:
+            doc_data = doc.to_dict()
+            
+            # Convert each document's NextVisit string to a datetime for comparison
+            doc_next_visit = doc_data.get("NextVisit")
+
+            if doc_next_visit:
+                doc_next_visit_no_tz = doc_next_visit.rsplit(" GMT", 1)[0]
+                doc_visit_datetime = datetime.strptime(doc_next_visit_no_tz, "%B %d, %Y at %I:%M:%S %p")
+                
+                # Localize and convert document datetime to UTC
+                doc_localized_datetime = input_tz.localize(doc_visit_datetime)
+                doc_utc_datetime = doc_localized_datetime.astimezone(pytz.UTC)
+                
+                # Compare document's UTC NextVisit with the provided UTC NextVisit
+                if doc_utc_datetime <= utc_datetime:
+                    # Handle vaccinesIssued array
+                    vaccines_issued = doc_data.get("vaccinesIssued", [])
+                    
+                    # Check if vaccinesIssued is a list
+                    if not isinstance(vaccines_issued, list):
+                        vaccines_issued = []
+
+                    # Add the filtered document data to the response
+                    response_data.append({
+                        "childName": doc_data.get("childName"),
+                        "DateofVaccination": doc_data.get("DateofVaccination"),
+                        "parentEmailAddress": doc_data.get("parentEmailAddress"),
+                        "NextVisit": doc_data.get("NextVisit"),
+                        "vaccinesIssued": vaccines_issued
+                    })
+                    
+                    # Stop after collecting 3 records
+                    if len(response_data) == 2:
+                        break
+        
+        # Return results or 404 if none found
+        if response_data:
+            return jsonify({"message": "Parent details found", "data": response_data}), 200
+        else:
+            return jsonify({"error": "No documents found for the given 'NextVisit'"}), 404
+
+    except Exception as e:
+        logging.error(f"Error fetching parent details: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+    
 #child data
 @app.route('/childDetails', methods=['GET'])
 def ChildDetails():
@@ -989,7 +1096,42 @@ def parse_date(date_str):
         print(f"Date parsing error for {date_str}: {e}")
         return None
 
+@app.route('/getChildDataLimited', methods=['GET'])
+def getChildDataLimited():
+    try:
+        # Query Firestore for all documents in 'childData'
+        doc_ref = db.collection('childData')
+        docs = doc_ref.stream()
 
+        # Prepare response data (limit to 3 records)
+        response_data = []
+        for doc in docs:
+            if doc.exists:  # Check if the document exists
+                doc_data = doc.to_dict()
+
+                # Extract necessary fields from the document
+                child_info = {
+                    "BirthCertificateID": doc_data.get("BirthCertificateID"),
+                    "ChildName": doc_data.get("ChildName"),
+                    "DateOfBirth": doc_data.get("DateOfBirth"),
+                    "ParentName": doc_data.get("ParentName"),
+                    "childId": doc.id  # To use as a link for the "View Child" button
+                }
+                response_data.append(child_info)
+
+                # Limit to 3 records
+                if len(response_data) == 3:
+                    break
+
+        # Return the data in JSON format
+        if response_data:
+            return jsonify({"message": "Child data found", "data": response_data}), 200
+        else:
+            return jsonify({"error": "No child data found"}), 404
+
+    except Exception as e:
+        logging.error(f"Error fetching limited child data: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 # Endpoint to retrieve and count vaccines administered each day in the past week
 @app.route('/drug_sales2', methods=['GET'])
 def drug_sales2():

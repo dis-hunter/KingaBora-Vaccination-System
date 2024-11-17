@@ -6,7 +6,7 @@ date_default_timezone_set('Africa/Nairobi');
 $processrequestUrl = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest";
 
 // You need a live URL for callback
-$callbackUrl = "https://b56d-196-200-45-130.ngrok-free.app/DarajaApi/callback.php";
+$callbackUrl = "https://72e9-196-200-45-130.ngrok-free.app/DarajaApi/callback.php";
 $passkey = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919";
 $BusinessShortCode = "174379";
 $Timestamp = date('YmdHis');

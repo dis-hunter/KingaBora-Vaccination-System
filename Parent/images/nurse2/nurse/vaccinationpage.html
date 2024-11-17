@@ -61,7 +61,7 @@ label, input {
   color: #555; /* Dark gray for text */
 }
 .measurements {
-  /* background-color: #e6f7f8;  */
+  background-color: #e6f7f8; /* Light teal background */
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 20px;
@@ -97,7 +97,7 @@ label, input {
   border-radius: 4px;
   margin: 10px auto;
   display: block;
-  width: 100%; /* Smaller width */
+  width: 60%; /* Smaller width */
   text-align: center;
   justify-content: flex-start;
 }
@@ -121,7 +121,7 @@ label, input {
 }
 
 #milestones:focus {
-    border-color: #008080; /* Green border on focus */
+    border-color: #5cb85c; /* Green border on focus */
     box-shadow: 0 2px 5px rgba(92, 184, 92, 0.5); /* Green shadow on focus */
     outline: none; /* Removes default focus outline */
 }
@@ -174,37 +174,46 @@ label, input {
             <h2>Your Next Appointment</h2>
           <div id="NextVisit"></div>
         </div>
-        <div id="DrugAdministered"></div>
+       
+        </div>
 
-        <div class="measurements">
-          <h2>Measurements</h2>
-          <label for="weight">Weight (kg):</label>
-          <input type="number" id="weight" name="weight">
-        
-          <label for="height">Height (cm):</label>
-          <input type="number" id="height" name="height">
-          <label for="milestones">Comments:</label>
-        <textarea id="milestones" name="milestones" rows="3" placeholder="Comments"></textarea>
-        <div class="button-container">
-          <button type="button" id="update" onclick="saveVaccine()">UPDATE</button>
-          <button type="button" id="paymentBtn" disabled>PAYMENT</button>
+    <div id="graph">
+      
+    </div>
+    
+    
+      <div class="measurements">
+        <h2>Measurements</h2>
+        <label for="weight">Weight (kg):</label>
+        <input type="number" id="weight" name="weight">
+      
+        <label for="height">Height (cm):</label>
+        <input type="number" id="height" name="height">
+        <label for="milestones">Comments:</label>
+      <textarea id="milestones" name="milestones" rows="3" placeholder="Comments"></textarea>
+      <div class="button-container">
+        <button type="button" id="update" onclick="saveVaccine()">UPDATE</button>
+        <button type="button" id="paymentBtn">PAYMENT</button>
+        </div>
+      </div>
+    <br><br>
+   
+
+    
+  
+</div>
+</div>
+
 
 <script>
-    document.getElementById("paymentBtn").addEventListener("click", function () {
-      const mpesaPaymentUrl = "http://localhost:8080/KingaBora-Vaccination-System/Payments/payments.html";
-      window.location.href = mpesaPaymentUrl;
-    });
-  
+  document.getElementById("paymentBtn").addEventListener("click", function() {
+    // Define the URL of the M-Pesa payment page
+    const mpesaPaymentUrl = "http://localhost/KingaBora-Vaccination-System/Payments/payments.html"; // Replace with actual URL
+
+    // Redirect to the M-Pesa payment page
+    window.location.href = mpesaPaymentUrl;
+  });
 </script>
-
-          </script>
-          </div>
-        </div>
-        </div>
-    <br><br>
-</div>
-</div>
-
 
 </body>
 </html>
@@ -262,8 +271,7 @@ async function VaccineReceipt() {
 
     if (response.ok) {
       console.log('Vaccine found:', data);
-      const vaccinereceipt = data.Vaccination[0];
- // Assuming there's only one child for simplicity
+      const vaccinereceipt = data.Vaccination[0]; // Assuming there's only one child for simplicity
       
       ChildName=vaccinereceipt.childName;                                      //child details
       Child_local_ID=vaccinereceipt.child_local_ID;
@@ -376,24 +384,18 @@ function getFormattedDate(weeksToAdd = 0) {
   now.setDate(now.getDate() + weeksToAdd * 7);
 
   // Format the date part
-  const dateOptions = { weekday:'short',year: 'numeric', month: 'short', day: 'numeric' };
-  const VDaydateOptions = { weekday:'short', year: 'numeric', month: 'short', day: 'numeric' };
-
+  const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
   const formattedDate = now.toLocaleDateString('en-US', dateOptions);
-   const DateofVaccinationdDate = DateofVaccinationtime.toLocaleDateString('en-US', VDaydateOptions);
+   const DateofVaccinationdDate = DateofVaccinationtime.toLocaleDateString('en-US', dateOptions);
 
   // Format the time part
-  const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+  const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' };
   const formattedTime = DateofVaccinationtime.toLocaleTimeString('en-US', timeOptions);
   const DateofVaccinationdTime = DateofVaccinationtime.toLocaleTimeString('en-US', timeOptions);
+
   // Combine the formatted date and time
-  NextVisitDate = `${formattedDate}  ${formattedTime}`;
-  reminderDateString = `${DateofVaccinationdDate}  ${DateofVaccinationdTime}`;
-   DateofVaccination = reminderDateString.replace(', ', ' ') + ' GMT+0300 (East Africa Time)';
-   NextVisit = NextVisitDate.replace(', ', ' ') + ' GMT+0300 (East Africa Time)';
-
-  console.log("todays date format",DateofVaccination);
-
+  NextVisit = `${formattedDate} at ${formattedTime}`;
+  DateofVaccination = `${DateofVaccinationdDate} at ${DateofVaccinationdTime}`;
   
   return NextVisit;
 
