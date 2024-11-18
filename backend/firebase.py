@@ -703,72 +703,51 @@ def getEmailList2():
         return jsonify({"error": str(e)}), 500
 
 @app.route('/getEmailList', methods=['GET'])
-def getEmailList():
+def get_email_list():
     try:
-        # Get the 'NextVisit' query parameter
-        NextVisit = request.args.get("NextVisit")
-        if not NextVisit:
-            return jsonify({"error": "Missing 'NextVisit' parameter"}), 400
+        # Set the timezone (Africa/Nairobi)
+        timezone = pytz.timezone('Africa/Nairobi')
 
-        # Parse the provided NextVisit parameter into a datetime object
-        try:
-            visit_datetime = parse_datetime(NextVisit)
-        except ValueError as e:
-            return jsonify({"error": str(e)}), 400
+        # Get today's date and add 1 day for reminder
+        today = datetime.now(timezone).date()
+        reminder_date = today + timedelta(days=7)  # Add 1 day to today's date
 
-        # Convert datetime to UTC if timezone-aware, otherwise localize to GMT+3 and convert to UTC
-        if visit_datetime.tzinfo:
-            utc_datetime = visit_datetime.astimezone(pytz.UTC)
-        else:
-            input_tz = pytz.FixedOffset(3 * 60)  # GMT+3
-            localized_datetime = input_tz.localize(visit_datetime)
-            utc_datetime = localized_datetime.astimezone(pytz.UTC)
+        # Format the reminder date in "Nov 24, 2024" format (same format as in the database)
+        formatted_reminder_date = reminder_date.strftime("%b %d, %Y")
 
-        # Query Firestore and filter based on UTC NextVisit (Looking for vaccinations after the provided date)
-        doc_ref = db.collection('VaccinationHistory')
-        docs = doc_ref.stream()
+        # Retrieve all documents in the VaccinationHistory collection
+        docs = db.collection('VaccinationHistory').stream() if db else []
 
-        response_data = []
+        result_docs = []
         for doc in docs:
-            doc_data = doc.to_dict()
-            doc_next_visit = doc_data.get("NextVisit")
-
-            if doc_next_visit:
+            data = doc.to_dict()
+            next_visit_str = data.get("NextVisit")
+            vaccines_issued = data.get("vaccinesIssued", 0)
+            
+            if next_visit_str:
+                # Parse and clean the NextVisit date from the database (remove time and timezone)
                 try:
-                    doc_visit_datetime = parse_datetime(doc_next_visit)
-
-                    # Adjust timezone to UTC if necessary
-                    if doc_visit_datetime.tzinfo:
-                        doc_utc_datetime = doc_visit_datetime.astimezone(pytz.UTC)
-                    else:
-                        doc_localized_datetime = input_tz.localize(doc_visit_datetime)
-                        doc_utc_datetime = doc_localized_datetime.astimezone(pytz.UTC)
-
-                    # Only include records with a 'NextVisit' greater than or equal to the provided date
-                    if doc_utc_datetime >= utc_datetime:
-                        vaccines_issued = doc_data.get("vaccinesIssued", [])
-                        if not isinstance(vaccines_issued, list):
-                            vaccines_issued = []
-                        response_data.append({
-                            "childName": doc_data.get("childName"),
-                            "DateofVaccination": doc_data.get("DateofVaccination"),
-                            "parentEmailAddress": doc_data.get("parentEmailAddress"),
-                            "NextVisit": doc_data.get("NextVisit"),
-                            "vaccinesIssued": vaccines_issued
+                    # Split the string by spaces and get the correct parts (Month, Day, Year)
+                    next_visit_parts = next_visit_str.split(' ')[1:4]  # [1:4] will give Month, Day, Year
+                    cleaned_next_visit_str = " ".join(next_visit_parts)  # Reassemble as "Nov 18, 2024"
+                    
+                    # Now compare the cleaned NextVisit with the reminder date
+                    if cleaned_next_visit_str == formatted_reminder_date:
+                        result_docs.append({
+                            "NextVisit": cleaned_next_visit_str,
+                            "parentEmailAddress": data.get("parentEmailAddress"),
+                            "childName": data.get("childName"),
+                            "vaccinesIssued": vaccines_issued 
                         })
-                except ValueError:
-                    continue
+                except ValueError as e:
+                    logging.error(f"Error parsing NextVisit date: {e}")
 
-        if response_data:
-            return jsonify({"message": "Parent details found", "data": response_data}), 200
-        else:
-            return jsonify({"error": "No documents found for the given 'NextVisit'"}), 404
+        # Return the records where the NextVisit date matches the reminder date
+        return jsonify({"data": result_docs})
 
     except Exception as e:
-        logging.error(f"Error fetching parent details: {str(e)}")
+        logging.error(f"Error fetching child data: {str(e)}")
         return jsonify({"error": str(e)}), 500
-
-    
 
 
 
