@@ -115,8 +115,7 @@
         <p id="childParentName">Parent Name:</p>
         <p id="childParentNationalID">Parent National ID:</p>
         <p id="childEmailAddress">Parent Email:</p>
-        <p id="childHeight">Height:</p>
-        <p id="childWeight">Weight:</p>
+        
       </div>
       <div class="child-info">
         <h2>Vaccination History</h2>
@@ -182,8 +181,7 @@
             document.getElementById("childParentName").textContent = `Parent Name: ${data.ParentName}`;
             document.getElementById("childParentNationalID").textContent = `Parent National ID: ${data.ParentNationalID}`;
             document.getElementById("childEmailAddress").textContent = `Parent Email: ${data.emailaddress}`;
-            document.getElementById("childHeight").textContent = `Height: ${data.height} cm`;
-            document.getElementById("childWeight").textContent = `Weight: ${data.weight} kg`;
+
           } else {
             console.error("Error fetching child details:", data.error);
           }
@@ -193,58 +191,63 @@
       }
 
       async function fetchVaccinationHistory(localId) {
-        try {
-          const response = await fetch(
-            `http://127.0.0.1:5000/vaccinationupdate?localId=${encodeURIComponent(localId)}`
+  try {
+    const response = await fetch(
+      `http://127.0.0.1:5000/vaccinationupdate?localId=${encodeURIComponent(localId)}`
+    );
+    const data = await response.json();
+
+    if (response.ok) {
+      const tableBody = document
+        .getElementById("vaccinationHistoryTable")
+        .querySelector("tbody");
+      tableBody.innerHTML = "";
+
+      // Sort data by date in ascending order
+      const sortedVaccinations = data.Vaccination.sort((a, b) => {
+        const dateA = new Date(a.DateofVaccination);
+        const dateB = new Date(b.DateofVaccination);
+        return dateA - dateB; // Sort in ascending order
+      });
+
+      let dates = [];
+      let weights = [];
+      let heights = [];
+
+      sortedVaccinations.forEach((vaccine) => {
+        const date = new Date(vaccine.DateofVaccination);
+        if (isNaN(date)) {
+          console.warn(
+            `Skipping invalid date for vaccine: ${vaccine.vaccinesIssued}`
           );
-          const data = await response.json();
-
-          if (response.ok) {
-            const tableBody = document
-              .getElementById("vaccinationHistoryTable")
-              .querySelector("tbody");
-            tableBody.innerHTML = "";
-
-            let dates = [];
-            let weights = [];
-            let heights = [];
-
-            data.Vaccination.forEach((vaccine) => {
-              const date = new Date(vaccine.DateofVaccination);
-              if (isNaN(date)) {
-                console.warn(
-                  `Skipping invalid date for vaccine: ${vaccine.vaccinesIssued}`
-                );
-                return;
-              }
-
-              dates.push(date.toLocaleDateString());
-              weights.push(vaccine.weight || 0);
-              heights.push(vaccine.height || 0);
-
-              const row = document.createElement("tr");
-              row.innerHTML = `
-                <td>${vaccine.vaccinesIssued}</td>
-                <td>${date.toLocaleString()}</td>
-                <td>${vaccine.weight || 0}</td>
-                <td>${vaccine.height || 0}</td>
-              `;
-              tableBody.appendChild(row);
-            });
-
-            dates.reverse();
-            weights.reverse();
-            heights.reverse();
-
-            renderChart("weightChart", dates, weights, "Weight (kg)");
-            renderChart("heightChart", dates, heights, "Height (cm)");
-          } else {
-            console.error("Error fetching vaccination history:", data.error);
-          }
-        } catch (error) {
-          console.error("Error fetching vaccination history:", error);
+          return;
         }
-      }
+
+        dates.push(date.toLocaleDateString());
+        weights.push(vaccine.weight || 0);
+        heights.push(vaccine.height || 0);
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${vaccine.vaccinesIssued}</td>
+          <td>${date.toLocaleString()}</td>
+          <td>${vaccine.weight || 0}</td>
+          <td>${vaccine.height || 0}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+
+      // Render charts with the sorted data
+      renderChart("weightChart", dates, weights, "Weight (kg)");
+      renderChart("heightChart", dates, heights, "Height (cm)");
+    } else {
+      console.error("Error fetching vaccination history:", data.error);
+    }
+  } catch (error) {
+    console.error("Error fetching vaccination history:", error);
+  }
+}
+
 
       function renderChart(chartId, labels, data, label) {
         const ctx = document.getElementById(chartId).getContext("2d");

@@ -204,12 +204,18 @@
         .querySelector("tbody");
       tableBody.innerHTML = "";
 
+      // Sort data by date in ascending order
+      const sortedVaccinations = data.Vaccination.sort((a, b) => {
+        const dateA = new Date(a.DateofVaccination);
+        const dateB = new Date(b.DateofVaccination);
+        return dateA - dateB; // Sort in ascending order
+      });
+
       let dates = [];
       let weights = [];
       let heights = [];
 
-      // Collect the data
-      data.Vaccination.forEach((vaccine) => {
+      sortedVaccinations.forEach((vaccine) => {
         const date = new Date(vaccine.DateofVaccination);
         if (isNaN(date)) {
           console.warn(
@@ -218,42 +224,21 @@
           return;
         }
 
-        dates.push(date);
+        dates.push(date.toLocaleDateString());
         weights.push(vaccine.weight || 0);
         heights.push(vaccine.height || 0);
-      });
-
-      // Sort the dates in ascending order (oldest to newest)
-      const sortedData = dates
-        .map((date, index) => ({
-          date: date,
-          weight: weights[index],
-          height: heights[index],
-        }))
-        .sort((a, b) => a.date - b.date); // Sorting dates in ascending order
-
-      // Clear the arrays
-      dates = [];
-      weights = [];
-      heights = [];
-
-      // Refill the arrays in the sorted order
-      sortedData.forEach((entry) => {
-        dates.push(entry.date.toLocaleDateString());
-        weights.push(entry.weight);
-        heights.push(entry.height);
 
         const row = document.createElement("tr");
         row.innerHTML = `
-          <td>${entry.weight || 0}</td>
-          <td>${entry.date.toLocaleString()}</td>
-          <td>${entry.weight || 0}</td>
-          <td>${entry.height || 0}</td>
+          <td>${vaccine.vaccinesIssued}</td>
+          <td>${date.toLocaleString()}</td>
+          <td>${vaccine.weight || 0}</td>
+          <td>${vaccine.height || 0}</td>
         `;
         tableBody.appendChild(row);
       });
 
-      // Render the charts
+      // Render charts with the sorted data
       renderChart("weightChart", dates, weights, "Weight (kg)");
       renderChart("heightChart", dates, heights, "Height (cm)");
     } else {
@@ -263,6 +248,7 @@
     console.error("Error fetching vaccination history:", error);
   }
 }
+
 
       function renderChart(chartId, labels, data, label) {
         const ctx = document.getElementById(chartId).getContext("2d");
