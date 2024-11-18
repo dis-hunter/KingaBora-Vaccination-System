@@ -3,3 +3,13 @@ button{
     text-align: center;
     align-tracks: center;
 }
+
+@font-face {
+    font-family: 'customfont'; 
+    src: url(Playpen_Sans/PlaypenSans-VariableFont_wght.ttf); 
+}
+
+
+*{
+    font-family: customfont;
+  }
