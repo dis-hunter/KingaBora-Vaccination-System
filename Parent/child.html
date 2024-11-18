@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Child Profile</title>
     <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../style.css" />
     <script defer src="child.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script defer src="../nurse/header-footer.js"></script>
@@ -169,21 +169,37 @@
       async function fetchChildDetails(localId) {
         try {
           const response = await fetch(
-            `http://127.0.0.1:5000/fetchChildByLocalId?localId=${encodeURIComponent(localId)}`
+            `http://127.0.0.1:5000/fetchChildByLocalId?localId=${encodeURIComponent(
+              localId
+            )}`
           );
           const data = await response.json();
 
           if (response.ok) {
             document.getElementById("childName").textContent = data.ChildName;
-            document.getElementById("childBirthCertificateID").textContent = `Birth Certificate ID: ${data.BirthCertificateID}`;
-            document.getElementById("childDateOfBirth").textContent = `Date of Birth: ${new Date(
+            document.getElementById(
+              "childBirthCertificateID"
+            ).textContent = `Birth Certificate ID: ${data.BirthCertificateID}`;
+            document.getElementById(
+              "childDateOfBirth"
+            ).textContent = `Date of Birth: ${new Date(
               data.DateOfBirth
             ).toLocaleString()}`;
-            document.getElementById("childParentName").textContent = `Parent Name: ${data.ParentName}`;
-            document.getElementById("childParentNationalID").textContent = `Parent National ID: ${data.ParentNationalID}`;
-            document.getElementById("childEmailAddress").textContent = `Parent Email: ${data.emailaddress}`;
-            document.getElementById("childHeight").textContent = `Height: ${data.height} cm`;
-            document.getElementById("childWeight").textContent = `Weight: ${data.weight} kg`;
+            document.getElementById(
+              "childParentName"
+            ).textContent = `Parent Name: ${data.ParentName}`;
+            document.getElementById(
+              "childParentNationalID"
+            ).textContent = `Parent National ID: ${data.ParentNationalID}`;
+            document.getElementById(
+              "childEmailAddress"
+            ).textContent = `Parent Email: ${data.emailaddress}`;
+            document.getElementById(
+              "childHeight"
+            ).textContent = `Height: ${data.height} cm`;
+            document.getElementById(
+              "childWeight"
+            ).textContent = `Weight: ${data.weight} kg`;
           } else {
             console.error("Error fetching child details:", data.error);
           }
@@ -195,7 +211,9 @@
       async function fetchVaccinationHistory(localId) {
         try {
           const response = await fetch(
-            `http://127.0.0.1:5000/vaccinationupdate?localId=${encodeURIComponent(localId)}`
+            `http://127.0.0.1:5000/vaccinationupdate?localId=${encodeURIComponent(
+              localId
+            )}`
           );
           const data = await response.json();
 
