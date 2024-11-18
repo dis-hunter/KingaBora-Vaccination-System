@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles.css" />
     <script defer src="child.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="header-footer.js"></script>
     <style>
       @font-face {
         font-family: "customfont";
@@ -103,6 +104,7 @@
     </style>
   </head>
   <body>
+    <special-header></special-header>
     <header>
       <h1>Child Profile</h1>
     </header>
@@ -140,9 +142,7 @@
         <canvas id="heightChart"></canvas>
       </div>
     </main>
-    <footer>
-      <p>&copy; 2023 Your Organization</p>
-    </footer>
+    <special-footer></special-footer>
     <script>
       function TokenFinder() {
         const token = localStorage.getItem("token");
