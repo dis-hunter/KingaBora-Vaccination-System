@@ -15,6 +15,41 @@
     main{
       background: radial-gradient(ellipse, #e0f2f1, teal); /* Teal to light teal gradient */
     }
+    /* Table styling */
+.child-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: white;
+}
+
+.child-table th, .child-table td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.child-table th {
+  background-color: #f2f2f2;
+}
+
+.child-table tr:nth-child(even) {
+  background-color: white;
+}
+
+
+
+/* Link styling */
+.view-child-link {
+  color: #008080;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.view-child-link:hover {
+  color: #005959;
+}
+
 
    
   </style>
@@ -30,45 +65,82 @@
       <button class="btn btn-outline-success" type="submit">Search</button>
     </form>
     <!-- Container for child links -->
-    <div id="childLinksContainer"></div>
+    <div id="childTableContainer"></div>
+
   </div>
   </main>
   <special-footer></special-footer>
   <script>
-    async function searchBar() {
-      const parentNationalID = document.getElementById('searchQuery').value;
+  async function searchBar() {
+  const parentNationalID = document.getElementById('searchQuery').value;
 
-      try {
-        const url = `http://127.0.0.1:5000/childDetails?ParentNationalID=${encodeURIComponent(parentNationalID)}`;
-        const response = await fetch(url, { method: 'GET' });
-        const data = await response.json();
+  try {
+    const url = `http://127.0.0.1:5000/childDetails?ParentNationalID=${encodeURIComponent(parentNationalID)}`;
+    const response = await fetch(url, { method: 'GET' });
+    const data = await response.json();
 
-        if (response.ok) {
-          console.log('Children found:', data);
+    const childTableContainer = document.getElementById("childTableContainer");
+    childTableContainer.innerHTML = ''; // Clear previous table content
 
-          const childLinksContainer = document.getElementById("childLinksContainer");
-          childLinksContainer.innerHTML = ''; // Clear previous links
+    if (response.ok) {
+      console.log('Children found:', data);
 
-          data.childNames.forEach(child => {
-            const childName = child.ChildName;
-            const childDocId = child.id;
+      if (data.childNames && data.childNames.length > 0) {
+        // Create a table
+        const table = document.createElement('table');
+        table.className = 'child-table';
 
-            // Create a link element for each child
-            const childLink = document.createElement('a');
-            childLink.href = `vaccinationpage.html?localId=${childDocId}`;
-            childLink.textContent = `${childName} (${childDocId})`;
-            childLink.className = 'child-link';
+        // Create the table header
+        const headerRow = document.createElement('tr');
+        const headers = ['Child Name', 'Birth Certificate ID', 'View Child'];
+        headers.forEach(headerText => {
+          const th = document.createElement('th');
+          th.textContent = headerText;
+          headerRow.appendChild(th);
+        });
+        table.appendChild(headerRow);
 
-            // Append the link to the container
-            childLinksContainer.appendChild(childLink);
-          });
-        } else {
-          console.error('Error fetching child details:', data.error || response.statusText);
-        }
-      } catch (error) {
-        console.error('Error:', error);
+        // Add rows for each child
+        data.childNames.forEach(child => {
+          const row = document.createElement('tr');
+
+          // Child Name
+          const childNameCell = document.createElement('td');
+          childNameCell.textContent = child.ChildName;
+          row.appendChild(childNameCell);
+
+          // Birth Certificate ID
+          const bcnCell = document.createElement('td');
+          bcnCell.textContent = child.BirthCertificateID;
+          row.appendChild(bcnCell);
+
+          // View Child link
+          const viewChildCell = document.createElement('td');
+          const childLink = document.createElement('a');
+          childLink.href = `vaccinationpage.html?localId=${child.id}`;
+          childLink.textContent = 'View Child';
+          childLink.className = 'view-child-link';
+          viewChildCell.appendChild(childLink);
+          row.appendChild(viewChildCell);
+
+          table.appendChild(row);
+        });
+
+        // Append the table to the container
+        childTableContainer.appendChild(table);
+      } else {
+        childTableContainer.innerHTML = '<p>No children found for the provided parent National ID.</p>';
       }
+    } else {
+      console.error('Error fetching child details:', data.error || response.statusText);
+      childTableContainer.innerHTML = `<p>Error: ${data.error || response.statusText}</p>`;
     }
+  } catch (error) {
+    console.error('Error:', error);
+    childTableContainer.innerHTML = `<p>Error: ${error.message}</p>`;
+  }
+}
+
   </script>
 </body>
 </html>
