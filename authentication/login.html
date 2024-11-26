@@ -140,7 +140,7 @@
 
                 if (response.status === 201) {
                     const { redirectUrl, localId } = response.data;
-                    localStorage.setItem('localId', localId);
+                    localStorage.setItem('token', localId);
                     window.location.href = redirectUrl;
                 } else {
                     alert("Login failed. Please check your credentials.");

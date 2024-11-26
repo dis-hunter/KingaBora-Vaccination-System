@@ -100,11 +100,11 @@ function logout()
         localStorage.removeItem('token');
 
         console.log("token not found. Redirecting to login...");
-        window.location.href = 'http://localhost:8080/KingaBora-Vaccination-System/authentication/login.html';
+        window.location.href = 'http://localhost:8080/KingaBora-Vaccination-System/landingpage/altIndex.html';
         } 
         else{
             localStorage.removeItem('token');
-            window.location.href = 'http://localhost:8080/KingaBora-Vaccination-System/authentication/login.html';
+            window.location.href = 'http://localhost:8080/KingaBora-Vaccination-System/landingpage/altIndex.html';
 
         }
 

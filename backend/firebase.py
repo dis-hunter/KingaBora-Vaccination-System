@@ -1382,6 +1382,38 @@ def parse_date2(date_str):
     except ValueError as e:
         print(f"Date parsing error for {date_str}: {e}")
         return None
+    
+@app.route('/getNurseDetails', methods=['GET'])
+def get_nurse_details():
+    nurse_id = request.args.get('nurseId')
+
+    if not nurse_id:
+        return jsonify({'error': 'Nurse ID is required'}), 400
+
+    try:
+        doc_ref = db.collection('nurseData').document(nurse_id)
+        doc = doc_ref.get()
+
+        # Check if the document exists
+        if doc.exists:
+            # Retrieve 'emailaddress' and 'parentName' from the document
+            doc_data = doc.to_dict()
+            response_data = {
+                "nurseEmailAddress": doc_data.get("nurseEmailAddress"),
+                "nurseName": doc_data.get("nurseName"),
+                "nurseNationalID": doc_data.get("nurseNationalID"),
+                "nursephonenumber": doc_data.get("nursephonenumber")
+
+
+
+            }
+            return jsonify({"message": "Parent details found", "data": response_data}), 200
+        else:
+            return jsonify({"error": "No document found for the given 'localID'"}), 404
+
+    except Exception as e:
+        logging.error(f"Error fetching parent details: {str(e)}")
+        return jsonify({"error": str(e)}), 500    
 # Run the Flask application
 if __name__ == '__main__':
     app.run(debug=True, port=5000)  # Running on localhost:5000

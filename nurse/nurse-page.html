@@ -1,105 +1,505 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Parent Registration Form</title>
-    <link rel="stylesheet" href="header-footer.css">
-    <script defer src="header-footer.js"></script>
-</head>
-<style>
-  body{
-    font-family: 'Playpen Sans', sans-serif;
-  }
-  .row {
-  display: flex;
-  align-items: center;
-  margin: 10px;
-}
-
-
-.col-md-3 img { 
-  width: 100%;
-  max-width: 500px; 
-  height: 400px;
-  display: block;
-  margin-right: 20px;
-  border-radius: 10px; 
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
-}
-
-.col-md-9{
-  margin-right: 40px;
-  padding-right: 20px;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile Page</title>
   
-</style>
-<body>
-  <special-header></special-header>
-  <div class="container">
-    <div class="row">
-      <div class="col-md-9"></div>
-    <H1>DASHBOARD</H1>
-
-    <div class="col-md-3">
-      <img src="images/parentspic1.jpeg" class="img-fluid" alt="Image"> 
-    </div>
-  </div>
-  </div>
-</div>
-    <special-footer></special-footer>
-    <script>
-        async function getEmailList(NextVisit) {
-  try {
-    console.log('Getting email and parent details for NextVisit:', NextVisit); // Debug logging
-    
-    const url = `http://127.0.0.1:5000/getEmailList?NextVisit=${encodeURIComponent(NextVisit)}`;
-    console.log('Request URL:', url); // Debug logging
-    
-    const response = await fetch(url, { method: 'GET' });
-    const data = await response.json();
-
-    if (response.ok) {
-    const emailList = [];  // Initialize an empty array to store emails
-
-    data.data.forEach((item) => {
-        if (item.parentEmailAddress) {  // Check if parentEmailAddress exists
-            emailList.push(item.parentEmailAddress);  // Add email to the list
-        }
-    });
-
-    console.log('Email list found:', emailList);  // Log the array of emails
-}
-
-
-      
-      // Assuming data.data is an array of results
-    //   data.data.forEach(item => {
-    //     console.log(`Child Name: ${item.childName}, Date of Vaccination: ${item.DateofVaccination}`);
-        
-    //     // Optionally update the DOM with the information
-    //     // For example, if you have elements to display them
-    //     // document.getElementById("parentEmail").innerHTML += item.emailaddress + '<br>';
-    //   });
-      
-    else {
-      console.error('Error fetching email list:', data.error || response.statusText);
-      document.getElementById('vaccineList').textContent = `Error: ${data.error || 'Failed to fetch vaccines'}`;
+  <script defer src="../nurse/header-footer.js"></script>
+  
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f9f9f9; /* Light background */
     }
-  } catch (error) {
-    console.error('Error:', error);
-    document.getElementById('vaccineList').textContent = 'Error: ' + error.message;
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    h1, h2 {
+      color: #333;
+      font-size: 2em;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin: 20px 0;
+    }
+
+    .topnav {
+      background-color: #008080; 
+      padding: 10px 0;
+      text-align: center;
+    }
+
+    .topnav h2 {
+      color: white;
+      font-size: 2em;
+      margin: 0;
+    }
+
+    main {
+      /* background-image: url("images/nursespic2.jpeg"); */
+      background-repeat: no-repeat;
+      background-size: cover;
+      padding: 20px;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      padding: 20px;
+      background-color: #008080;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .profile-info {
+      flex-grow: 1;
+      color: white;
+    }
+
+    .profile-actions button {
+      margin-left: 10px;
+      padding: 8px 12px;
+      background-color: #40e0d0;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .children ul {
+      list-style: none;
+      padding-left: 10px;
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .children li {
+      margin: 5px;
+      padding: 8px 12px;
+      background-color: #f5f5f5;
+      border-radius: 4px;
+    }
+
+    .updates {
+      margin-top: 20px;
+    }
+
+    .update {
+      background-color: #fff;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.4);
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      position: relative;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 8px;
+      max-height: 80vh;
+      overflow-y: auto;
+      margin: auto;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .close {
+      position: absolute;
+      right: 20px;
+      top: 10px;
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: black;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    .add-child-btn {
+      background-color: #008080;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    #addChildForm button[type="submit"] {
+      background-color: #008080;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 15px;
+    }
+
+    #addChildForm button[type="submit"]:hover {
+      background-color: #006666;
+    }
+    
+
+    .modal-content h2 {
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    .profile-header .profile-actions button:hover {
+      background-color: #36b3a0;
+    }
+
+  @media (max-width: 600px) {
+    .modal-content {
+      width: 95%;
+      margin: 10px;
+      padding: 15px;
+    }
+    
+    .form-group input,
+    .form-group select {
+      font-size: 16px; 
+    }
+    #editProfileModal {
+  transition: opacity 0.3s ease-in-out; /* Add a transition for opacity */
+}
+.button-30 {
+  align-items: center;
+  appearance: none;
+  background-color: #FCFCFD;
+  border-radius: 4px;
+  border-width: 0;
+  box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px,rgba(45, 35, 66, 0.3) 0 7px 13px -3px,#D6D6E7 0 -3px 0 inset;
+  box-sizing: border-box;
+  color: #36395A;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: "JetBrains Mono",monospace;
+  height: 48px;
+  justify-content: center;
+  line-height: 1;
+  list-style: none;
+  overflow: hidden;
+  padding-left: 16px;
+  padding-right: 16px;
+  position: relative;
+  text-align: left;
+  text-decoration: none;
+  transition: box-shadow .15s,transform .15s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  white-space: nowrap;
+  will-change: box-shadow,transform;
+  font-size: 18px;
+}
+
+.button-30:focus {
+  box-shadow: #D6D6E7 0 0 0 1.5px inset, rgba(45, 35, 66, 0.4) 0 2px 4px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
+}
+
+.button-30:hover {
+  box-shadow: rgba(45, 35, 66, 0.4) 0 4px 8px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
+  transform: translateY(-2px);
+}
+
+.button-30:active {
+  box-shadow: #D6D6E7 0 3px 7px inset;
+  transform: translateY(2px);
+}
   }
+</style>
+</head>
+<body>
+  <header>
+    <!-- <special-header></special-header> -->
+    <div class="topnav">
+      <h2>Nurse Profile Page</h2>
+    </div>
+  </header>
+  <main>
+    <div class="profile-header">
+      <div class="profile-info">
+        <h1 id="nurseName">Nurse Name: </h1>
+        <p id="nurseEmailAddress">Email: </p>
+        <p id="nursePhoneNumber">Phone Number: </p>
+        <p id="nurseNationalID">National ID: </p>
+        <p id="nurseGender">Gender: </p>
+      </div>
+      <div class="profile-actions">
+        <button id="editProfileButton">Edit Profile</button>
+      </div>
+    </div>
+    
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeEditProfileModal()">&times;</span>
+        <h2>Edit Profile</h2>
+        <form id="editProfileForm">
+          <div class="form-group">
+            <label for="editNurseName">Name:</label>
+            <input type="text" id="editNurseName" required>
+          </div>
+          <div class="form-group">
+            <label for="editNurseEmailAddress">Email:</label>
+            <input type="email" id="editNurseEmailAddress" required>
+          </div>
+          <div class="form-group">
+            <label for="editnursephonenumber">Phone Number:</label>
+            <input type="text" id="editnursePhoneNumber" required>
+          </div>
+          <div class="form-group">
+            <label for="editNurseNationalID">National ID:</label>
+            <input type="text" id="editNurseNationalID" required>
+          </div>
+          <button type="submit">Update Profile</button>
+        </form>
+      </div>
+    </div>
+
+
+    <script>
+
+    document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const localId = urlParams.get('localId');
+
+            if (localId) {
+                await fetchNurseDetails(localId);
+            } else {
+                console.error("No localId found in URL");
+            }
+    });
+
+    async function fetchNurseDetails(nurseId) {
+    try {
+        // Construct the API endpoint URL with the nurseId parameter
+        const url = `http://127.0.0.1:5000/getNurseDetails?nurseId=${encodeURIComponent(nurseId)}`;
+        
+        // Make an HTTP GET request to the server
+        const response = await fetch(url);
+        
+        // Parse the JSON response
+        const data = await response.json();
+        
+        if (response.ok && data.data) {
+            // Access individual nurse details
+            const nurseName = data.data.nurseName;
+            const nurseEmailAddress = data.data.nurseEmailAddress;
+            const nursePhoneNumber = data.data.nursephonenumber;
+            const nurseNationalID = data.data.nurseNationalID;
+
+            // Print each detail to the console
+            console.log('Nurse Name:', nurseName);
+            console.log('Nurse Email Address:', nurseEmailAddress);
+            console.log('Nurse Phone Number:', nursePhoneNumber);
+            console.log('Nurse National ID:', nurseNationalID);
+
+            // If required, update the DOM or perform additional logic here
+        } else {
+            console.error('Error fetching nurse details:', data.error || 'No data available');
+        }
+    } catch (error) {
+        // Handle errors during the fetch process
+        console.error('Error:', error);
+    }
 }
 
 
- // Call the function when the DOM is fully loaded
-document.addEventListener('DOMContentLoaded', () => {
-    getEmailList("December 18, 2024 at 09:11:32 PM GMT+3"); //this endpoint uses the november date to get the emails of users whose date is beyond this
-    // make a function that gets todays date, adds 14 days or 7 days depending on your reminder algorithmn, then the new date will be passed into the function to get data that are close past due so that reminder is sent
-    
-    });
+//    document.addEventListener('DOMContentLoaded', async () => {
+//      const urlParams = new URLSearchParams(window.location.search);
+//      const nurseId = urlParams.get('localId'); // Assuming you're passing nurseId in the URL
 
-    </script>
-</body>
-</html>
+//      if (nurseId) {
+//       await fetchNurseDetails(nurseId);
+//      } else {
+//      console.error("No nurseId found in URL");
+//       }
+//     });
+
+//     async function nurseDetails() {
+//         try {
+//             const urlParams = new URLSearchParams(window.location.search);
+//             const localId = urlParams.get('localId');
+            
+//             if (!localId) {
+//                 console.error("No localId found in URL");
+//                 return;
+//             }
+    
+//             const url = http://127.0.0.1:5000/nurseDetails?NurselocalID=${encodeURIComponent(localId)};
+//             const response = await fetch(url);
+//             const data = await response.json();
+    
+//             if (response.ok && data.nurseDetails) {
+//                 // Update DOM
+//                 document.getElementById("nurseName").textContent = data.nurseDetails.nurseName;
+//                 document.getElementById("nurseEmailAddress").textContent = data.nurseDetails.nurseEmailAddress;
+//                 document.getElementById("nursePhoneNumber").textContent = data.nurseDetails.nursePhoneNumber;
+//                 document.getElementById("nurseNationalID").textContent = data.nurseDetails.nurseNationalID;
+//             } else {
+//                 console.error('Error fetching nurse details:', data.error || 'Unknown error');
+//             }
+//         } catch (error) {
+//             console.error('Error:', error);
+//         }
+//     }
+
+// </script>
+    <script>
+//         let nurseNationalID;
+//         document.querySelector("form").addEventListener("submit", function (event) {
+//           event.preventDefault();
+//           getChildren();
+//         });
+        
+//         async function nurseDetails() {
+//         try {
+//             const urlParams = new URLSearchParams(window.location.search);
+//             const localId = urlParams.get('localId');
+            
+//             if (!localId) {
+//                 console.error("No localId found in URL");
+//                 return;
+//             }
+    
+//             console.log("Fetching details for localId:", localId); // Debug log
+    
+//             const url = http://127.0.0.1:5000/nurseDetails?NurselocalID=${encodeURIComponent(localId)};
+//             const response = await fetch(url);
+//             const data = await response.json();
+    
+    
+//             console.log("Received data:", data); // Debug log
+    
+//             if (response.ok && data.nurseDetails) {
+//                 // Update the DOM with nurse details - matching exact field names from Firebase
+//                 document.getElementById("nurseName").textContent = data.nurseDetails.nurseName;
+//                 document.getElementById("nurseEmailAddress").textContent = data.nurseDetails.nurseEmailAddress;
+//                 document.getElementById("nursePhoneNumber").textContent = data.nurseDetails.nursePhoneNumber;
+//                 document.getElementById("nurseNationalID").textContent = data.nurseDetails.nurseNationalID;
+    
+//                 // Update hidden fields
+//                 document.getElementById("nurseNameHidden").value = data.nurseDetails.nurseName;
+//                 document.getElementById("nurseNationalIDHidden").value = data.nurseDetails.nurseNationalID;
+//                 document.getElementById("nurseEmailHidden").value = data.nurseDetails.nurseEmailAddress;
+    
+//                 // Store nurseNationalID for later use
+//                 nurseNationalID = data.nurseDetails.nurseNationalID;
+    
+//                 // Fetch children for this nurse
+//                 if (data.nurseDetails.nurseNationalID) {
+//                     await getChildren(data.nurseDetails.nurseNationalID);
+//                 }
+//             } else {
+//                 console.error('Error fetching nurse details:', data.error);
+//             }
+//         } catch (error) {
+//             console.error('Error:', error);
+//         }
+//     }
+
+//     document.querySelector('.profile-actions button').addEventListener('click', openEditProfileModal);
+
+// async function openEditProfileModal() {
+//     const nurseName = document.getElementById("nurseName").textContent;
+//     const nurseEmailAddress = document.getElementById("nurseEmailAddress").textContent;
+//     const nursePhoneNumber = document.getElementById("nursePhoneNumber").textContent;
+//     const nurseNationalID = document.getElementById("nurseNationalID").textContent;
+
+//     // Populate modal fields
+//     document.getElementById("editnurseName").value = nurseName;
+//     document.getElementById("editnurseEmailAddress").value = nurseEmailAddress;
+//     document.getElementById("editnursePhoneNumber").value = nursePhoneNumber;
+//     document.getElementById("editnurseNationalID").value = nurseNationalID;
+
+//     document.getElementById('editProfileModal').style.display = 'block';
+// }
+// document.getElementById('editProfileForm').addEventListener('submit', async function(e) {
+//     e.preventDefault();
+
+//     const updatedData = {
+//         nurseName: document.getElementById('editnurseName').value,
+//         nurseEmailAddress: document.getElementById('editnurseEmailAddress').value,
+//         nursePhoneNumber: document.getElementById('editnursePhoneNumber').value,
+//         nurseNationalID: document.getElementById('editnurseNationalID').value,
+//     };
+
+//     try {
+//         const localId = new URLSearchParams(window.location.search).get('localId');
+//         const response = await fetch(http://127.0.0.1:5000/updatenurseProfile?localId=${localId}, {
+//             method: 'PUT',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify(updatedData)
+//         });
+
+//         const data = await response.json();
+
+//         if (response.ok) {
+//             alert('Profile updated successfully!');
+//             closeEditProfileModal();
+//             nurseDetails(); // Refresh the nurse details
+//         } else {
+//             alert('Error updating profile: ' + (data.error || 'Unknown error'));
+//         }
+//     } catch (error) {
+//         console.error('Error updating profile:', error);
+//         alert('Error updating profile: ' + error.message);
+//     }
+// });
+
+// function closeEditProfileModal() {
+//     document.getElementById('editProfileModal').style.display = 'none';
+// }
+// 
+</script>
