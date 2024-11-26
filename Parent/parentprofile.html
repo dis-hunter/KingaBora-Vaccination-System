@@ -8,6 +8,14 @@
   <script defer src="../nurse/header-footer.js"></script>
   
   <style>
+
+@font-face {
+        font-family: "customfont";
+        src: url(Playpen_Sans/PlaypenSans-VariableFont_wght.ttf);
+      }
+      * {
+        font-family: customfont;
+      }
     body {
       font-family: 'Arial', sans-serif;
       margin: 0;
@@ -256,6 +264,72 @@
 }
   }
 
+/* General table styling */
+.tbl {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    font-family: custom !important;
+    text-align: left;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Table header styling */
+.thead {
+    background-color: #008080;
+    color: white;
+}
+
+.tbl th, .tbl td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+}
+
+/* Styling for table rows */
+.tbl tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.tbl tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+/* Hover effect for rows */
+
+
+/* Header cell styling */
+.tbl th {
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 14px;
+    color: black;
+    background-color: teal;
+    font-family: custom;
+}
+
+/* Styling for the "View Child" button */
+.tbl a.button-30 {
+    padding: 8px 12px;
+    background-color: #008080;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: background-color 0.2s, transform 0.1s;
+    display: inline-block;
+    text-align: center;
+}
+
+.tbl a.button-30:hover {
+    background-color: #005959;
+    transform: scale(1.05);
+}
+
 
   
 </style>
@@ -307,13 +381,22 @@
       </div>
     </div>
     
-    <section class="children">
+    <section class="children" style="font-family: custom;">
       <h1>Children</h1>
-      <a id="childname" href="#" style="color: black; text-decoration:none;">Child Name , BirthCertificate number</a>
-      <ul>
-        <!-- Children list will be populated here -->
-      </ul>
-    </section>
+      <table class="tbl">
+          <thead class="thead">
+              <tr>
+                  <th>Child Name</th>
+                  <th>Birth Certificate ID</th>
+                  <th>Details</th>
+              </tr>
+          </thead>
+          <tbody id="childrenTableBody">
+              <!-- Rows will be dynamically added here -->
+          </tbody>
+      </table>
+  </section>
+  
 
     <section class="updates">
       <div class="update">
@@ -448,40 +531,43 @@ async function getChildren(parentNationalID) {
         console.log("Fetching children for parent ID:", parentNationalID);
         const url = `http://127.0.0.1:5000/childDetails?ParentNationalID=${encodeURIComponent(parentNationalID)}`;
         console.log("Requesting URL:", url);
-        
+
         const response = await fetch(url);
         console.log("Response status:", response.status);
-        
+
         const data = await response.json();
         console.log("Received children data:", data);
 
         if (data.childNames && data.childNames.length > 0) {
-    const childrenList = document.querySelector('.children ul');
-    childrenList.innerHTML = ''; // Clear existing list
-    data.childNames.forEach(child => {
-        const li = document.createElement('li');
-        const a = document.createElement('a');
-        
-        // Set href and textContent for the link
-        a.href = `child.html?localId=${encodeURIComponent(child.id)}`; // Use child.id or the appropriate field
-        a.textContent = `${child.ChildName}  BCN: (${child.BirthCertificateID})`;
-        
-        // Add the button-30 class to style the link
-        a.className = 'button-30';
-        
-        // Append the styled link to the list item
-        li.appendChild(a);
-        
-        // Append the list item to the parent list
-        childrenList.appendChild(li);
-    });
-}
+            // Get reference to the table body
+            const childrenTableBody = document.getElementById('childrenTableBody');
+            childrenTableBody.innerHTML = ''; // Clear existing rows
 
-        
+            // Loop through each child and create table rows
+            data.childNames.forEach(child => {
+                const row = document.createElement('tr');
+
+                // Create columns for Name, Birth Certificate, and View Child link
+                row.innerHTML = `
+                    <td>${child.ChildName}</td>
+                    <td>${child.BirthCertificateID}</td>
+                    <td><a href="child.html?localId=${encodeURIComponent(child.id)}" class="button-30">View Child</a></td>
+                `;
+
+                // Append the row to the table body
+                childrenTableBody.appendChild(row);
+            });
+        } else {
+            console.warn("No children data available for the given parent ID.");
+        }
     } catch (error) {
-        console.error("Error fetching children:", error);
+        console.error("Error fetching children data:", error);
     }
 }
+
+
+   
+
 
     function openAddChildForm() {
     document.getElementById("parentNameHidden").value = document.getElementById("parentName").textContent;
