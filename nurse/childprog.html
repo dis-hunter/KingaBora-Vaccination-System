@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Child Profile</title>
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="../style.css">
     <script defer src="child.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -114,8 +115,7 @@
         <p id="childParentName">Parent Name:</p>
         <p id="childParentNationalID">Parent National ID:</p>
         <p id="childEmailAddress">Parent Email:</p>
-        <p id="childHeight">Height:</p>
-        <p id="childWeight">Weight:</p>
+        
       </div>
       <div class="child-info">
         <h2>Vaccination History</h2>
@@ -141,7 +141,7 @@
       </div>
     </main>
     <footer>
-      <p>&copy; 2023 Your Organization</p>
+      <p>&copy; 2024 KingaBora</p>
     </footer>
     <script>
       function TokenFinder() {
@@ -181,8 +181,7 @@
             document.getElementById("childParentName").textContent = `Parent Name: ${data.ParentName}`;
             document.getElementById("childParentNationalID").textContent = `Parent National ID: ${data.ParentNationalID}`;
             document.getElementById("childEmailAddress").textContent = `Parent Email: ${data.emailaddress}`;
-            document.getElementById("childHeight").textContent = `Height: ${data.height} cm`;
-            document.getElementById("childWeight").textContent = `Weight: ${data.weight} kg`;
+
           } else {
             console.error("Error fetching child details:", data.error);
           }
