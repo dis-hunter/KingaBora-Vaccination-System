@@ -5,118 +5,107 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Child Profile</title>
     <link rel="stylesheet" href="styles.css" />
-    <!-- Link to your CSS file -->
+    <link rel="stylesheet" href="../style.css" />
     <script defer src="child.js"></script>
-    <!-- Link to your JavaScript file -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    <script defer src="../nurse/header-footer.js"></script>
     <style>
-body {
-  font-family: 'Arial', sans-serif;
-  margin: 0;
-  padding: 20px;
-  background-color: #f9f9f9; /* Light background */
-}
-
-header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-h1 {
-  color: #333; /* Dark text for the main heading */
-  font-size: 2.5em;
-  font-weight: bold; /* Make the main heading bold */
-  text-transform: uppercase; /* Uppercase for emphasis */
-}
-
-.child-header {
-  padding: 20px;
-  background-color: #008080; /* Light teal color */
-  border-radius: 8px;
-  margin: 20px 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.child-header h2 {
-  margin: 0;
-  color: #fff; /* White text for the header */
-  font-size: 2em; /* Increase size for better visibility */
-  font-weight: 600; /* Semi-bold for emphasis */
-}
-
-.child-header p {
-  margin: 5px 0;
-  color: #fff; /* White text for child details */
-  font-size: 1.1em; /* Slightly larger for readability */
-}
-
-.child-info {
-  margin-top: 20px;
-}
-
-.child-info h2 {
-  margin-bottom: 10px;
-  color: #333; /* Dark text color for headings */
-  border-bottom: 2px solid #008080; /* Underline for emphasis */
-  padding-bottom: 5px;
-  font-size: 1.8em; /* Larger size for section headings */
-  font-weight: bold; /* Bold for emphasis */
-  letter-spacing: 1px; /* Slightly increase space between letters */
-}
-
-.child-info p {
-  color: #555; /* Dark gray for paragraph text */
-  font-size: 1.1em; /* Slightly larger for readability */
-}
-
-.chart-container {
-  width: 80%;
-  margin: 20px auto;
-}
-
-canvas {
-  max-height: 400px;
-  height: 400px;
-}
-
-/* Table styles */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-  background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-th, td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #dddddd;
-}
-
-th {
-  background-color: #008080; /* Light teal for header */
-  color: white; /* White text for header */
-}
-
-tr:hover {
-  background-color: #f1f1f1; /* Light gray on hover */
-}
-
-tr:nth-child(even) {
-  background-color: #f9f9f9; /* Light gray for even rows */
-}
-
-/* Footer styles */
-footer {
-  text-align: center;
-  margin-top: 20px;
-  color: #777;
-}
+      @font-face {
+        font-family: "customfont";
+        src: url(Playpen_Sans/PlaypenSans-VariableFont_wght.ttf);
+      }
+      * {
+        font-family: customfont;
+      }
+      body {
+        margin: 0;
+        padding: 20px;
+        background-color: #f9f9f9;
+      }
+      header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      h1 {
+        color: #333;
+        font-size: 2.5em;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+      .child-header {
+        padding: 20px;
+        background-color: #008080;
+        border-radius: 8px;
+        margin: 20px 0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .child-header h2 {
+        margin: 0;
+        color: #fff;
+        font-size: 2em;
+        font-weight: 600;
+      }
+      .child-header p {
+        margin: 5px 0;
+        color: #fff;
+        font-size: 1.1em;
+      }
+      .child-info {
+        margin-top: 20px;
+      }
+      .child-info h2 {
+        margin-bottom: 10px;
+        color: #333;
+        border-bottom: 2px solid #008080;
+        padding-bottom: 5px;
+        font-size: 1.8em;
+        font-weight: bold;
+        letter-spacing: 1px;
+      }
+      .child-info p {
+        color: #555;
+        font-size: 1.1em;
+      }
+      .chart-container {
+        width: 80%;
+        margin: 20px auto;
+      }
+      canvas {
+        max-height: 400px;
+        height: 400px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background-color: #ffffff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #dddddd;
+      }
+      th {
+        background-color: #008080;
+        color: white;
+      }
+      tr:hover {
+        background-color: #f1f1f1;
+      }
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+      footer {
+        text-align: center;
+        margin-top: 20px;
+        color: #777;
+      }
     </style>
   </head>
   <body>
+    <special-header></special-header>
     <header>
       <h1>Child Profile</h1>
     </header>
@@ -128,8 +117,7 @@ footer {
         <p id="childParentName">Parent Name:</p>
         <p id="childParentNationalID">Parent National ID:</p>
         <p id="childEmailAddress">Parent Email:</p>
-        <p id="childHeight">Height:</p>
-        <p id="childWeight">Weight:</p>
+        
       </div>
       <div class="child-info">
         <h2>Vaccination History</h2>
@@ -142,9 +130,7 @@ footer {
               <th>Height (cm)</th>
             </tr>
           </thead>
-          <tbody>
-            <!-- Vaccination history will be populated here -->
-          </tbody>
+          <tbody></tbody>
         </table>
       </div>
       <div class="chart-container">
@@ -157,27 +143,22 @@ footer {
       </div>
     </main>
     <footer>
-      <p>&copy; 2023 Your Organization</p>
+      <p>&copy; 2024 KingaBora</p>
     </footer>
-
     <script>
-      function TokenFinder()
-      {
-
-        const token = localStorage.getItem('token');
-
-
-            if (!token) {
-                console.log("token not found. Redirecting to login...");
-                window.location.href = 'http://localhost:8080/KingaBora-Vaccination-System/authentication/login.html';
-                } 
-
+      function TokenFinder() {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.log("Token not found. Redirecting to login...");
+          window.location.href =
+            "http://localhost:8080/KingaBora-Vaccination-System/authentication/login.html";
+        }
       }
+
       document.addEventListener("DOMContentLoaded", async () => {
         const urlParams = new URLSearchParams(window.location.search);
         TokenFinder();
         const localId = urlParams.get("localId");
-
         if (localId) {
           await fetchChildDetails(localId);
           await fetchVaccinationHistory(localId);
@@ -205,21 +186,10 @@ footer {
             ).textContent = `Date of Birth: ${new Date(
               data.DateOfBirth
             ).toLocaleString()}`;
-            document.getElementById(
-              "childParentName"
-            ).textContent = `Parent Name: ${data.ParentName}`;
-            document.getElementById(
-              "childParentNationalID"
-            ).textContent = `Parent National ID: ${data.ParentNationalID}`;
-            document.getElementById(
-              "childEmailAddress"
-            ).textContent = `Parent Email: ${data.emailaddress}`;
-            document.getElementById(
-              "childHeight"
-            ).textContent = ` Height: ${data.height} cm`;
-            document.getElementById(
-              "childWeight"
-            ).textContent = `Weight: ${data.weight} kg`;
+            document.getElementById("childParentName").textContent = `Parent Name: ${data.ParentName}`;
+            document.getElementById("childParentNationalID").textContent = `Parent National ID: ${data.ParentNationalID}`;
+            document.getElementById("childEmailAddress").textContent = `Parent Email: ${data.emailaddress}`;
+
           } else {
             console.error("Error fetching child details:", data.error);
           }
@@ -228,7 +198,7 @@ footer {
         }
       }
 
-async function fetchVaccinationHistory(localId) {
+      async function fetchVaccinationHistory(localId) {
   try {
     const response = await fetch(
       `http://127.0.0.1:5000/vaccinationupdate?localId=${encodeURIComponent(localId)}`
@@ -236,22 +206,35 @@ async function fetchVaccinationHistory(localId) {
     const data = await response.json();
 
     if (response.ok) {
-      const vaccinationHistoryTableBody = document.getElementById(
-        "vaccinationHistoryTable").querySelector("tbody");
-      vaccinationHistoryTableBody.innerHTML = ""; // Clear existing table rows
+      const tableBody = document
+        .getElementById("vaccinationHistoryTable")
+        .querySelector("tbody");
+      tableBody.innerHTML = "";
 
-      // Prepare data for charts
-      const dates = [];
-      const weights = [];
-      const heights = [];
+      // Sort data by date in ascending order
+      const sortedVaccinations = data.Vaccination.sort((a, b) => {
+        const dateA = new Date(a.DateofVaccination);
+        const dateB = new Date(b.DateofVaccination);
+        return dateA - dateB; // Sort in ascending order
+      });
 
-      data.Vaccination.forEach((vaccine) => {
+      let dates = [];
+      let weights = [];
+      let heights = [];
+
+      sortedVaccinations.forEach((vaccine) => {
         const date = new Date(vaccine.DateofVaccination);
-        dates.push(date.toLocaleDateString());
-        weights.push(vaccine.weight || 0); // Set default value if weight is missing
-        heights.push(vaccine.height || 0); // Set default value if height is missing
+        if (isNaN(date)) {
+          console.warn(
+            `Skipping invalid date for vaccine: ${vaccine.vaccinesIssued}`
+          );
+          return;
+        }
 
-        // Create a new row for the table
+        dates.push(date.toLocaleDateString());
+        weights.push(vaccine.weight || 0);
+        heights.push(vaccine.height || 0);
+
         const row = document.createElement("tr");
         row.innerHTML = `
           <td>${vaccine.vaccinesIssued}</td>
@@ -259,10 +242,10 @@ async function fetchVaccinationHistory(localId) {
           <td>${vaccine.weight || 0}</td>
           <td>${vaccine.height || 0}</td>
         `;
-        vaccinationHistoryTableBody.appendChild(row);
+        tableBody.appendChild(row);
       });
 
-      // Render charts with the fetched data
+      // Render charts with the sorted data
       renderChart("weightChart", dates, weights, "Weight (kg)");
       renderChart("heightChart", dates, heights, "Height (cm)");
     } else {
@@ -273,48 +256,6 @@ async function fetchVaccinationHistory(localId) {
   }
 }
 
-      async function fetchVaccinationHistory2(localId) {
-        try {
-          // Fetch vaccination progress data for the specified localId
-          const response = await fetch(
-            `http://127.0.0.1:5000/ChildVaccinationProgress?localId=${encodeURIComponent(
-              localId
-            )}`
-          );
-          const data = await response.json();
-
-          if (response.ok) {
-            // Display vaccination history list (if needed)
-            const vaccinationHistoryList = document.getElementById(
-              "vaccinationHistoryList"
-            );
-            vaccinationHistoryList.innerHTML = "";
-            data.data.dates.forEach((date, index) => {
-              const li = document.createElement("li");
-              li.textContent = ` Date: ${date}, Weight: ${data.data.weights[index]} kg, Height: ${data.data.heights[index]} cm`;
-              vaccinationHistoryList.appendChild(li);
-            });
-
-            // Render weight and height charts
-            renderChart(
-              "weightChart",
-              data.data.dates.reverse(),
-              data.data.weights,
-              "Weight (kg)"
-            );
-            renderChart(
-              "heightChart",
-              data.data.dates.reverse(),
-              data.data.heights,
-              "Height (cm)"
-            );
-          } else {
-            console.error("Error fetching vaccination history:", data.error);
-          }
-        } catch (error) {
-          console.error("Error fetching vaccination history:", error);
-        }
-      }
 
       function renderChart(chartId, labels, data, label) {
         const ctx = document.getElementById(chartId).getContext("2d");
@@ -336,8 +277,19 @@ async function fetchVaccinationHistory(localId) {
           options: {
             responsive: true,
             scales: {
-              x: { title: { display: true, text: "Date" } },
-              y: { title: { display: true, text: label } },
+              x: {
+                title: {
+                  display: true,
+                  text: "Date",
+                },
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: label,
+                },
+                beginAtZero: true,
+              },
             },
           },
         });

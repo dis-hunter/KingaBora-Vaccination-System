@@ -74,7 +74,7 @@ fieldset {
     width: 170vh !important; /* Increase the size of the table to take full width */
      /* Set a maximum width if desired */
      align-self: center !important;
-    margin-right: 10px !important; /* Center the table */
+    margin-right: 30px !important; /* Center the table */
     border-collapse: collapse; /* Optional: Collapse borders for a cleaner look */
     table-layout: auto; /* Allow the table to adjust based on content */
 }
@@ -188,6 +188,7 @@ h1 {
     height: 100vh; /* Full height */
     background-color: teal;
     flex-shrink: 0; /* Prevent shrinking */
+    position: sticky !important;
 }
 
 
@@ -296,6 +297,7 @@ input, select {
             border-collapse: collapse;
             width: 100%;
             margin-top: 20px;
+            margin-right: 20px !important;
             background-color: white;
             color: black;
         }
@@ -449,6 +451,7 @@ input, select {
             border-collapse: collapse;
             width: 100%;
             margin-top: 20px;
+        
             background-color: white;
             color: black;
         }

@@ -1,260 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profile Page</title>
-  
-  <script defer src="../nurse/header-footer.js"></script>
-  
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: #f9f9f9; /* Light background */
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    h1, h2 {
-      color: #333;
-      font-size: 2em;
-      font-weight: bold;
-      text-transform: uppercase;
-      margin: 20px 0;
-    }
-
-    .topnav {
-      background-color: #008080; 
-      padding: 10px 0;
-      text-align: center;
-    }
-
-    .topnav h2 {
-      color: white;
-      font-size: 2em;
-      margin: 0;
-    }
-
-    main {
-      /* background-image: url("images/nursespic2.jpeg"); */
-      background-repeat: no-repeat;
-      background-size: cover;
-      padding: 20px;
-    }
-
-    .profile-header {
-      display: flex;
-      align-items: center;
-      padding: 20px;
-      background-color: #008080;
-      border-radius: 8px;
-      margin-bottom: 20px;
-    }
-
-    .profile-info {
-      flex-grow: 1;
-      color: white;
-    }
-
-    .profile-actions button {
-      margin-left: 10px;
-      padding: 8px 12px;
-      background-color: #40e0d0;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .children ul {
-      list-style: none;
-      padding-left: 10px;
-      display: flex;
-      flex-wrap: wrap;
-    }
-
-    .children li {
-      margin: 5px;
-      padding: 8px 12px;
-      background-color: #f5f5f5;
-      border-radius: 4px;
-    }
-
-    .updates {
-      margin-top: 20px;
-    }
-
-    .update {
-      background-color: #fff;
-      padding: 15px;
-      margin-bottom: 10px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.4);
-      display: none;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .modal-content {
-      background-color: #fefefe;
-      position: relative;
-      padding: 20px;
-      border: 1px solid #888;
-      width: 90%;
-      max-width: 500px;
-      border-radius: 8px;
-      max-height: 80vh;
-      overflow-y: auto;
-      margin: auto;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    .close {
-      position: absolute;
-      right: 20px;
-      top: 10px;
-      color: #aaa;
-      font-size: 28px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .close:hover {
-      color: black;
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
-
-    .form-group input,
-    .form-group select {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      box-sizing: border-box;
-    }
-
-    .add-child-btn {
-      background-color: #008080;
-      color: white;
-      padding: 8px 16px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-bottom: 10px;
-    }
-
-    #addChildForm button[type="submit"] {
-      background-color: #008080;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      width: 100%;
-      margin-top: 15px;
-    }
-
-    #addChildForm button[type="submit"]:hover {
-      background-color: #006666;
-    }
-    
-
-    .modal-content h2 {
-      margin-top: 0;
-      margin-bottom: 20px;
-    }
-
-    .profile-header .profile-actions button:hover {
-      background-color: #36b3a0;
-    }
-
-  @media (max-width: 600px) {
-    .modal-content {
-      width: 95%;
-      margin: 10px;
-      padding: 15px;
-    }
-    
-    .form-group input,
-    .form-group select {
-      font-size: 16px; 
-    }
-    #editProfileModal {
-  transition: opacity 0.3s ease-in-out; /* Add a transition for opacity */
-}
-.button-30 {
-  align-items: center;
-  appearance: none;
-  background-color: #FCFCFD;
-  border-radius: 4px;
-  border-width: 0;
-  box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px,rgba(45, 35, 66, 0.3) 0 7px 13px -3px,#D6D6E7 0 -3px 0 inset;
-  box-sizing: border-box;
-  color: #36395A;
-  cursor: pointer;
-  display: inline-flex;
-  font-family: "JetBrains Mono",monospace;
-  height: 48px;
-  justify-content: center;
-  line-height: 1;
-  list-style: none;
-  overflow: hidden;
-  padding-left: 16px;
-  padding-right: 16px;
-  position: relative;
-  text-align: left;
-  text-decoration: none;
-  transition: box-shadow .15s,transform .15s;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-  white-space: nowrap;
-  will-change: box-shadow,transform;
-  font-size: 18px;
-}
-
-.button-30:focus {
-  box-shadow: #D6D6E7 0 0 0 1.5px inset, rgba(45, 35, 66, 0.4) 0 2px 4px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
-}
-
-.button-30:hover {
-  box-shadow: rgba(45, 35, 66, 0.4) 0 4px 8px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
-  transform: translateY(-2px);
-}
-
-.button-30:active {
-  box-shadow: #D6D6E7 0 3px 7px inset;
-  transform: translateY(2px);
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parent Registration Form</title>
+    <link rel="stylesheet" href="header-footer.css">
+    <script defer src="header-footer.js"></script>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<style>
+  body{
+    font-family: 'Playpen Sans', sans-serif;
   }
+  .row {
+  display: flex;
+  align-items: center;
+  margin: 10px;
+}
+
+
+.col-md-3 img { 
+  width: 100%;
+  max-width: 500px; 
+  height: 400px;
+  display: block;
+  margin-right: 20px;
+  border-radius: 10px; 
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+}
+
+.col-md-9{
+  margin-right: 40px;
+  padding-right: 20px;
+}
+  
 </style>
 </head>
 <body>
