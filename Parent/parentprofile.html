@@ -17,7 +17,7 @@
         font-family: customfont;
       }
     body {
-      font-family: 'Arial', sans-serif;
+      font-family: customfont;
       margin: 0;
       padding: 20px;
       background-color: #f9f9f9; /* Light background */
@@ -29,7 +29,7 @@
     }
 
     h1, h2 {
-      color: #333;
+      color: white;
       font-size: 2em;
       font-weight: bold;
       text-transform: uppercase;
@@ -270,7 +270,7 @@
     border-collapse: collapse;
     margin: 20px 0;
     font-size: 16px;
-    font-family: custom !important;
+    font-family: customfont;
     text-align: left;
     background-color: #f9f9f9;
     border-radius: 8px;
@@ -282,6 +282,7 @@
 .thead {
     background-color: #008080;
     color: white;
+    font-family: customfont;
 }
 
 .tbl th, .tbl td {
@@ -307,9 +308,9 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     font-size: 14px;
-    color: black;
+    color: white;
     background-color: teal;
-    font-family: custom;
+    font-family: customfont;
 }
 
 /* Styling for the "View Child" button */
@@ -323,6 +324,7 @@
     transition: background-color 0.2s, transform 0.1s;
     display: inline-block;
     text-align: center;
+    
 }
 
 .tbl a.button-30:hover {
@@ -344,8 +346,8 @@
   <main>
     <div class="profile-header">
       <div class="profile-info">
-        <h1 id="parentName">Parent Name</h1>
-        email<p id="parentEmailAddress">parent@example.com</p>
+        <h1 id="parentName">Parent Name:</h1>
+        <p id="parentEmailAddress">parent@example.com</p>
         <p id="parentPhoneNumber">Phone Number</p>
         <p id="parentNationalID">National ID</p>
       </div>
@@ -381,8 +383,8 @@
       </div>
     </div>
     
-    <section class="children" style="font-family: custom;">
-      <h1>Children</h1>
+    <section class="children" style="font-family: customfont;">
+      <h1 style="color: black;">Children</h1>
       <table class="tbl">
           <thead class="thead">
               <tr>
@@ -401,7 +403,7 @@
     <section class="updates">
       <div class="update">
         <a href="#" style="text-decoration: none; color: black;">
-          <h2>Messages</h2>
+          <h2 style="color: black;">Messages</h2>
           <p>Receive latest results and reminders on vaccinations to come!</p>
         </a>
       </div>
