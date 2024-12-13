@@ -30,7 +30,7 @@ excellent support, helping your child grow healthy and secure.</br>
 <b>Note: The image demonstrations are not that extensive, A demonstration video will be attached so as to further provide guidance on  the UI.</b> </br>
 <h3>1) Landing and authentication page.</h3> </br>
 This module contains the landing page for parents and other users as shown below. </br> </br>
-<img width="946" alt="image" src="https://github.com/user-attachments/assets/5282d114-ebec-4569-bda9-e06d58ac79e1" /> </br>
+<img width="946" alt="image" src="https://github.com/user-attachments/assets/5282d114-ebec-4569-bda9-e06d58ac79e1" /> </br> </br>
 The signup and login pages are also shown below with the option of using federated authentication included. </br> </br>
 <img width="940" alt="image" src="https://github.com/user-attachments/assets/ce1fc193-7a6f-4524-9841-ad26eb4996da" />
 <h3>2) A Parent Module</h3> </br>
@@ -40,7 +40,7 @@ a) View their various children and the children's information. </br> </br>
 They can see their vaccination history : </br>
 <img width="940" alt="image" src="https://github.com/user-attachments/assets/c4f5dd97-b64f-42e9-a2d6-bdad759d6202" /> </br>
 The weight and height progress of their children overtime. </br>
-<img width="942" alt="image" src="https://github.com/user-attachments/assets/95b318e2-352d-4605-a12b-eaa43d8a2b34" /> </br>
+<img width="942" alt="image" src="https://github.com/user-attachments/assets/95b318e2-352d-4605-a12b-eaa43d8a2b34" /> </br> </br>
 <img width="902" alt="image" src="https://github.com/user-attachments/assets/3f0aa20e-18ae-4286-baa9-bbd811a34b2f" /> </br>
 
 b)Edit their profile and that of their children
