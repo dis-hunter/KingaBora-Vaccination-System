@@ -31,11 +31,11 @@ excellent support, helping your child grow healthy and secure.</br>
 <h3>1) Landing and authentication page.</h3> </br>
 This module contains the landing page for parents and other users as shown below. </br> </br>
 <img width="946" alt="image" src="https://github.com/user-attachments/assets/5282d114-ebec-4569-bda9-e06d58ac79e1" /> </br>
-The signup and login pages are also shown below with the option of using federated authentication included. </br>
+The signup and login pages are also shown below with the option of using federated authentication included. </br> </br>
 <img width="940" alt="image" src="https://github.com/user-attachments/assets/ce1fc193-7a6f-4524-9841-ad26eb4996da" />
 <h3>2) A Parent Module</h3> </br>
 When the parent logs in, they can be able to : </br></br>
-a) View their various children and the children's information. </br>
+a) View their various children and the children's information. </br> </br>
 <img width="941" alt="image" src="https://github.com/user-attachments/assets/1fe7a319-010e-423e-8e15-3283c314ee75" /> </br>
 They can see their vaccination history : </br>
 <img width="940" alt="image" src="https://github.com/user-attachments/assets/c4f5dd97-b64f-42e9-a2d6-bdad759d6202" /> </br>
