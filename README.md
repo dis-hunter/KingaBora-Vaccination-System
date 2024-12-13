@@ -74,7 +74,9 @@ An admin, is the overseer of the system, they can be able to: </br>
 <h2>Video Demonstration</h2> </br>
 Below are short video demonstration's of the project overflow. (The video is split into parts due to the limit of file upload sizes for a free version account.)  </br>
 
-https://github.com/user-attachments/assets/6e3e9064-bf8e-485f-872b-2bca8e5ba86c 
+https://github.com/user-attachments/assets/ed125cab-d62d-4a6f-bcd1-0bd2eef18178
+
+
 </br>
 
 
